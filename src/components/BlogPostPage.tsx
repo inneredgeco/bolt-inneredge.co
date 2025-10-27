@@ -5,7 +5,7 @@ import { Header } from './Header';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from './SEOHead';
 import { BlogNewsletterSignup } from './BlogNewsletterSignup';
 import { BlogNavigation } from './BlogNavigation';
 
@@ -142,56 +142,17 @@ export function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <Helmet>
-        <title>{post.title} | Inner Edge</title>
-        <meta name="description" content={post.excerpt} />
-
-        {/* Open Graph */}
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        {post.image_url && <meta property="og:image" content={post.image_url} />}
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={currentUrl} />
-        <meta property="og:site_name" content="Inner Edge" />
-        <meta property="article:published_time" content={post.created_at} />
-        <meta property="article:modified_time" content={post.updated_at} />
-        <meta property="article:author" content={post.author} />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt} />
-        {post.image_url && <meta name="twitter:image" content={post.image_url} />}
-
-        <link rel="canonical" href={currentUrl} />
-
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "description": post.excerpt,
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": currentUrl
-            },
-            "author": {
-              "@type": "Person",
-              "name": post.author
-            },
-            "datePublished": post.created_at,
-            "dateModified": post.updated_at,
-            "image": post.image_url,
-            "inLanguage": "en-US",
-            "wordCount": wordCount,
-            "publisher": {
-              "@type": "Organization",
-              "name": "Inner Edge"
-            }
-          })}
-        </script>
-      </Helmet>
+      <SEOHead
+        type="article"
+        title={`${post.title} | Inner Edge`}
+        description={post.excerpt}
+        image={post.image_url || undefined}
+        url={currentUrl}
+        author={post.author}
+        publishedTime={post.created_at}
+        modifiedTime={post.updated_at}
+        wordCount={wordCount}
+      />
 
       <Header />
 
@@ -235,7 +196,6 @@ export function BlogPostPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-4 leading-tight">
               {post.title}
             </h1>
-
 
             <div className="prose prose-lg prose-stone max-w-none">
               <ReactMarkdown
