@@ -114,9 +114,37 @@ export function SEOHead({
       }
 
       const structuredData = {
-        '@context': 'https://schema.org',
-        '@type': 'BlogPosting',
-        'headline': title,
-        'description': description,
-        'mainEntityOfPage': {
-          '@type': 'WebP
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": title,
+        "description": description,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": ogUrl
+        },
+        "author": {
+          "@type": "Person",
+          "name": author || "Inner Edge"
+        },
+        "datePublished": publishedTime,
+        "dateModified": modifiedTime || publishedTime,
+        "image": finalImage,
+        "inLanguage": "en-US",
+        "wordCount": wordCount,
+        "publisher": {
+          "@type": "Organization",
+          "name": "Inner Edge"
+        }
+      };
+
+      scriptElement.textContent = JSON.stringify(structuredData);
+    } else {
+      const existingScript = document.querySelector('script[type="application/ld+json"]#article-schema');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    }
+  }, [title, description, keywords, ogImage, ogUrl, canonical, locality, region, type, author, publishedTime, modifiedTime, wordCount]);
+
+  return null;
+}
