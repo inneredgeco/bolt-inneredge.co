@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
-import { Trash2, Edit, Eye, EyeOff, Lock, BookOpen } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, Lock, BookOpen } from 'lucide-react';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { SlashCommandMenu } from './SlashCommandMenu';
 import ReactMarkdown from 'react-markdown';
