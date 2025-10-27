@@ -55,6 +55,12 @@ export function BlogPostPage() {
       if (error) throw error;
 
       if (data) {
+        console.log('=== BLOG POST DEBUG ===');
+        console.log('post.title:', data.title);
+        console.log('post.slug:', data.slug);
+        console.log('post.image_url:', data.image_url);
+        console.log('post.excerpt:', data.excerpt);
+        console.log('======================');
         setPost(data);
         await fetchAdjacentPosts(data.created_at);
       } else {
@@ -190,6 +196,18 @@ export function BlogPostPage() {
       <Header />
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {import.meta.env.DEV && (
+          <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4 mb-8">
+            <h3 className="font-bold text-yellow-900 mb-2">🐛 Debug Info (Development Only)</h3>
+            <div className="text-sm text-yellow-900 font-mono space-y-1">
+              <div><strong>Post ID:</strong> {post.id}</div>
+              <div><strong>Image URL:</strong> {post.image_url || '(null/undefined)'}</div>
+              <div><strong>Slug:</strong> {post.slug}</div>
+              <div><strong>Title:</strong> {post.title}</div>
+            </div>
+          </div>
+        )}
+
         <Link
           to="/blog"
           className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-semibold mb-8 transition-colors"
