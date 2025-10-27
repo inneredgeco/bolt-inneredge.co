@@ -436,7 +436,7 @@ export function LinkPage() {
       <div className="fixed bottom-0 left-0 right-0 bg-brand-900 bg-opacity-98 backdrop-blur-sm shadow-lg z-50 py-4">
         <div className="max-w-7xl mx-auto px-4 flex justify-center gap-3">
           <a
-            href="mailto:contact@inneredge.com"
+            href="mailto:contact@inneredge.co"
             className="flex flex-col items-center gap-1 px-4 py-3 bg-white text-brand-700 rounded-lg font-semibold text-sm hover:bg-brand-50 transition-all hover:scale-105 hover:-translate-y-1 flex-1 max-w-[140px]"
           >
             <span className="text-xl">📧</span>

@@ -234,8 +234,8 @@ export function RiseCourseResources() {
         description="Access your RISE course materials including workbooks, audio meditations, life design canvas, goal roadmaps, and habit building trackers. Complete resources for personal transformation."
         keywords="RISE course, personal development resources, life coaching materials, goal setting workbook, habit tracker, forgiveness meditation"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inner-edge.com/rise-course-resources"
-        ogUrl="https://www.inner-edge.com/rise-course-resources"
+        canonical="https://www.inneredge.co/rise-course-resources"
+        ogUrl="https://www.inneredge.co/rise-course-resources"
       />
       {/* Navigation */}
       <nav className="bg-white sticky top-0 z-50 shadow-md">

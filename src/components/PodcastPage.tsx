@@ -8,8 +8,8 @@ export function PodcastPage() {
         title="Podcast - Inner Edge"
         description="The Inner Edge Podcast - Coming Soon"
         keywords="inner edge podcast, mens work podcast, personal development"
-        canonical="https://www.inner-edge.com/podcast"
-        ogUrl="https://www.inner-edge.com/podcast"
+        canonical="https://www.inneredge.co/podcast"
+        ogUrl="https://www.inneredge.co/podcast"
       />
       <Header />
       <div className="min-h-[80vh] bg-gray-900 text-white flex items-center justify-center px-4">

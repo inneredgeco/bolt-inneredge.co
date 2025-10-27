@@ -27,8 +27,8 @@ export function AboutPage() {
         description="Meet Soleiman Bolour, men's coach and founder of Inner Edge. Learn about his journey through Spiritual Psychology, Tantra, and embodiment work to help men live authentically."
         keywords="Soleiman Bolour, mens coach, spiritual psychology, tantra teacher, Inner Edge founder, mens work facilitator"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inner-edge.com/about"
-        ogUrl="https://www.inner-edge.com/about"
+        canonical="https://www.inneredge.co/about"
+        ogUrl="https://www.inneredge.co/about"
       />
       <Header />
 

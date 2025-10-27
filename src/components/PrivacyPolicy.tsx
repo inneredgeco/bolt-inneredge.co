@@ -14,8 +14,8 @@ export function PrivacyPolicy() {
         description="Inner Edge privacy policy. Learn how we collect, use, and protect your personal information when you use our mens coaching services and website."
         keywords="privacy policy, data protection, user privacy, terms and conditions"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inner-edge.com/privacy-policy"
-        ogUrl="https://www.inner-edge.com/privacy-policy"
+        canonical="https://www.inneredge.co/privacy-policy"
+        ogUrl="https://www.inneredge.co/privacy-policy"
       />
       <Header />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

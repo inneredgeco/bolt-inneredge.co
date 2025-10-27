@@ -25,8 +25,8 @@ export function Contact() {
         description="Ready to start your transformation? Contact Inner Edge today for mens coaching, personal development, and life-changing support. Based in San Diego, CA."
         keywords="contact mens coach, get coaching help, mens life coach contact, coaching inquiry, book coaching session"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inner-edge.com/contact"
-        ogUrl="https://www.inner-edge.com/contact"
+        canonical="https://www.inneredge.co/contact"
+        ogUrl="https://www.inneredge.co/contact"
       />
       <Header />
       {/* Hero Section */}
@@ -88,8 +88,8 @@ export function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-900 mb-1">Email</h3>
-                    <a href="mailto:contact@inneredge.com" className="text-slate-600 hover:text-brand-500 transition-colors">
-                      contact@inneredge.com
+                    <a href="mailto:contact@inneredge.co" className="text-slate-600 hover:text-brand-500 transition-colors">
+                      contact@inneredge.co
                     </a>
                   </div>
                 </div>

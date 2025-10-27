@@ -16,8 +16,8 @@ export function HomePage() {
         description="Transform your life with Inner Edge, San Diego's premier virtual life coaching for men. Specializing in emotional wellness, personal growth, and breakthrough coaching in La Mesa, CA."
         keywords="life coach san diego, mens coaching san diego, virtual life coach california, personal development san diego, emotional wellness coach, la mesa life coach, breakthrough coaching san diego"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inner-edge.com/"
-        ogUrl="https://www.inner-edge.com/"
+        canonical="https://www.inneredge.co/"
+        ogUrl="https://www.inneredge.co/"
         locality="San Diego"
         region="CA"
       />
