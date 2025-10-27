@@ -19,8 +19,8 @@ interface SEOHeadProps {
 export function SEOHead({
   title,
   description,
-  keywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development',
-  ogImage = 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png',
+  keywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community',
+  ogImage,
   ogUrl,
   canonical,
   locality = 'San Diego',
@@ -58,13 +58,21 @@ export function SEOHead({
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:type', type, true);
-    if (ogImage) {
-      const fullImageUrl = ogImage.startsWith('http') ? ogImage : `${window.location.origin}${ogImage}`;
+    
+    // Only add og:image if one is provided, OR if it's a non-article page (then use default)
+    const finalImage = ogImage || (type === 'website' ? 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png' : undefined);
+    
+    if (finalImage) {
+      const fullImageUrl = finalImage.startsWith('http') ? finalImage : `${window.location.origin}${finalImage}`;
       updateMetaTag('og:image', fullImageUrl, true);
       updateMetaTag('og:image:type', 'image/png', true);
       updateMetaTag('og:image:width', '1200', true);
       updateMetaTag('og:image:height', '630', true);
+      
+      // Twitter image
+      updateMetaTag('twitter:image', fullImageUrl);
     }
+    
     if (ogUrl) updateMetaTag('og:url', ogUrl, true);
     updateMetaTag('og:site_name', 'Inner Edge', true);
 
@@ -77,10 +85,6 @@ export function SEOHead({
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    if (ogImage) {
-      const fullImageUrl = ogImage.startsWith('http') ? ogImage : `${window.location.origin}${ogImage}`;
-      updateMetaTag('twitter:image', fullImageUrl);
-    }
 
     if (canonical) {
       let linkElement = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
@@ -92,7 +96,7 @@ export function SEOHead({
       linkElement.setAttribute('href', canonical);
     }
 
-    if (type === 'article' && ogUrl) {
+    if (type === 'article' && ogUrl && finalImage) {
       let scriptElement = document.querySelector('script[type="application/ld+json"]#article-schema') as HTMLScriptElement;
       if (!scriptElement) {
         scriptElement = document.createElement('script');
@@ -116,7 +120,7 @@ export function SEOHead({
         },
         "datePublished": publishedTime,
         "dateModified": modifiedTime || publishedTime,
-        "image": ogImage,
+        "image": finalImage,
         "inLanguage": "en-US",
         "wordCount": wordCount,
         "publisher": {
@@ -132,7 +136,8 @@ export function SEOHead({
         existingScript.remove();
       }
     }
-  }, [title, description, keywords, ogImage, ogUrl, canonical, type, author, publishedTime, modifiedTime, wordCount]);
+  }, [title, description, keywords, ogImage, ogUrl, canonical, type, author, publishedTime, modifiedTime, wordCount, locality, region]);
 
   return null;
+}
 }
