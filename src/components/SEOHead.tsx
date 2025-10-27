@@ -9,6 +9,11 @@ interface SEOHeadProps {
   canonical?: string;
   locality?: string;
   region?: string;
+  type?: 'website' | 'article';
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  wordCount?: number;
 }
 
 export function SEOHead({
@@ -19,7 +24,12 @@ export function SEOHead({
   ogUrl,
   canonical,
   locality = 'San Diego',
-  region = 'CA'
+  region = 'CA',
+  type = 'website',
+  author,
+  publishedTime,
+  modifiedTime,
+  wordCount
 }: SEOHeadProps) {
   useEffect(() => {
     document.title = title;
@@ -47,7 +57,7 @@ export function SEOHead({
 
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
-    updateMetaTag('og:type', 'website', true);
+    updateMetaTag('og:type', type, true);
     if (ogImage) {
       const fullImageUrl = ogImage.startsWith('http') ? ogImage : `${window.location.origin}${ogImage}`;
       updateMetaTag('og:image', fullImageUrl, true);
@@ -57,6 +67,12 @@ export function SEOHead({
     }
     if (ogUrl) updateMetaTag('og:url', ogUrl, true);
     updateMetaTag('og:site_name', 'Inner Edge', true);
+
+    if (type === 'article') {
+      if (author) updateMetaTag('article:author', author, true);
+      if (publishedTime) updateMetaTag('article:published_time', publishedTime, true);
+      if (modifiedTime) updateMetaTag('article:modified_time', modifiedTime, true);
+    }
 
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
@@ -75,7 +91,48 @@ export function SEOHead({
       }
       linkElement.setAttribute('href', canonical);
     }
-  }, [title, description, keywords, ogImage, ogUrl, canonical]);
+
+    if (type === 'article' && ogUrl) {
+      let scriptElement = document.querySelector('script[type="application/ld+json"]#article-schema') as HTMLScriptElement;
+      if (!scriptElement) {
+        scriptElement = document.createElement('script');
+        scriptElement.setAttribute('type', 'application/ld+json');
+        scriptElement.setAttribute('id', 'article-schema');
+        document.head.appendChild(scriptElement);
+      }
+
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": title,
+        "description": description,
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": ogUrl
+        },
+        "author": {
+          "@type": "Person",
+          "name": author || "Inner Edge"
+        },
+        "datePublished": publishedTime,
+        "dateModified": modifiedTime || publishedTime,
+        "image": ogImage,
+        "inLanguage": "en-US",
+        "wordCount": wordCount,
+        "publisher": {
+          "@type": "Organization",
+          "name": "Inner Edge"
+        }
+      };
+
+      scriptElement.textContent = JSON.stringify(structuredData);
+    } else {
+      const existingScript = document.querySelector('script[type="application/ld+json"]#article-schema');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    }
+  }, [title, description, keywords, ogImage, ogUrl, canonical, type, author, publishedTime, modifiedTime, wordCount]);
 
   return null;
 }
