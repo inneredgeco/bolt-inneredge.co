@@ -19,7 +19,7 @@ interface SEOHeadProps {
 export function SEOHead({
   title,
   description,
-  keywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community',
+  keywords,
   ogImage,
   ogUrl,
   canonical,
@@ -31,6 +31,7 @@ export function SEOHead({
   modifiedTime,
   wordCount
 }: SEOHeadProps) {
+  const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
   useEffect(() => {
     document.title = title;
 
@@ -48,9 +49,7 @@ export function SEOHead({
     };
 
     updateMetaTag('description', description);
-    if (keywords) {
-      updateMetaTag('keywords', keywords);
-    }
+    updateMetaTag('keywords', keywords || defaultKeywords);
 
     updateMetaTag('geo.region', `US-${region}`);
     updateMetaTag('geo.placename', locality);

@@ -140,14 +140,20 @@ export function BlogPostPage() {
   const wordCount = post.content.split(/\s+/).filter(word => word.length > 0).length;
   const imageAlt = post.image_alt_text || `Featured image for ${post.title}`;
 
+  const postDescription = post.excerpt || post.content.substring(0, 160).replace(/[#*_\[\]]/g, '').trim();
+  const postImage = post.image_url || 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png';
+  const postKeywords = `${post.title}, mens coaching blog, personal development, Inner Edge, ${post.author}`;
+
   return (
     <div className="min-h-screen bg-stone-50">
       <SEOHead
         type="article"
         title={`${post.title} | Inner Edge`}
-        description={post.excerpt}
-        image={post.image_url || undefined}
-        url={currentUrl}
+        description={postDescription}
+        keywords={postKeywords}
+        ogImage={postImage}
+        ogUrl={currentUrl}
+        canonical={currentUrl}
         author={post.author}
         publishedTime={post.created_at}
         modifiedTime={post.updated_at}
