@@ -203,6 +203,17 @@ export function BlogPostPage() {
               {post.title}
             </h1>
 
+            <div className="hidden">
+              <span itemProp="author">{post.author}</span>
+              <time itemProp="datePublished" dateTime={post.created_at}>
+                {new Date(post.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            </div>
+
             <div className="prose prose-lg prose-stone max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
