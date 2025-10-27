@@ -32,7 +32,7 @@ export function AdminPage() {
     title: '',
     content: '',
     excerpt: '',
-    author: 'Soleiman',
+    author: 'Soleiman Bolour',
     image_url: '',
     image_alt_text: ''
   });
@@ -101,11 +101,13 @@ export function AdminPage() {
             excerpt: formData.excerpt,
             author: formData.author,
             image_url: formData.image_url || null,
-            image_alt_text: formData.image_alt_text || null
+            image_alt_text: formData.image_alt_text || null,
+            updated_at: new Date().toISOString()
           })
           .eq('id', editingId);
 
         if (error) throw error;
+        alert('Post updated successfully!');
         setEditingId(null);
       } else {
         const { error } = await supabase
@@ -128,7 +130,7 @@ export function AdminPage() {
         title: '',
         content: '',
         excerpt: '',
-        author: 'Soleiman',
+        author: 'Soleiman Bolour',
         image_url: '',
         image_alt_text: ''
       });
@@ -188,7 +190,7 @@ export function AdminPage() {
       title: '',
       content: '',
       excerpt: '',
-      author: 'Soleiman',
+      author: 'Soleiman Bolour',
       image_url: '',
       image_alt_text: ''
     });
