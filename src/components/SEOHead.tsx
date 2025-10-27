@@ -66,12 +66,19 @@ export function SEOHead({
     if (finalImage) {
       const fullImageUrl = finalImage.startsWith('http') ? finalImage : `${window.location.origin}${finalImage}`;
       updateMetaTag('og:image', fullImageUrl, true);
+      updateMetaTag('og:image:secure_url', fullImageUrl, true);
       updateMetaTag('og:image:type', 'image/png', true);
       updateMetaTag('og:image:width', '1200', true);
       updateMetaTag('og:image:height', '630', true);
+      updateMetaTag('og:image:alt', title, true);
       updateMetaTag('twitter:image', fullImageUrl);
+    } else {
+      const ogImageElement = document.querySelector('meta[property="og:image"]');
+      if (ogImageElement) {
+        ogImageElement.remove();
+      }
     }
-    
+
     if (ogUrl) {
       updateMetaTag('og:url', ogUrl, true);
     }
