@@ -92,7 +92,7 @@ export function AdminPage() {
 
     try {
       if (editingId) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('posts')
           .update({
             title: formData.title,
@@ -104,10 +104,16 @@ export function AdminPage() {
             image_alt_text: formData.image_alt_text || null,
             updated_at: new Date().toISOString()
           })
-          .eq('id', editingId);
+          .eq('id', editingId)
+          .select();
 
-        if (error) throw error;
-        alert('Post updated successfully!');
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
+
+        console.log('Post updated:', data);
+        alert('✓ Post updated successfully!\n\nAll fields including image have been saved.');
         setEditingId(null);
       } else {
         const { error } = await supabase
