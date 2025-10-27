@@ -20,6 +20,7 @@ interface Post {
   created_at: string;
 }
 
+const ADMIN_EMAIL = 'admin@inner-edge.com';
 const ADMIN_PASSWORD = 'innerwork2024';
 
 export function AdminPage() {
@@ -27,6 +28,7 @@ export function AdminPage() {
   const [password, setPassword] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -44,10 +46,21 @@ export function AdminPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
 
   useEffect(() => {
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
     if (authenticated) {
       fetchAllPosts();
     }
   }, [authenticated]);
+
+  async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      setAuthenticated(true);
+    }
+  }
 
   async function fetchAllPosts() {
     try {
@@ -63,13 +76,32 @@ export function AdminPage() {
     }
   }
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setAuthenticated(true);
-    } else {
-      alert('Incorrect password');
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: ADMIN_EMAIL,
+        password: password,
+      });
+
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          alert('Incorrect password');
+        } else {
+          alert('Login error: ' + error.message);
+        }
+        setPassword('');
+      } else if (data.session) {
+        setAuthenticated(true);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An error occurred during login');
       setPassword('');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -315,9 +347,10 @@ export function AdminPage() {
               />
               <button
                 type="submit"
-                className="w-full bg-stone-900 text-white py-3 rounded-lg hover:bg-stone-800 font-semibold transition-colors"
+                disabled={loading}
+                className="w-full bg-stone-900 text-white py-3 rounded-lg hover:bg-stone-800 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Login
+                {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
           </div>
