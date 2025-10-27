@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Flodesk Form Custom Styling */
+#fd-form-68f7a8c0338a9cff5f4e5400 {
+  background: transparent !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 form {
+  background: transparent !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 .fd-form-content {
+  background: transparent !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 input[type="text"],
+#fd-form-68f7a8c0338a9cff5f4e5400 input[type="email"] {
+  background: white !important;
+  border-radius: 9999px !important;
+  padding: 1rem 1.5rem !important;
+  font-size: 1.125rem !important;
+  border: none !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 input[type="text"]:focus,
+#fd-form-68f7a8c0338a9cff5f4e5400 input[type="email"]:focus {
+  outline: 2px solid rgba(153, 246, 228, 0.5) !important;
+  outline-offset: 2px !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 button[type="submit"] {
+  background: white !important;
+  color: #0f766e !important;
+  border-radius: 9999px !important;
+  padding: 1rem 2rem !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  transition: all 0.3s !important;
+}
+
+#fd-form-68f7a8c0338a9cff5f4e5400 button[type="submit"]:hover {
+  background: #f0fdfa !important;
+  transform: scale(1.05) !important;
+}
