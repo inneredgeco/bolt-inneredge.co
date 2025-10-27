@@ -48,7 +48,9 @@ export function SEOHead({
     };
 
     updateMetaTag('description', description);
-    if (keywords) updateMetaTag('keywords', keywords);
+    if (keywords) {
+      updateMetaTag('keywords', keywords);
+    }
 
     updateMetaTag('geo.region', `US-${region}`);
     updateMetaTag('geo.placename', locality);
@@ -59,8 +61,8 @@ export function SEOHead({
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:type', type, true);
     
-    // Only add og:image if one is provided, OR if it's a non-article page (then use default)
-    const finalImage = ogImage || (type === 'website' ? 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png' : undefined);
+    const defaultImage = 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png';
+    const finalImage = ogImage ? ogImage : (type === 'website' ? defaultImage : '');
     
     if (finalImage) {
       const fullImageUrl = finalImage.startsWith('http') ? finalImage : `${window.location.origin}${finalImage}`;
@@ -68,18 +70,24 @@ export function SEOHead({
       updateMetaTag('og:image:type', 'image/png', true);
       updateMetaTag('og:image:width', '1200', true);
       updateMetaTag('og:image:height', '630', true);
-      
-      // Twitter image
       updateMetaTag('twitter:image', fullImageUrl);
     }
     
-    if (ogUrl) updateMetaTag('og:url', ogUrl, true);
+    if (ogUrl) {
+      updateMetaTag('og:url', ogUrl, true);
+    }
     updateMetaTag('og:site_name', 'Inner Edge', true);
 
     if (type === 'article') {
-      if (author) updateMetaTag('article:author', author, true);
-      if (publishedTime) updateMetaTag('article:published_time', publishedTime, true);
-      if (modifiedTime) updateMetaTag('article:modified_time', modifiedTime, true);
+      if (author) {
+        updateMetaTag('article:author', author, true);
+      }
+      if (publishedTime) {
+        updateMetaTag('article:published_time', publishedTime, true);
+      }
+      if (modifiedTime) {
+        updateMetaTag('article:modified_time', modifiedTime, true);
+      }
     }
 
     updateMetaTag('twitter:card', 'summary_large_image');
@@ -102,4 +110,13 @@ export function SEOHead({
         scriptElement = document.createElement('script');
         scriptElement.setAttribute('type', 'application/ld+json');
         scriptElement.setAttribute('id', 'article-schema');
-        document.head.app
+        document.head.appendChild(scriptElement);
+      }
+
+      const structuredData = {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        'headline': title,
+        'description': description,
+        'mainEntityOfPage': {
+          '@type': 'WebP
