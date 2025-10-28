@@ -56,9 +56,9 @@ export function BlogNewsletterSignup() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row gap-3 mb-3">
-            <div className="relative flex-1">
+            <div className="relative sm:flex-[1.5]">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-4 w-4 text-stone-400" />
               </div>
@@ -72,7 +72,7 @@ export function BlogNewsletterSignup() {
               />
             </div>
 
-            <div className="relative flex-1">
+            <div className="relative sm:flex-[2]">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail className="h-4 w-4 text-stone-400" />
               </div>
@@ -89,7 +89,7 @@ export function BlogNewsletterSignup() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-brand-500 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all whitespace-nowrap"
+              className="bg-brand-500 text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all whitespace-nowrap sm:flex-shrink-0"
             >
               {isSubmitting ? 'Subscribing...' : 'Subscribe'}
             </button>
