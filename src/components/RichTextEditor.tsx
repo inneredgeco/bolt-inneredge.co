@@ -194,14 +194,12 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .ProseMirror ul li,
         .ProseMirror ol li {
           margin: 0.5rem 0;
-          color: red !important;
-          background: yellow !important;
+          color: #292524 !important;
         }
 
         .ProseMirror ul li *,
         .ProseMirror ol li * {
-          color: red !important;
-          background: yellow !important;
+          color: #292524 !important;
         }
 
         .prose .ProseMirror ul li p,
@@ -212,8 +210,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .prose-stone .ProseMirror ol li p,
         .ProseMirror ul li p,
         .ProseMirror ol li p {
-          color: red !important;
-          background: yellow !important;
+          color: #292524 !important;
         }
 
         .prose .ProseMirror ul li::marker,
@@ -224,7 +221,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .prose-stone .ProseMirror ol li::marker,
         .ProseMirror ul li::marker,
         .ProseMirror ol li::marker {
-          color: blue !important;
+          color: #292524 !important;
         }
 
         .prose .ProseMirror blockquote,

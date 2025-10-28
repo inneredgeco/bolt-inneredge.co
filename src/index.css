@@ -75,19 +75,18 @@
   color: #44403c !important;
 }
 
-/* DEBUG: ProseMirror List Styles */
+/* ProseMirror List Styles - Fix for Editor */
 .ProseMirror ul li,
 .ProseMirror ol li {
-  color: red !important;
-  background: yellow !important;
+  color: #292524 !important;
 }
 
 .ProseMirror ul li *,
 .ProseMirror ol li * {
-  color: red !important;
+  color: #292524 !important;
 }
 
 .ProseMirror ul li::marker,
 .ProseMirror ol li::marker {
-  color: blue !important;
+  color: #292524 !important;
 }
