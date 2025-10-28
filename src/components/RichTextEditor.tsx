@@ -296,7 +296,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
   }
 
   return (
-    <div className="border border-stone-300 rounded-lg bg-white overflow-hidden">
+    <div className="border border-stone-300 rounded-lg bg-white">
       <RichTextToolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>
