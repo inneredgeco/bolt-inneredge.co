@@ -177,13 +177,24 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .ProseMirror a:hover { color: #0f766e !important; }
 
         .prose .ProseMirror ul,
-        .prose .ProseMirror ol,
         .prose-lg .ProseMirror ul,
-        .prose-lg .ProseMirror ol,
         .prose-stone .ProseMirror ul,
+        .ProseMirror ul {
+          margin: 1rem 0;
+          padding-left: 1.5rem;
+          color: #292524 !important;
+          list-style-type: disc !important;
+        }
+
+        .prose .ProseMirror ol,
+        .prose-lg .ProseMirror ol,
         .prose-stone .ProseMirror ol,
-        .ProseMirror ul,
-        .ProseMirror ol { margin: 1rem 0; padding-left: 1.5rem; color: #292524 !important; }
+        .ProseMirror ol {
+          margin: 1rem 0;
+          padding-left: 1.5rem;
+          color: #292524 !important;
+          list-style-type: decimal !important;
+        }
 
         .prose .ProseMirror ul li,
         .prose .ProseMirror ol li,
@@ -195,6 +206,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .ProseMirror ol li {
           margin: 0.5rem 0;
           color: #292524 !important;
+          display: list-item !important;
         }
 
         .ProseMirror ul li *,
