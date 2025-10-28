@@ -244,12 +244,12 @@ export function BlogPostPage() {
                       : src;
 
                     return (
-                      <div className="my-8 -mx-8 md:-mx-12" style={{ border: '5px solid red', padding: 0, margin: '2rem -2rem', overflow: 'hidden' }}>
+                      <div className="my-8 -mx-8 md:-mx-12" style={{ padding: 0, margin: '2rem -2rem', overflow: 'hidden' }}>
                         <iframe
                           {...props}
                           src={updatedSrc}
-                          className="w-full"
-                          style={{ aspectRatio: '16/9', width: '100%', height: '100%', border: '2px solid blue', display: 'block', margin: 0, padding: 0 }}
+                          className="w-full rounded-lg shadow-lg"
+                          style={{ aspectRatio: '16/9', width: '100%', height: '100%', border: 0, display: 'block', margin: 0, padding: 0 }}
                           allow="autoplay; fullscreen; picture-in-picture"
                         />
                       </div>
