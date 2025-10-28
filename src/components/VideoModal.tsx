@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface VideoModalProps {
@@ -28,7 +29,7 @@ export function VideoModal({ onClose, onSubmit }: VideoModalProps) {
     }
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={handleBackdropClick}
@@ -83,6 +84,7 @@ export function VideoModal({ onClose, onSubmit }: VideoModalProps) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
