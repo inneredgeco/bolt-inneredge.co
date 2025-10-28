@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { Trash2, CreditCard as Edit, Eye, EyeOff, Lock, BookOpen, Plus } from 'lucide-react';
-import { MarkdownToolbar } from './MarkdownToolbar';
-import { SlashCommandMenu } from './SlashCommandMenu';
+import { RichTextEditor } from './RichTextEditor';
+import { htmlToMarkdown } from '../utils/htmlToMarkdown';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 interface Post {
   id: string;
@@ -41,10 +42,7 @@ export function AdminPage() {
     image_alt_text: ''
   });
 
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 });
-  const [slashFilter, setSlashFilter] = useState('');
+  const [editorHtml, setEditorHtml] = useState('');
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
 
   useEffect(() => {
@@ -95,7 +93,9 @@ export function AdminPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!formData.title || !formData.content || !formData.excerpt) {
+    const markdownContent = htmlToMarkdown(editorHtml);
+
+    if (!formData.title || !markdownContent || !formData.excerpt) {
       alert('Please fill in all required fields');
       return;
     }
@@ -109,7 +109,7 @@ export function AdminPage() {
           .update({
             title: formData.title,
             slug,
-            content: formData.content,
+            content: markdownContent,
             excerpt: formData.excerpt,
             author: formData.author,
             image_url: formData.image_url || null,
@@ -133,7 +133,7 @@ export function AdminPage() {
           .insert({
             title: formData.title,
             slug,
-            content: formData.content,
+            content: markdownContent,
             excerpt: formData.excerpt,
             author: formData.author,
             image_url: formData.image_url || null,
@@ -146,12 +146,14 @@ export function AdminPage() {
 
       setFormData({
         title: '',
+        slug: '',
         content: '',
         excerpt: '',
         author: 'Soleiman Bolour',
         image_url: '',
         image_alt_text: ''
       });
+      setEditorHtml('');
       setShowForm(false);
 
       fetchAllPosts();
@@ -201,6 +203,7 @@ export function AdminPage() {
       image_url: post.image_url || '',
       image_alt_text: post.image_alt_text || ''
     });
+    setEditorHtml(post.content);
     setEditingId(post.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -216,101 +219,11 @@ export function AdminPage() {
       image_url: '',
       image_alt_text: ''
     });
+    setEditorHtml('');
     setEditingId(null);
     setShowForm(false);
   }
 
-  function insertMarkdown(before: string, after: string, placeholder?: string) {
-    const textarea = contentRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = formData.content.substring(start, end);
-    const textToInsert = selectedText || placeholder || '';
-
-    const newContent =
-      formData.content.substring(0, start) +
-      before +
-      textToInsert +
-      after +
-      formData.content.substring(end);
-
-    setFormData({ ...formData, content: newContent });
-
-    setTimeout(() => {
-      if (selectedText) {
-        textarea.setSelectionRange(start + before.length, start + before.length + textToInsert.length);
-      } else {
-        textarea.setSelectionRange(start + before.length, start + before.length + textToInsert.length);
-      }
-      textarea.focus();
-    }, 0);
-  }
-
-  function handleContentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const value = e.target.value;
-    const cursorPos = e.target.selectionStart;
-
-    setFormData({ ...formData, content: value });
-
-    const textBeforeCursor = value.substring(0, cursorPos);
-    const lastSlashIndex = textBeforeCursor.lastIndexOf('/');
-
-    if (lastSlashIndex !== -1) {
-      const charBefore = lastSlashIndex > 0 ? value[lastSlashIndex - 1] : '\n';
-
-      if (charBefore === '\n' || charBefore === ' ' || lastSlashIndex === 0) {
-        const filter = textBeforeCursor.substring(lastSlashIndex);
-
-        if (filter.length > 0 && filter.length <= 15 && !filter.includes(' ') && !filter.includes('\n')) {
-          const textarea = e.target;
-          const textareaRect = textarea.getBoundingClientRect();
-
-          const lines = textBeforeCursor.split('\n');
-          const currentLineIndex = lines.length - 1;
-          const computedStyle = window.getComputedStyle(textarea);
-          const lineHeight = parseInt(computedStyle.lineHeight) || 20;
-          const paddingTop = parseInt(computedStyle.paddingTop) || 0;
-
-          setSlashFilter(filter);
-          setSlashMenuPosition({
-            top: textareaRect.top + paddingTop + (currentLineIndex * lineHeight) + lineHeight + 5,
-            left: textareaRect.left + 20
-          });
-          setShowSlashMenu(true);
-          return;
-        }
-      }
-    }
-
-    setShowSlashMenu(false);
-  }
-
-  function handleSlashCommand(command: { before: string; after: string; placeholder?: string }) {
-    const textarea = contentRef.current;
-    if (!textarea) return;
-
-    const cursorPos = textarea.selectionStart;
-    const textBeforeCursor = formData.content.substring(0, cursorPos);
-    const lastSlashIndex = textBeforeCursor.lastIndexOf('/');
-
-    const newContent =
-      formData.content.substring(0, lastSlashIndex) +
-      command.before +
-      (command.placeholder || '') +
-      command.after +
-      formData.content.substring(cursorPos);
-
-    setFormData({ ...formData, content: newContent });
-    setShowSlashMenu(false);
-
-    setTimeout(() => {
-      const newCursorPos = lastSlashIndex + command.before.length + (command.placeholder?.length || 0);
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-      textarea.focus();
-    }, 0);
-  }
 
   if (!authenticated) {
     return (
@@ -421,7 +334,7 @@ export function AdminPage() {
 
               <div className="relative">
                 <label className="block text-sm font-semibold text-stone-700 mb-3">
-                  Content * (Markdown supported)
+                  Content *
                 </label>
 
                 <div className="flex gap-2 mb-3">
@@ -450,28 +363,10 @@ export function AdminPage() {
                 </div>
 
                 {activeTab === 'edit' ? (
-                  <>
-                    <MarkdownToolbar onInsert={insertMarkdown} />
-                    <textarea
-                      ref={contentRef}
-                      value={formData.content}
-                      onChange={handleContentChange}
-                      rows={16}
-                      className="w-full px-4 py-2 border border-stone-300 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-sm"
-                      required
-                    />
-                    {showSlashMenu && (
-                      <SlashCommandMenu
-                        position={slashMenuPosition}
-                        filter={slashFilter}
-                        onSelect={handleSlashCommand}
-                        onClose={() => setShowSlashMenu(false)}
-                      />
-                    )}
-                    <div className="mt-2 text-xs text-stone-600">
-                      <p><strong>Tip:</strong> Type <code className="bg-stone-100 px-1 rounded">/</code> for quick commands</p>
-                    </div>
-                  </>
+                  <RichTextEditor
+                    content={editorHtml}
+                    onChange={setEditorHtml}
+                  />
                 ) : (
                   <div className="border border-stone-300 rounded-lg bg-stone-50 overflow-hidden">
                     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -494,25 +389,11 @@ export function AdminPage() {
                           {formData.title || 'Untitled Post'}
                         </h1>
 
-                        {formData.content ? (
-                          <div className="prose prose-lg prose-stone max-w-none">
-                            <ReactMarkdown
-                              remarkPlugins={[remarkGfm]}
-                              components={{
-                                h1: ({node, ...props}) => <h2 className="text-3xl font-bold text-stone-900 mt-8 mb-4" {...props} />,
-                                h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-stone-900 mt-8 mb-4" {...props} />,
-                                h3: ({node, ...props}) => <h3 className="text-xl font-bold text-stone-900 mt-6 mb-3" {...props} />,
-                                p: ({node, ...props}) => <p className="text-stone-700 leading-relaxed mb-6" {...props} />,
-                                ul: ({node, ...props}) => <ul className="list-disc list-inside mb-6 space-y-2 text-stone-700" {...props} />,
-                                ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-6 space-y-2 text-stone-700" {...props} />,
-                                a: ({node, ...props}) => <a className="text-teal-600 hover:text-teal-700 underline" {...props} />,
-                                strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
-                                em: ({node, ...props}) => <em className="italic" {...props} />,
-                              }}
-                            >
-                              {formData.content}
-                            </ReactMarkdown>
-                          </div>
+                        {editorHtml ? (
+                          <div
+                            className="prose prose-lg prose-stone max-w-none"
+                            dangerouslySetInnerHTML={{ __html: editorHtml }}
+                          />
                         ) : (
                           <p className="text-stone-500 italic">No content to preview yet...</p>
                         )}
