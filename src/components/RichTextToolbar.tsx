@@ -22,11 +22,26 @@ interface RichTextToolbarProps {
 }
 
 export function RichTextToolbar({ editor }: RichTextToolbarProps) {
+  const [, forceUpdate] = useState({});
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateHandler = () => {
+      forceUpdate({});
+    };
+
+    editor.on('transaction', updateHandler);
+    editor.on('selectionUpdate', updateHandler);
+
+    return () => {
+      editor.off('transaction', updateHandler);
+      editor.off('selectionUpdate', updateHandler);
+    };
+  }, [editor]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

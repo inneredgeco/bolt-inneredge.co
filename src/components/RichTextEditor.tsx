@@ -147,6 +147,12 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    onSelectionUpdate: ({ editor }) => {
+      editor.view.updateState(editor.view.state);
+    },
+    onTransaction: ({ editor }) => {
+      editor.view.updateState(editor.view.state);
+    },
   });
 
   useEffect(() => {
