@@ -27,6 +27,7 @@ export function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -156,17 +157,18 @@ export function AdminPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this post?')) return;
+  async function confirmDelete() {
+    if (!deleteConfirmId) return;
 
     try {
       const { error } = await supabase
         .from('posts')
         .delete()
-        .eq('id', id);
+        .eq('id', deleteConfirmId);
 
       if (error) throw error;
       fetchAllPosts();
+      setDeleteConfirmId(null);
     } catch (error) {
       console.error('Error deleting post:', error);
     }
@@ -479,7 +481,7 @@ export function AdminPage() {
                         <Edit className="w-5 h-5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(post.id)}
+                        onClick={() => setDeleteConfirmId(post.id)}
                         className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
                         title="Delete"
                       >
@@ -494,6 +496,31 @@ export function AdminPage() {
         </div>
         )}
       </div>
+
+      {deleteConfirmId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-stone-900 mb-4">Confirm Delete</h3>
+            <p className="text-stone-600 mb-6">
+              Are you sure you want to delete this post? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="px-4 py-2 bg-stone-200 text-stone-700 rounded-lg hover:bg-stone-300 transition-colors font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+              >
+                Delete Post
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
