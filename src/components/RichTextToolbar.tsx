@@ -156,7 +156,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 p-2 bg-stone-100 border-b border-stone-300">
+    <div className="sticky top-0 z-50 flex flex-wrap items-center gap-1 p-2 bg-white border-b border-stone-300 shadow-sm">
       <div className="relative" ref={headingDropdownRef}>
         <button
           type="button"
@@ -172,7 +172,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         </button>
 
         {showHeadingDropdown && (
-          <div className="absolute top-full left-0 mt-1 bg-white border border-stone-300 rounded shadow-lg z-10 min-w-[140px]">
+          <div className="absolute top-full left-0 mt-1 bg-white border border-stone-300 rounded shadow-lg z-[60] min-w-[140px]">
             <button
               type="button"
               onClick={(e) => setHeading(e, 0)}
