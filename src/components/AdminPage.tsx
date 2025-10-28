@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut, ExternalLink } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
 import { htmlToMarkdown, markdownToHtml } from '../utils/htmlToMarkdown';
 import ReactMarkdown from 'react-markdown';
@@ -462,6 +462,15 @@ export function AdminPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
+                      <a
+                        href={`/blog/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                        title="View Post"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </a>
                       <button
                         onClick={() => handleTogglePublish(post.id, post.published)}
                         className={`p-2 rounded-lg transition-colors ${
