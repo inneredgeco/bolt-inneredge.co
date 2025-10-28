@@ -35,6 +35,9 @@ export function Footer() {
                 <Link to="/blog" onClick={() => handleNavigation('/blog')} className="hover:text-teal-400 transition-colors">Blog</Link>
               </li>
               <li>
+                <Link to="/podcast" onClick={() => handleNavigation('/podcast')} className="hover:text-teal-400 transition-colors">Podcast</Link>
+              </li>
+              <li>
                 <Link to="/contact" onClick={() => handleNavigation('/contact')} className="hover:text-teal-400 transition-colors">Contact</Link>
               </li>
             </ul>
