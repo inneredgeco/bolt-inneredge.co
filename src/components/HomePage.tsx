@@ -12,7 +12,7 @@ export function HomePage() {
   return (
     <>
       <SEOHead
-        title="Life Coach for Men in San Diego | Inner Edge Coaching"
+        title="Men's Life Coaching and Community Organization. Based in San Diego, CA."
         description="Transform your life with Inner Edge, San Diego's premier virtual life coaching for men. Specializing in emotional wellness, personal growth, and breakthrough coaching in La Mesa, CA."
         keywords="life coach san diego, mens coaching san diego, virtual life coach california, personal development san diego, emotional wellness coach, la mesa life coach, breakthrough coaching san diego"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
