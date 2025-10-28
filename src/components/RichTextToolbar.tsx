@@ -169,7 +169,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleBold().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('bold') ? 'bg-stone-200' : 'bg-white'
         }`}
@@ -180,7 +183,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleItalic().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('italic') ? 'bg-stone-200' : 'bg-white'
         }`}
@@ -191,7 +197,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleBlockquote().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('blockquote') ? 'bg-stone-200' : 'bg-white'
         }`}
@@ -204,7 +213,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleBulletList().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('bulletList') ? 'bg-stone-200' : 'bg-white'
         }`}
@@ -215,7 +227,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleOrderedList().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('orderedList') ? 'bg-stone-200' : 'bg-white'
         }`}
@@ -246,7 +261,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleCodeBlock().run();
+        }}
         className={`p-2 rounded hover:bg-stone-200 transition-colors ${
           editor.isActive('codeBlock') ? 'bg-stone-200' : 'bg-white'
         }`}
