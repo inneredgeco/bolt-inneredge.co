@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
-import { BookOpen, Rss } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { SEOHead } from './SEOHead';
 
 interface Post {
@@ -79,18 +79,9 @@ export function BlogPage() {
           <h1 className="text-5xl md:text-6xl font-bold mb-4 tracking-tight">
             The Path Forward
           </h1>
-          <p className="text-xl text-brand-100 max-w-2xl mx-auto mb-6">
+          <p className="text-xl text-brand-100 max-w-2xl mx-auto">
             Insights and reflections on men's personal development, growth, and transformation
           </p>
-          <a
-            href="/rss.xml"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-brand-700 rounded-lg hover:bg-brand-50 font-semibold transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Rss className="w-5 h-5" />
-            Subscribe via RSS
-          </a>
         </div>
       </div>
 
