@@ -236,15 +236,25 @@ export function BlogPostPage() {
                   a: ({node, ...props}) => <a className="text-teal-600 hover:text-teal-700 underline" {...props} />,
                   strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
                   em: ({node, ...props}) => <em className="italic" {...props} />,
-                  iframe: ({node, ...props}) => (
-                    <div className="my-8 -mx-8 md:-mx-12" style={{ border: '5px solid red', padding: 0, margin: '2rem -2rem' }}>
-                      <iframe
-                        {...props}
-                        className="w-full"
-                        style={{ aspectRatio: '16/9', width: '100%', border: '2px solid blue', display: 'block' }}
-                      />
-                    </div>
-                  ),
+                  iframe: ({node, ...props}) => {
+                    const src = props.src as string;
+                    const isVimeo = src?.includes('vimeo.com');
+                    const updatedSrc = isVimeo && src
+                      ? `${src}${src.includes('?') ? '&' : '?'}background=1&responsive=1`
+                      : src;
+
+                    return (
+                      <div className="my-8 -mx-8 md:-mx-12" style={{ border: '5px solid red', padding: 0, margin: '2rem -2rem', overflow: 'hidden' }}>
+                        <iframe
+                          {...props}
+                          src={updatedSrc}
+                          className="w-full"
+                          style={{ aspectRatio: '16/9', width: '100%', height: '100%', border: '2px solid blue', display: 'block', margin: 0, padding: 0 }}
+                          allow="autoplay; fullscreen; picture-in-picture"
+                        />
+                      </div>
+                    );
+                  },
                 }}
               >
                 {post.content}
