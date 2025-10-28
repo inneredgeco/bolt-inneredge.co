@@ -68,30 +68,44 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   };
 
   const handleVideoSubmit = (input: string) => {
+    console.log('=== VIDEO EMBED DEBUG ===');
+    console.log('1. Input received:', input);
+
     let iframeHTML = '';
 
     if (input.trim().startsWith('<')) {
+      console.log('2. Detected as iframe code (starts with <)');
       iframeHTML = input.trim();
     } else {
+      console.log('2. Detected as URL, processing...');
       let embedUrl = input;
 
       if (input.includes('youtube.com/watch?v=')) {
         const videoId = input.split('v=')[1]?.split('&')[0];
         embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        console.log('3. YouTube URL detected, embed URL:', embedUrl);
       } else if (input.includes('youtu.be/')) {
         const videoId = input.split('youtu.be/')[1]?.split('?')[0];
         embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        console.log('3. YouTube short URL detected, embed URL:', embedUrl);
       } else if (input.includes('vimeo.com/')) {
         const videoId = input.split('vimeo.com/')[1]?.split('?')[0];
         embedUrl = `https://player.vimeo.com/video/${videoId}`;
+        console.log('3. Vimeo URL detected, embed URL:', embedUrl);
       } else if (input.includes('iframe.mediadelivery.net') || input.includes('bunny.net')) {
         embedUrl = input;
+        console.log('3. Bunny.net URL detected, using as-is:', embedUrl);
       }
 
       iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
     }
 
+    console.log('4. Final iframe HTML:', iframeHTML);
+    console.log('5. Inserting into editor...');
     editor.chain().focus().insertContent(iframeHTML).run();
+    console.log('6. Editor content after insert:', editor.getHTML().substring(0, 500));
+    console.log('========================');
+
     setShowVideoModal(false);
   };
 

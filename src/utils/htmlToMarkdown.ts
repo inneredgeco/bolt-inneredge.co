@@ -16,7 +16,7 @@ turndownService.addRule('iframe', {
     const element = node as HTMLElement;
     const src = element.getAttribute('src') || '';
 
-    if (src.includes('youtube.com') || src.includes('vimeo.com')) {
+    if (src.includes('youtube.com') || src.includes('vimeo.com') || src.includes('iframe.mediadelivery.net') || src.includes('bunny.net')) {
       return `\n\n${element.outerHTML}\n\n`;
     }
 
@@ -30,7 +30,16 @@ marked.setOptions({
 });
 
 export function htmlToMarkdown(html: string): string {
-  return turndownService.turndown(html);
+  console.log('=== htmlToMarkdown DEBUG ===');
+  console.log('Input HTML contains iframe:', html.includes('<iframe'));
+  if (html.includes('<iframe')) {
+    const iframeMatch = html.match(/<iframe[^>]*>/);
+    console.log('Iframe tag found:', iframeMatch ? iframeMatch[0] : 'none');
+  }
+  const markdown = turndownService.turndown(html);
+  console.log('Output markdown contains iframe:', markdown.includes('<iframe'));
+  console.log('============================');
+  return markdown;
 }
 
 export function markdownToHtml(markdown: string): string {
