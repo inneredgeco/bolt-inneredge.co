@@ -124,7 +124,6 @@ export function AdminPage() {
         }
 
         console.log('Post updated:', data);
-        alert('✓ Post updated successfully!\n\nAll fields including image have been saved.');
         setEditingId(null);
         setShowForm(false);
       } else {
@@ -142,7 +141,6 @@ export function AdminPage() {
           });
 
         if (error) throw error;
-        alert('✓ Post created successfully!');
       }
 
       setFormData({
