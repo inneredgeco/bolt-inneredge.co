@@ -242,11 +242,29 @@ export function AdminPage() {
 
         {showForm && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-stone-900 mb-6">
-            {editingId ? 'Edit Post' : 'Create New Post'}
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-stone-900">
+              {editingId ? 'Edit Post' : 'Create New Post'}
+            </h2>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                form="post-form"
+                className="px-6 py-2.5 bg-stone-900 text-white rounded-lg hover:bg-stone-800 font-semibold transition-colors"
+              >
+                {editingId ? 'Update Post' : 'Create Post'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="px-6 py-2.5 bg-stone-300 text-stone-900 rounded-lg hover:bg-stone-400 font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
 
-          <form onSubmit={handleSubmit}>
+          <form id="post-form" onSubmit={handleSubmit}>
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-2">
@@ -299,6 +317,49 @@ export function AdminPage() {
                   className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
+                  Author *
+                </label>
+                <input
+                  type="text"
+                  value={formData.author}
+                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
+                  Featured Image URL *
+                </label>
+                <input
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
+                  Image Alt Text
+                </label>
+                <input
+                  type="text"
+                  value={formData.image_alt_text}
+                  onChange={(e) => setFormData({ ...formData, image_alt_text: e.target.value })}
+                  placeholder="Leave empty to auto-generate from title"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+                <p className="text-xs text-stone-500 mt-1">
+                  If empty, will default to: "Featured image for [Post Title]"
+                </p>
               </div>
 
               <div className="relative">
@@ -370,63 +431,6 @@ export function AdminPage() {
                     </div>
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-stone-700 mb-2">
-                  Author
-                </label>
-                <input
-                  type="text"
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-stone-700 mb-2">
-                  Featured Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-stone-700 mb-2">
-                  Image Alt Text (SEO)
-                </label>
-                <input
-                  type="text"
-                  value={formData.image_alt_text}
-                  onChange={(e) => setFormData({ ...formData, image_alt_text: e.target.value })}
-                  placeholder="Leave empty to auto-generate from title"
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-                <p className="text-xs text-stone-500 mt-1">
-                  If empty, will default to: "Featured image for [Post Title]"
-                </p>
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-stone-900 text-white rounded-lg hover:bg-stone-800 font-semibold transition-colors"
-                >
-                  {editingId ? 'Update Post' : 'Create Post'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="px-6 py-3 bg-stone-300 text-stone-900 rounded-lg hover:bg-stone-400 font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
               </div>
             </div>
           </form>
