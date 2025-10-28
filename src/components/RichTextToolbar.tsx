@@ -99,8 +99,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         embedUrl = `https://player.vimeo.com/video/${videoId}`;
         console.log('3. Vimeo URL detected, embed URL:', embedUrl);
       } else if (input.includes('iframe.mediadelivery.net') || input.includes('bunny.net')) {
-        embedUrl = input;
-        console.log('3. Bunny.net URL detected, using as-is:', embedUrl);
+        embedUrl = input.replace('/play/', '/embed/');
+        console.log('3. Bunny.net URL detected, converted to embed URL:', embedUrl);
       }
 
       iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
