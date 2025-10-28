@@ -545,21 +545,20 @@ export function AdminPage() {
                 >
                   {editingId ? 'Update Post' : 'Create Post'}
                 </button>
-                {editingId && (
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="px-6 py-3 bg-stone-300 text-stone-900 rounded-lg hover:bg-stone-400 font-semibold transition-colors"
-                  >
-                    Cancel
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="px-6 py-3 bg-stone-300 text-stone-900 rounded-lg hover:bg-stone-400 font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </form>
         </div>
         )}
 
+        {!showForm && (
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-bold text-stone-900 mb-6">All Posts</h2>
 
@@ -614,6 +613,7 @@ export function AdminPage() {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
