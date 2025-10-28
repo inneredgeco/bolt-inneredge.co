@@ -236,12 +236,30 @@ export function BlogPostPage() {
                   a: ({node, ...props}) => <a className="text-teal-600 hover:text-teal-700 underline" {...props} />,
                   strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
                   em: ({node, ...props}) => <em className="italic" {...props} />,
+                  div: ({node, ...props}) => {
+                    const style = props.style as React.CSSProperties;
+                    const hasIframe = node?.children?.some((child: any) => child.tagName === 'iframe');
+
+                    if (hasIframe && style?.position === 'relative') {
+                      return (
+                        <div className="my-8 -mx-8 md:-mx-12" style={{ padding: 0, margin: '2rem -2rem', overflow: 'hidden' }}>
+                          <div {...props} className="rounded-lg shadow-lg overflow-hidden" />
+                        </div>
+                      );
+                    }
+                    return <div {...props} />;
+                  },
                   iframe: ({node, ...props}) => {
                     const src = props.src as string;
+                    const style = props.style as React.CSSProperties;
                     const isVimeo = src?.includes('vimeo.com');
                     const updatedSrc = isVimeo && src
                       ? `${src}${src.includes('?') ? '&' : '?'}background=1&responsive=1`
                       : src;
+
+                    if (style?.position === 'absolute') {
+                      return <iframe {...props} src={updatedSrc} style={{ ...style, border: 0 }} />;
+                    }
 
                     return (
                       <div className="my-8 -mx-8 md:-mx-12" style={{ padding: 0, margin: '2rem -2rem', overflow: 'hidden' }}>
