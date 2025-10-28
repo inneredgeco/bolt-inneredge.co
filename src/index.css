@@ -74,3 +74,20 @@
 .prose ol li {
   color: #44403c !important;
 }
+
+/* DEBUG: ProseMirror List Styles */
+.ProseMirror ul li,
+.ProseMirror ol li {
+  color: red !important;
+  background: yellow !important;
+}
+
+.ProseMirror ul li *,
+.ProseMirror ol li * {
+  color: red !important;
+}
+
+.ProseMirror ul li::marker,
+.ProseMirror ol li::marker {
+  color: blue !important;
+}

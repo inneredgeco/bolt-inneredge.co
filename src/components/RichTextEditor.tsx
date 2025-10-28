@@ -198,6 +198,12 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
           background: yellow !important;
         }
 
+        .ProseMirror ul li *,
+        .ProseMirror ol li * {
+          color: red !important;
+          background: yellow !important;
+        }
+
         .prose .ProseMirror ul li p,
         .prose .ProseMirror ol li p,
         .prose-lg .ProseMirror ul li p,
