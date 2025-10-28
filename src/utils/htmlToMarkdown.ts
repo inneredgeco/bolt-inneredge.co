@@ -24,6 +24,14 @@ turndownService.addRule('iframe', {
   }
 });
 
+turndownService.addRule('audio', {
+  filter: 'audio',
+  replacement: function (content, node) {
+    const element = node as HTMLElement;
+    return `\n\n${element.outerHTML}\n\n`;
+  }
+});
+
 marked.setOptions({
   gfm: true,
   breaks: false,
