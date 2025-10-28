@@ -60,6 +60,11 @@
 }
 
 /* List Marker Styles */
+.prose ul,
+.prose ol {
+  color: #44403c !important;
+}
+
 .prose ul li::marker,
 .prose ol li::marker {
   color: #44403c !important;
@@ -67,5 +72,5 @@
 
 .prose ul li,
 .prose ol li {
-  color: #44403c;
+  color: #44403c !important;
 }
