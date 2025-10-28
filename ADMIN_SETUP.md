@@ -8,7 +8,7 @@ Your site now has a secure authentication system using Supabase Auth. The admin 
 
 An admin user has already been created in your Supabase database:
 
-**Email:** `admin@inner-edge.com`
+**Email:** `admin@inneredge.co`
 
 ## Setting the Admin Password
 
@@ -19,7 +19,7 @@ You need to set a password for the admin user. You can do this in two ways:
 1. Go to your Supabase Dashboard: https://supabase.com/dashboard
 2. Select your project
 3. Navigate to **Authentication** → **Users**
-4. Find the user with email `admin@inner-edge.com`
+4. Find the user with email `admin@inneredge.co`
 5. Click on the user
 6. Click **"Reset Password"** and set a new password
 
