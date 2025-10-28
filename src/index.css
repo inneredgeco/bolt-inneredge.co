@@ -75,6 +75,17 @@
   color: #44403c !important;
 }
 
+.prose ul li p,
+.prose ol li p {
+  margin: 0 !important;
+  display: inline !important;
+}
+
+.prose ul li > p:first-child,
+.prose ol li > p:first-child {
+  display: inline !important;
+}
+
 /* ProseMirror List Styles - Fix for Editor */
 .ProseMirror ul {
   list-style-type: disc !important;
