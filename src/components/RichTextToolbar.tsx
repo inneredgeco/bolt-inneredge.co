@@ -12,7 +12,10 @@ import {
   Table,
   ChevronDown,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { LinkModal } from './LinkModal';
+import { ImageModal } from './ImageModal';
+import { VideoModal } from './VideoModal';
 
 interface RichTextToolbarProps {
   editor: Editor;
@@ -20,40 +23,67 @@ interface RichTextToolbarProps {
 
 export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const headingDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headingDropdownRef.current && !headingDropdownRef.current.contains(event.target as Node)) {
+        setShowHeadingDropdown(false);
+      }
+    };
+
+    if (showHeadingDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showHeadingDropdown]);
 
   const addLink = () => {
-    const url = prompt('Enter URL:');
-    if (url) {
+    setShowLinkModal(true);
+  };
+
+  const handleLinkSubmit = (url: string, text?: string) => {
+    if (text) {
+      editor.chain().focus().insertContent(`<a href="${url}">${text}</a>`).run();
+    } else {
       editor.chain().focus().setLink({ href: url }).run();
     }
+    setShowLinkModal(false);
   };
 
   const addImage = () => {
-    const url = prompt('Enter image URL:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+    setShowImageModal(true);
+  };
+
+  const handleImageSubmit = (url: string, alt?: string) => {
+    editor.chain().focus().setImage({ src: url, alt: alt || '' }).run();
+    setShowImageModal(false);
   };
 
   const addVideo = () => {
-    const url = prompt('Enter YouTube or Vimeo URL:');
-    if (url) {
-      let embedUrl = url;
+    setShowVideoModal(true);
+  };
 
-      if (url.includes('youtube.com/watch?v=')) {
-        const videoId = url.split('v=')[1]?.split('&')[0];
-        embedUrl = `https://www.youtube.com/embed/${videoId}`;
-      } else if (url.includes('youtu.be/')) {
-        const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-        embedUrl = `https://www.youtube.com/embed/${videoId}`;
-      } else if (url.includes('vimeo.com/')) {
-        const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-        embedUrl = `https://player.vimeo.com/video/${videoId}`;
-      }
+  const handleVideoSubmit = (url: string) => {
+    let embedUrl = url;
 
-      const iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
-      editor.chain().focus().insertContent(iframeHTML).run();
+    if (url.includes('youtube.com/watch?v=')) {
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    } else if (url.includes('vimeo.com/')) {
+      const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+      embedUrl = `https://player.vimeo.com/video/${videoId}`;
     }
+
+    const iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
+    editor.chain().focus().insertContent(iframeHTML).run();
+    setShowVideoModal(false);
   };
 
   const addTable = () => {
@@ -81,7 +111,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-1 p-2 bg-stone-100 border-b border-stone-300">
-      <div className="relative">
+      <div className="relative" ref={headingDropdownRef}>
         <button
           type="button"
           onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
@@ -224,6 +254,27 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
       >
         <Table className="w-4 h-4 text-stone-700" />
       </button>
+
+      {showLinkModal && (
+        <LinkModal
+          onClose={() => setShowLinkModal(false)}
+          onSubmit={handleLinkSubmit}
+        />
+      )}
+
+      {showImageModal && (
+        <ImageModal
+          onClose={() => setShowImageModal(false)}
+          onSubmit={handleImageSubmit}
+        />
+      )}
+
+      {showVideoModal && (
+        <VideoModal
+          onClose={() => setShowVideoModal(false)}
+          onSubmit={handleVideoSubmit}
+        />
+      )}
     </div>
   );
 }
