@@ -41,7 +41,9 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     }
   }, [showHeadingDropdown]);
 
-  const addLink = () => {
+  const addLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    editor.chain().focus().run();
     setShowLinkModal(true);
   };
 
@@ -54,7 +56,9 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     setShowLinkModal(false);
   };
 
-  const addImage = () => {
+  const addImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    editor.chain().focus().run();
     setShowImageModal(true);
   };
 
@@ -63,7 +67,9 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     setShowImageModal(false);
   };
 
-  const addVideo = () => {
+  const addVideo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    editor.chain().focus().run();
     setShowVideoModal(true);
   };
 
@@ -109,11 +115,13 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     setShowVideoModal(false);
   };
 
-  const addTable = () => {
+  const addTable = (e: React.MouseEvent) => {
+    e.preventDefault();
     editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   };
 
-  const setHeading = (level: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
+  const setHeading = (e: React.MouseEvent, level: 0 | 1 | 2 | 3 | 4 | 5 | 6) => {
+    e.preventDefault();
     if (level === 0) {
       editor.chain().focus().setParagraph().run();
     } else {
@@ -137,7 +145,11 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
       <div className="relative" ref={headingDropdownRef}>
         <button
           type="button"
-          onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
+          onClick={(e) => {
+            e.preventDefault();
+            editor.chain().focus().run();
+            setShowHeadingDropdown(!showHeadingDropdown);
+          }}
           className="flex items-center gap-2 px-3 py-1.5 bg-white border border-stone-300 rounded hover:bg-stone-50 transition-colors text-sm font-medium text-stone-700 min-w-[140px] justify-between"
         >
           <span>{getActiveHeading()}</span>
@@ -148,7 +160,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
           <div className="absolute top-full left-0 mt-1 bg-white border border-stone-300 rounded shadow-lg z-10 min-w-[140px]">
             <button
               type="button"
-              onClick={() => setHeading(0)}
+              onClick={(e) => setHeading(e, 0)}
               className="w-full px-3 py-2 text-left text-sm hover:bg-stone-50 transition-colors text-stone-700"
             >
               Paragraph
@@ -157,7 +169,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
               <button
                 key={level}
                 type="button"
-                onClick={() => setHeading(level as 1 | 2 | 3 | 4 | 5 | 6)}
+                onClick={(e) => setHeading(e, level as 1 | 2 | 3 | 4 | 5 | 6)}
                 className="w-full px-3 py-2 text-left text-sm hover:bg-stone-50 transition-colors text-stone-700"
                 style={{ fontSize: `${20 - level}px`, fontWeight: 600 }}
               >
@@ -183,7 +195,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBold().run();
         }}
@@ -197,7 +209,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleItalic().run();
         }}
@@ -211,7 +223,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBlockquote().run();
         }}
@@ -227,7 +239,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBulletList().run();
         }}
@@ -241,7 +253,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleOrderedList().run();
         }}
@@ -275,7 +287,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => {
+        onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleCodeBlock().run();
         }}
