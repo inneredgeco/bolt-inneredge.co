@@ -84,7 +84,7 @@ export function AdminPage() {
 
     try {
       if (editingId) {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('posts')
           .update({
             title: formData.title,
@@ -96,15 +96,14 @@ export function AdminPage() {
             image_alt_text: formData.image_alt_text || null,
             updated_at: new Date().toISOString()
           })
-          .eq('id', editingId)
-          .select();
+          .eq('id', editingId);
 
         if (error) {
           console.error('Update error:', error);
+          alert(`Error updating post: ${error.message}`);
           throw error;
         }
 
-        console.log('Post updated:', data);
         setEditingId(null);
         setShowForm(false);
       } else {
