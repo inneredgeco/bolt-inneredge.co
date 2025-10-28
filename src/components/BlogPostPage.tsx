@@ -237,11 +237,11 @@ export function BlogPostPage() {
                   strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
                   em: ({node, ...props}) => <em className="italic" {...props} />,
                   iframe: ({node, ...props}) => (
-                    <div className="my-8 -mx-4 sm:-mx-6 lg:-mx-0">
+                    <div className="my-8 -mx-8 md:-mx-12" style={{ border: '5px solid red', padding: 0, margin: '2rem -2rem' }}>
                       <iframe
                         {...props}
-                        className="w-full rounded-lg shadow-lg"
-                        style={{ aspectRatio: '16/9', width: '100%', border: 0, display: 'block' }}
+                        className="w-full"
+                        style={{ aspectRatio: '16/9', width: '100%', border: '2px solid blue', display: 'block' }}
                       />
                     </div>
                   ),
