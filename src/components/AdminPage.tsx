@@ -173,8 +173,12 @@ export function AdminPage() {
     }
   }
 
-  async function handleEdit(post: Post) {
-    const htmlContent = await markdownToHtml(post.content);
+  function handleEdit(post: Post) {
+    console.log('=== EDIT POST DEBUG ===');
+    console.log('1. Raw content from database (markdown):', post.content);
+
+    const htmlContent = markdownToHtml(post.content);
+    console.log('2. After markdown-to-HTML conversion:', htmlContent);
 
     setFormData({
       title: post.title,
@@ -185,10 +189,13 @@ export function AdminPage() {
       image_url: post.image_url || '',
       image_alt_text: post.image_alt_text || ''
     });
+
+    console.log('3. Setting editor HTML to:', htmlContent);
     setEditorHtml(htmlContent);
     setEditingId(post.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('======================');
   }
 
   function handleCancel() {

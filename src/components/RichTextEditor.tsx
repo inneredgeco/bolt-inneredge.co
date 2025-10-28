@@ -151,7 +151,13 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
+      console.log('=== RICH TEXT EDITOR DEBUG ===');
+      console.log('Content being set in editor:', content);
+      console.log('Content type:', typeof content);
+      console.log('First 200 chars:', content.substring(0, 200));
       editor.commands.setContent(content);
+      console.log('After setContent, editor HTML:', editor.getHTML().substring(0, 200));
+      console.log('=============================');
     }
   }, [content, editor]);
 

@@ -33,6 +33,11 @@ export function htmlToMarkdown(html: string): string {
   return turndownService.turndown(html);
 }
 
-export async function markdownToHtml(markdown: string): Promise<string> {
-  return await marked.parse(markdown);
+export function markdownToHtml(markdown: string): string {
+  const html = marked.parse(markdown) as string;
+  console.log('=== markdownToHtml DEBUG ===');
+  console.log('Input markdown:', markdown.substring(0, 200));
+  console.log('Output HTML:', html.substring(0, 200));
+  console.log('============================');
+  return html;
 }
