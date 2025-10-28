@@ -58,3 +58,14 @@
 .prose div:has(> iframe) {
   margin: 1.5rem 0;
 }
+
+/* List Marker Styles */
+.prose ul li::marker,
+.prose ol li::marker {
+  color: #44403c !important;
+}
+
+.prose ul li,
+.prose ol li {
+  color: #44403c;
+}
