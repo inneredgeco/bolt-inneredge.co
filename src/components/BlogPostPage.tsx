@@ -5,6 +5,7 @@ import { Header } from './Header';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { SEOHead } from './SEOHead';
 import { BlogNewsletterSignup } from './BlogNewsletterSignup';
 import { BlogNavigation } from './BlogNavigation';
@@ -224,6 +225,7 @@ export function BlogPostPage() {
             <div className="prose prose-lg prose-stone max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
                 components={{
                   h1: ({node, ...props}) => <h2 className="text-3xl font-bold text-stone-900 mt-8 mb-4" {...props} />,
                   h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-stone-900 mt-8 mb-4" {...props} />,
@@ -234,6 +236,15 @@ export function BlogPostPage() {
                   a: ({node, ...props}) => <a className="text-teal-600 hover:text-teal-700 underline" {...props} />,
                   strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
                   em: ({node, ...props}) => <em className="italic" {...props} />,
+                  iframe: ({node, ...props}) => (
+                    <div className="my-8">
+                      <iframe
+                        {...props}
+                        className="w-full rounded-lg shadow-lg"
+                        style={{ aspectRatio: '16/9', maxWidth: '100%', border: 0 }}
+                      />
+                    </div>
+                  ),
                 }}
               >
                 {post.content}
