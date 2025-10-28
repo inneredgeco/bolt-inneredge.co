@@ -8,18 +8,18 @@ interface VideoModalProps {
 }
 
 export function VideoModal({ onClose, onSubmit }: VideoModalProps) {
-  const [url, setUrl] = useState('');
-  const urlInputRef = useRef<HTMLInputElement>(null);
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    urlInputRef.current?.focus();
+    inputRef.current?.focus();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (url.trim()) {
-      onSubmit(url.trim());
+    if (input.trim()) {
+      onSubmit(input.trim());
     }
   };
 
@@ -50,20 +50,26 @@ export function VideoModal({ onClose, onSubmit }: VideoModalProps) {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-1">
-                Video URL *
+                Video URL or Embed Code *
               </label>
-              <input
-                ref={urlInputRef}
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Paste URL or full iframe embed code..."
                 required
-                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                rows={4}
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 font-mono text-sm"
               />
-              <p className="text-xs text-stone-500 mt-1">
-                Supports YouTube and Vimeo URLs
+              <p className="text-xs text-stone-500 mt-2">
+                Supports:
               </p>
+              <ul className="text-xs text-stone-500 mt-1 ml-4 list-disc space-y-0.5">
+                <li>YouTube URLs (youtube.com or youtu.be)</li>
+                <li>Vimeo URLs</li>
+                <li>Bunny.net URLs (iframe.mediadelivery.net)</li>
+                <li>Full iframe embed codes</li>
+              </ul>
             </div>
           </div>
 

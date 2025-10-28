@@ -67,21 +67,30 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     setShowVideoModal(true);
   };
 
-  const handleVideoSubmit = (url: string) => {
-    let embedUrl = url;
+  const handleVideoSubmit = (input: string) => {
+    let iframeHTML = '';
 
-    if (url.includes('youtube.com/watch?v=')) {
-      const videoId = url.split('v=')[1]?.split('&')[0];
-      embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-      embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes('vimeo.com/')) {
-      const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-      embedUrl = `https://player.vimeo.com/video/${videoId}`;
+    if (input.trim().startsWith('<')) {
+      iframeHTML = input.trim();
+    } else {
+      let embedUrl = input;
+
+      if (input.includes('youtube.com/watch?v=')) {
+        const videoId = input.split('v=')[1]?.split('&')[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      } else if (input.includes('youtu.be/')) {
+        const videoId = input.split('youtu.be/')[1]?.split('?')[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      } else if (input.includes('vimeo.com/')) {
+        const videoId = input.split('vimeo.com/')[1]?.split('?')[0];
+        embedUrl = `https://player.vimeo.com/video/${videoId}`;
+      } else if (input.includes('iframe.mediadelivery.net') || input.includes('bunny.net')) {
+        embedUrl = input;
+      }
+
+      iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
     }
 
-    const iframeHTML = `<iframe src="${embedUrl}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="max-width: 100%; aspect-ratio: 16/9; margin: 1rem 0;"></iframe>`;
     editor.chain().focus().insertContent(iframeHTML).run();
     setShowVideoModal(false);
   };
