@@ -156,7 +156,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   };
 
   return (
-    <div className="sticky top-[365px] z-40 flex flex-wrap items-center gap-1 p-2 bg-white border-b border-stone-300 shadow-sm">
+    <div className="sticky top-[72px] z-40 flex flex-wrap items-center gap-1 p-2 bg-white border-b border-stone-300 shadow-sm">
       <div className="relative" ref={headingDropdownRef}>
         <button
           type="button"
