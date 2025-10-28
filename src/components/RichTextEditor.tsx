@@ -6,7 +6,7 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { Node } from '@tiptap/core';
+import { Node, mergeAttributes } from '@tiptap/core';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useEffect } from 'react';
 
@@ -63,6 +63,39 @@ const Iframe = Node.create({
   },
 });
 
+const Audio = Node.create({
+  name: 'audio',
+  group: 'block',
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+      },
+      controls: {
+        default: true,
+      },
+      preload: {
+        default: 'metadata',
+      },
+      style: {
+        default: null,
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{
+      tag: 'audio',
+    }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ['audio', mergeAttributes(HTMLAttributes)];
+  },
+});
+
 interface RichTextEditorProps {
   content: string;
   onChange: (html: string) => void;
@@ -88,6 +121,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         },
       }),
       Iframe,
+      Audio,
       Table.configure({
         resizable: true,
         HTMLAttributes: {
@@ -265,6 +299,11 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .prose-lg .ProseMirror div[data-type="iframe"],
         .prose-stone .ProseMirror div[data-type="iframe"],
         .ProseMirror div[data-type="iframe"] { position: relative; padding-top: 56.25%; margin: 1rem 0; }
+
+        .prose .ProseMirror audio,
+        .prose-lg .ProseMirror audio,
+        .prose-stone .ProseMirror audio,
+        .ProseMirror audio { width: 100%; max-width: 640px; margin: 1rem 0; }
       `;
       editorElement.parentElement?.appendChild(style);
     },

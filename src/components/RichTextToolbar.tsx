@@ -8,6 +8,7 @@ import {
   Quote,
   Image as ImageIcon,
   Video,
+  Music,
   Code,
   Table,
   ChevronDown,
@@ -16,6 +17,7 @@ import { useState, useEffect, useRef } from 'react';
 import { LinkModal } from './LinkModal';
 import { ImageModal } from './ImageModal';
 import { VideoModal } from './VideoModal';
+import { AudioModal } from './AudioModal';
 
 interface RichTextToolbarProps {
   editor: Editor;
@@ -27,6 +29,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showAudioModal, setShowAudioModal] = useState(false);
   const headingDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -128,6 +131,18 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
     console.log('========================');
 
     setShowVideoModal(false);
+  };
+
+  const addAudio = (e: React.MouseEvent) => {
+    e.preventDefault();
+    editor.chain().focus().run();
+    setShowAudioModal(true);
+  };
+
+  const handleAudioSubmit = (url: string) => {
+    const audioHTML = `<audio src="${url}" controls preload="metadata" style="width: 100%; max-width: 640px; margin: 1rem 0;"></audio>`;
+    editor.chain().focus().insertContent(audioHTML).run();
+    setShowAudioModal(false);
   };
 
   const addTable = (e: React.MouseEvent) => {
@@ -302,6 +317,15 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
       <button
         type="button"
+        onClick={addAudio}
+        className="p-2 bg-white rounded hover:bg-stone-200 transition-colors"
+        title="Add Audio"
+      >
+        <Music className="w-4 h-4 text-stone-700" />
+      </button>
+
+      <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleCodeBlock().run();
@@ -341,6 +365,13 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         <VideoModal
           onClose={() => setShowVideoModal(false)}
           onSubmit={handleVideoSubmit}
+        />
+      )}
+
+      {showAudioModal && (
+        <AudioModal
+          onClose={() => setShowAudioModal(false)}
+          onSubmit={handleAudioSubmit}
         />
       )}
     </div>
