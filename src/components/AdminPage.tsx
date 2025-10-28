@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
 import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
-import { htmlToMarkdown } from '../utils/htmlToMarkdown';
+import { htmlToMarkdown, markdownToHtml } from '../utils/htmlToMarkdown';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -173,7 +173,9 @@ export function AdminPage() {
     }
   }
 
-  function handleEdit(post: Post) {
+  async function handleEdit(post: Post) {
+    const htmlContent = await markdownToHtml(post.content);
+
     setFormData({
       title: post.title,
       slug: post.slug,
@@ -183,7 +185,7 @@ export function AdminPage() {
       image_url: post.image_url || '',
       image_alt_text: post.image_alt_text || ''
     });
-    setEditorHtml(post.content);
+    setEditorHtml(htmlContent);
     setEditingId(post.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
