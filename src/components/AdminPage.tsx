@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { Trash2, CreditCard as Edit, Eye, EyeOff, Lock, BookOpen, Plus } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
 import { htmlToMarkdown } from '../utils/htmlToMarkdown';
 import ReactMarkdown from 'react-markdown';
@@ -21,15 +22,10 @@ interface Post {
   created_at: string;
 }
 
-const ADMIN_PASSWORD = 'innerwork2024';
-const ADMIN_KEY = 'admin-secret-2024';
-
 export function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
+  const { signOut } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [adminKey] = useState(() => sessionStorage.getItem('adminKey') || '');
   const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -46,17 +42,8 @@ export function AdminPage() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
 
   useEffect(() => {
-    const storedKey = sessionStorage.getItem('adminKey');
-    if (storedKey === ADMIN_KEY) {
-      setAuthenticated(true);
-    }
+    fetchAllPosts();
   }, []);
-
-  useEffect(() => {
-    if (authenticated) {
-      fetchAllPosts();
-    }
-  }, [authenticated]);
 
   async function fetchAllPosts() {
     try {
@@ -72,15 +59,8 @@ export function AdminPage() {
     }
   }
 
-  function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem('adminKey', ADMIN_KEY);
-      setAuthenticated(true);
-    } else {
-      alert('Incorrect password');
-      setPassword('');
-    }
+  async function handleLogout() {
+    await signOut();
   }
 
   function generateSlug(title: string): string {
@@ -225,37 +205,6 @@ export function AdminPage() {
   }
 
 
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen bg-stone-50">
-        <Header />
-        <div className="max-w-md mx-auto px-4 py-16">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="flex justify-center mb-6">
-              <Lock className="w-12 h-12 text-stone-700" />
-            </div>
-            <h1 className="text-3xl font-bold text-stone-900 mb-6 text-center">Admin Login</h1>
-            <form onSubmit={handleLogin}>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="w-full px-4 py-3 border border-stone-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              />
-              <button
-                type="submit"
-                className="w-full bg-stone-900 text-white py-3 rounded-lg hover:bg-stone-800 font-semibold transition-colors"
-              >
-                Login
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-stone-50">
       <Header />
@@ -263,15 +212,24 @@ export function AdminPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold text-stone-900">Blog Admin</h1>
-          {!showForm && (
+          <div className="flex items-center gap-4">
             <button
-              onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold transition-all hover:scale-105 shadow-lg"
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-stone-200 text-stone-900 rounded-lg hover:bg-stone-300 font-semibold transition-colors"
             >
-              <Plus className="w-5 h-5" />
-              New Post
+              <LogOut className="w-4 h-4" />
+              Logout
             </button>
-          )}
+            {!showForm && (
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold transition-all hover:scale-105 shadow-lg"
+              >
+                <Plus className="w-5 h-5" />
+                New Post
+              </button>
+            )}
+          </div>
         </div>
 
         {showForm && (
