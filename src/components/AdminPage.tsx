@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
-import { Trash2, CreditCard as Edit, Eye, EyeOff, Lock, BookOpen } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, Lock, BookOpen, Plus } from 'lucide-react';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { SlashCommandMenu } from './SlashCommandMenu';
 import ReactMarkdown from 'react-markdown';
@@ -29,6 +29,7 @@ export function AdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [adminKey] = useState(() => sessionStorage.getItem('adminKey') || '');
+  const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -125,6 +126,7 @@ export function AdminPage() {
         console.log('Post updated:', data);
         alert('✓ Post updated successfully!\n\nAll fields including image have been saved.');
         setEditingId(null);
+        setShowForm(false);
       } else {
         const { error } = await supabase
           .from('posts')
@@ -140,6 +142,7 @@ export function AdminPage() {
           });
 
         if (error) throw error;
+        alert('✓ Post created successfully!');
       }
 
       setFormData({
@@ -150,6 +153,7 @@ export function AdminPage() {
         image_url: '',
         image_alt_text: ''
       });
+      setShowForm(false);
 
       fetchAllPosts();
     } catch (error) {
@@ -198,6 +202,7 @@ export function AdminPage() {
       image_alt_text: post.image_alt_text || ''
     });
     setEditingId(post.id);
+    setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -211,6 +216,7 @@ export function AdminPage() {
       image_alt_text: ''
     });
     setEditingId(null);
+    setShowForm(false);
   }
 
   function insertMarkdown(before: string, after: string, placeholder?: string) {
@@ -341,9 +347,21 @@ export function AdminPage() {
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-stone-900 mb-8">Blog Admin</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-stone-900">Blog Admin</h1>
+          {!showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold transition-all hover:scale-105 shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              New Post
+            </button>
+          )}
+        </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
+        {showForm && (
+          <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
           <h2 className="text-2xl font-bold text-stone-900 mb-6">
             {editingId ? 'Edit Post' : 'Create New Post'}
           </h2>
@@ -540,6 +558,7 @@ export function AdminPage() {
             </div>
           </form>
         </div>
+        )}
 
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-bold text-stone-900 mb-6">All Posts</h2>
