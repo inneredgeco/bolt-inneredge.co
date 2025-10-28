@@ -33,6 +33,7 @@ export function AdminPage() {
 
   const [formData, setFormData] = useState({
     title: '',
+    slug: '',
     content: '',
     excerpt: '',
     author: 'Soleiman Bolour',
@@ -99,7 +100,7 @@ export function AdminPage() {
       return;
     }
 
-    const slug = generateSlug(formData.title);
+    const slug = formData.slug || generateSlug(formData.title);
 
     try {
       if (editingId) {
@@ -193,6 +194,7 @@ export function AdminPage() {
   function handleEdit(post: Post) {
     setFormData({
       title: post.title,
+      slug: post.slug,
       content: post.content,
       excerpt: post.excerpt,
       author: post.author,
@@ -207,6 +209,7 @@ export function AdminPage() {
   function handleCancel() {
     setFormData({
       title: '',
+      slug: '',
       content: '',
       excerpt: '',
       author: 'Soleiman Bolour',
@@ -373,10 +376,34 @@ export function AdminPage() {
                 <input
                   type="text"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) => {
+                    const newTitle = e.target.value;
+                    setFormData({
+                      ...formData,
+                      title: newTitle,
+                      slug: formData.slug || generateSlug(newTitle)
+                    });
+                  }}
                   className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
+                  Slug *
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-sm"
+                  placeholder="auto-generated-from-title"
+                  required
+                />
+                <p className="text-xs text-stone-500 mt-1">
+                  Auto-generated from title. Edit if needed.
+                </p>
               </div>
 
               <div>
