@@ -45,3 +45,16 @@
   background: #f0fdfa !important;
   transform: scale(1.05) !important;
 }
+
+/* Video Embed Styles */
+.prose iframe {
+  max-width: 100%;
+  margin: 1.5rem 0;
+  border: 0;
+  aspect-ratio: 16/9;
+  border-radius: 0.5rem;
+}
+
+.prose div:has(> iframe) {
+  margin: 1.5rem 0;
+}

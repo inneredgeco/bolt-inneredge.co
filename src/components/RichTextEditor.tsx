@@ -6,8 +6,62 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { Node } from '@tiptap/core';
 import { RichTextToolbar } from './RichTextToolbar';
 import { useEffect } from 'react';
+
+const Iframe = Node.create({
+  name: 'iframe',
+  group: 'block',
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+      },
+      frameborder: {
+        default: 0,
+      },
+      allow: {
+        default: null,
+      },
+      allowfullscreen: {
+        default: true,
+      },
+      width: {
+        default: null,
+      },
+      height: {
+        default: null,
+      },
+      style: {
+        default: null,
+      },
+      loading: {
+        default: null,
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{
+      tag: 'iframe',
+    }, {
+      tag: 'div',
+      getAttrs: (node) => {
+        if (typeof node === 'string') return false;
+        const element = node as HTMLElement;
+        const iframe = element.querySelector('iframe');
+        return iframe ? null : false;
+      },
+    }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ['iframe', HTMLAttributes];
+  },
+});
 
 interface RichTextEditorProps {
   content: string;
@@ -33,6 +87,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
           class: 'max-w-full h-auto rounded-lg my-4',
         },
       }),
+      Iframe,
       Table.configure({
         resizable: true,
         HTMLAttributes: {
@@ -84,6 +139,8 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .ProseMirror code { background: #f5f5f4; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-family: monospace; font-size: 0.875em; color: #292524; }
         .ProseMirror pre { background: #1c1917; color: #f5f5f4; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin: 1rem 0; }
         .ProseMirror pre code { background: transparent; padding: 0; color: #f5f5f4; }
+        .ProseMirror iframe { max-width: 100%; margin: 1rem 0; border: 0; aspect-ratio: 16/9; }
+        .ProseMirror div[data-type="iframe"] { position: relative; padding-top: 56.25%; margin: 1rem 0; }
       `;
       editorElement.parentElement?.appendChild(style);
     },
