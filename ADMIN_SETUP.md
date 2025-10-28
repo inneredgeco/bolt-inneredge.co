@@ -4,34 +4,27 @@
 
 Your site now has a secure authentication system using Supabase Auth. The admin panel at `inneredge.co/admin` is protected and requires login.
 
-## Admin User
+## Admin Credentials
 
-An admin user has already been created in your Supabase database:
+An admin user has already been created with a password:
 
 **Email:** `admin@inneredge.co`
+**Password:** `innerwork2024`
 
-## Setting the Admin Password
+⚠️ **IMPORTANT:** Change this password immediately after your first login for security reasons.
 
-You need to set a password for the admin user. You can do this in two ways:
+## Changing Your Password
 
-### Option 1: Through Supabase Dashboard (Recommended)
+To change your password after logging in:
 
-1. Go to your Supabase Dashboard: https://supabase.com/dashboard
+1. Log into your Supabase Dashboard: https://supabase.com/dashboard
 2. Select your project
 3. Navigate to **Authentication** → **Users**
 4. Find the user with email `admin@inneredge.co`
 5. Click on the user
-6. Click **"Reset Password"** and set a new password
+6. Update the password to something secure and unique
 
-### Option 2: Create a New Admin User
-
-If you prefer to use a different email, you can create a new admin user:
-
-1. Go to your Supabase Dashboard
-2. Navigate to **Authentication** → **Users**
-3. Click **"Add user"**
-4. Enter your preferred email and password
-5. Enable **"Auto Confirm User"** to skip email verification
+Or you can ask me to update the password directly.
 
 ## How to Access Admin Panel
 
