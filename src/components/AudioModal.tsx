@@ -11,6 +11,7 @@ export function AudioModal({ onClose, onSubmit }: AudioModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (url.trim()) {
       onSubmit(url.trim());
       setUrl('');
