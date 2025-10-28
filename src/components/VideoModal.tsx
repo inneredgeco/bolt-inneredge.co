@@ -16,6 +16,7 @@ export function VideoModal({ onClose, onSubmit }: VideoModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (url.trim()) {
       onSubmit(url.trim());
     }

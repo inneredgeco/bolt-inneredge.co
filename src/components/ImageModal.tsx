@@ -17,6 +17,7 @@ export function ImageModal({ onClose, onSubmit }: ImageModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (url.trim()) {
       onSubmit(url.trim(), alt.trim() || undefined);
     }

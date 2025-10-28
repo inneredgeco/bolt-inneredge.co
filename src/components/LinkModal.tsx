@@ -19,6 +19,7 @@ export function LinkModal({ onClose, onSubmit, initialUrl = '', initialText = ''
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (url.trim()) {
       onSubmit(url.trim(), text.trim() || undefined);
     }
