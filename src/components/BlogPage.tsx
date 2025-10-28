@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { BookOpen, Rss } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from './SEOHead';
 
 interface Post {
   id: string;
@@ -63,24 +63,14 @@ export function BlogPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <Helmet>
-        <title>The Path Forward - Inner Edge Blog</title>
-        <meta name="description" content="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood." />
-
-        <meta property="og:title" content="The Path Forward - Inner Edge Blog" />
-        <meta property="og:description" content="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood." />
-        <meta property="og:image" content="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://inneredge.co/blog" />
-        <meta property="og:site_name" content="Inner Edge" />
-
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="The Path Forward - Inner Edge Blog" />
-        <meta name="twitter:description" content="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood." />
-        <meta name="twitter:image" content="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png" />
-
-        <link rel="canonical" href="https://inneredge.co/blog" />
-      </Helmet>
+      <SEOHead
+        title="The Path Forward - Inner Edge Blog"
+        description="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood."
+        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        ogUrl="https://inneredge.co/blog"
+        canonical="https://inneredge.co/blog"
+        keywords="mens coaching blog, personal development, mens growth, emotional intelligence, mindset coaching, mens community"
+      />
       <Header />
 
       <div className="bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800 text-white py-20">
