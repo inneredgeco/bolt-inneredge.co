@@ -258,10 +258,13 @@ export function AdminPage() {
                   value={formData.title}
                   onChange={(e) => {
                     const newTitle = e.target.value;
+                    console.log('Title changed:', newTitle);
+                    const generatedSlug = generateSlug(newTitle);
+                    console.log('Generated slug:', generatedSlug);
                     setFormData({
                       ...formData,
                       title: newTitle,
-                      slug: formData.slug || generateSlug(newTitle)
+                      slug: editingId ? formData.slug : generatedSlug
                     });
                   }}
                   className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
