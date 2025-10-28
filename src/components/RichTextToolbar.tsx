@@ -140,7 +140,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   };
 
   const handleAudioSubmit = (url: string) => {
-    const audioHTML = `<audio src="${url}" controls preload="metadata" style="width: 100%; max-width: 640px; margin: 1rem 0;"></audio>`;
+    const audioHTML = `<audio src="${url}" controls preload="metadata" style="width: 100%; max-width: 480px; margin: 1rem 0;"></audio>`;
     editor.chain().focus().insertContent(audioHTML).run();
     setShowAudioModal(false);
   };

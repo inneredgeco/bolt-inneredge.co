@@ -303,7 +303,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         .prose .ProseMirror audio,
         .prose-lg .ProseMirror audio,
         .prose-stone .ProseMirror audio,
-        .ProseMirror audio { width: 100%; max-width: 640px; margin: 1rem 0; }
+        .ProseMirror audio { width: 100%; max-width: 480px; margin: 1rem 0; }
       `;
       editorElement.parentElement?.appendChild(style);
     },
