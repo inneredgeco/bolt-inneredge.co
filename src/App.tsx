@@ -11,7 +11,6 @@ import { BlogPostPage } from './components/BlogPostPage';
 import { AdminPage } from './components/AdminPage';
 import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { SitemapPage } from './components/SitemapPage';
 import { RSSPage } from './components/RSSPage';
 import { LinkPage } from './components/LinkPage';
 import { PodcastPage } from './components/PodcastPage';
@@ -35,7 +34,6 @@ function App() {
         <Route path="/podcast" element={<><PodcastPage /><Footer /></>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
-        <Route path="/sitemap.xml" element={<SitemapPage />} />
         <Route path="/rss.xml" element={<RSSPage />} />
         <Route path="/link" element={<LinkPage />} />
         <Route path="*" element={<NotFound />} />

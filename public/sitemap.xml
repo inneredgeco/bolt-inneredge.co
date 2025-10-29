@@ -61,8 +61,14 @@
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://inneredge.co/blog/why-slowing-down-is-the-fastest-way-to-get-where-you-re-going</loc>
-    <lastmod>2025-10-22</lastmod>
+    <loc>https://inneredge.co/blog/why-the-f-k-should-i-forgive</loc>
+    <lastmod>2025-10-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://inneredge.co/blog/why-slowing-down</loc>
+    <lastmod>2025-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
