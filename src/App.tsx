@@ -14,6 +14,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RSSPage } from './components/RSSPage';
 import { LinkPage } from './components/LinkPage';
 import { PodcastPage } from './components/PodcastPage';
+import { PodcastGuestPage } from './components/PodcastGuestPage';
 import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
@@ -32,6 +33,7 @@ function App() {
         <Route path="/blog" element={<><BlogPage /><Footer /></>} />
         <Route path="/blog/:slug" element={<><BlogPostPage /><Footer /></>} />
         <Route path="/podcast" element={<><PodcastPage /><Footer /></>} />
+        <Route path="/podcast-guest" element={<><PodcastGuestPage /><Footer /></>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         <Route path="/rss.xml" element={<RSSPage />} />
