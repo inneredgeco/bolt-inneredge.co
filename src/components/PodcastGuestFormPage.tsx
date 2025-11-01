@@ -148,38 +148,6 @@ export function PodcastGuestFormPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="profession" className="block text-stone-900 font-bold mb-2">
-                    What do you do? / Your profession *
-                  </label>
-                  <textarea
-                    id="profession"
-                    name="profession"
-                    required
-                    value={formData.profession}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="I'm a men's coach specializing in..."
-                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label htmlFor="whyGuest" className="block text-stone-900 font-bold mb-2">
-                    Why would you be a great podcast guest? *
-                  </label>
-                  <textarea
-                    id="whyGuest"
-                    name="whyGuest"
-                    required
-                    value={formData.whyGuest}
-                    onChange={handleChange}
-                    rows={6}
-                    placeholder="Tell us about your expertise, your story, and what unique perspective you'd bring to our listeners..."
-                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
-                  />
-                </div>
-
-                <div className="mb-6">
                   <label htmlFor="website" className="block text-stone-900 font-bold mb-2">
                     Website
                   </label>
@@ -221,6 +189,38 @@ export function PodcastGuestFormPage() {
                     onChange={handleChange}
                     placeholder="https://instagram.com/yourhandle or @yourhandle"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="profession" className="block text-stone-900 font-bold mb-2">
+                    What do you do? / Your profession *
+                  </label>
+                  <textarea
+                    id="profession"
+                    name="profession"
+                    required
+                    value={formData.profession}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="I'm a men's coach specializing in..."
+                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="whyGuest" className="block text-stone-900 font-bold mb-2">
+                    Why would you be a great podcast guest? *
+                  </label>
+                  <textarea
+                    id="whyGuest"
+                    name="whyGuest"
+                    required
+                    value={formData.whyGuest}
+                    onChange={handleChange}
+                    rows={6}
+                    placeholder="Tell us about your expertise, your story, and what unique perspective you'd bring to our listeners..."
+                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
                   />
                 </div>
 
