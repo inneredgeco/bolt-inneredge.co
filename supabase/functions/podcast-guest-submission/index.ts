@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
   try {
     const formData: PodcastGuestSubmission = await req.json();
 
-    const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL");
+    const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL2");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
     const submittedAt = new Date().toISOString();
@@ -107,7 +107,7 @@ Deno.serve(async (req: Request) => {
       }
     } else {
       errors.push("Webhook URL not configured");
-      console.warn("PABBLY_WEBHOOK_URL not set");
+      console.warn("PABBLY_WEBHOOK_URL2 not set");
     }
 
     if (resendApiKey) {
