@@ -149,12 +149,13 @@ export function PodcastGuestFormPage() {
 
                 <div className="mb-6">
                   <label htmlFor="website" className="block text-stone-900 font-bold mb-2">
-                    Website
+                    Website *
                   </label>
                   <input
                     type="url"
                     id="website"
                     name="website"
+                    required
                     value={formData.website}
                     onChange={handleChange}
                     placeholder="https://yourwebsite.com"
@@ -164,12 +165,13 @@ export function PodcastGuestFormPage() {
 
                 <div className="mb-6">
                   <label htmlFor="facebook" className="block text-stone-900 font-bold mb-2">
-                    Facebook
+                    Facebook *
                   </label>
                   <input
                     type="text"
                     id="facebook"
                     name="facebook"
+                    required
                     value={formData.facebook}
                     onChange={handleChange}
                     placeholder="https://facebook.com/yourprofile or @yourhandle"
@@ -179,12 +181,13 @@ export function PodcastGuestFormPage() {
 
                 <div className="mb-6">
                   <label htmlFor="instagram" className="block text-stone-900 font-bold mb-2">
-                    Instagram
+                    Instagram *
                   </label>
                   <input
                     type="text"
                     id="instagram"
                     name="instagram"
+                    required
                     value={formData.instagram}
                     onChange={handleChange}
                     placeholder="https://instagram.com/yourhandle or @yourhandle"
