@@ -27,6 +27,15 @@ export function PodcastGuestFormPage() {
     });
   };
 
+  const normalizeUrl = (url: string): string => {
+    if (!url) return url;
+    const trimmed = url.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    return `https://${trimmed}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -42,7 +51,7 @@ export function PodcastGuestFormPage() {
         name: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        website: formData.website,
+        website: normalizeUrl(formData.website),
         facebook: formData.facebook,
         instagram: formData.instagram,
         profession: formData.profession,
@@ -183,13 +192,13 @@ export function PodcastGuestFormPage() {
                     Website *
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     id="website"
                     name="website"
                     required
                     value={formData.website}
                     onChange={handleChange}
-                    placeholder="https://yourwebsite.com"
+                    placeholder="yourwebsite.com"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
                 </div>
