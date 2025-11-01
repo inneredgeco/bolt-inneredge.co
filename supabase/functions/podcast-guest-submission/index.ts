@@ -48,7 +48,8 @@ Deno.serve(async (req: Request) => {
     };
 
     let webhookSuccess = false;
-    let emailSuccess = false;
+    let confirmationEmailSuccess = false;
+    let notificationEmailSuccess = false;
     const errors: string[] = [];
 
     if (webhookUrl) {
@@ -80,14 +81,14 @@ Deno.serve(async (req: Request) => {
 
     if (resendApiKey) {
       try {
-        const emailResponse = await fetch("https://api.resend.com/emails", {
+        const confirmationResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "noreply@send.inneredge.co",
+            from: "Inner Edge Podcast <noreply@send.inneredge.co>",
             to: formData.email,
             subject: "Thanks for Your Podcast Guest Application!",
             html: `
@@ -105,17 +106,69 @@ Deno.serve(async (req: Request) => {
           }),
         });
 
-        if (emailResponse.ok) {
-          emailSuccess = true;
+        if (confirmationResponse.ok) {
+          confirmationEmailSuccess = true;
           console.log("Confirmation email sent successfully");
         } else {
-          const errorText = await emailResponse.text();
-          errors.push(`Email failed: ${emailResponse.status} - ${errorText}`);
-          console.error("Email error:", errorText);
+          const errorText = await confirmationResponse.text();
+          errors.push(`Confirmation email failed: ${confirmationResponse.status} - ${errorText}`);
+          console.error("Confirmation email error:", errorText);
         }
       } catch (error) {
-        errors.push(`Email error: ${error.message}`);
-        console.error("Email error:", error);
+        errors.push(`Confirmation email error: ${error.message}`);
+        console.error("Confirmation email error:", error);
+      }
+
+      try {
+        const notificationResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: "Inner Edge Podcast <noreply@send.inneredge.co>",
+            to: "soleiman@inneredge.co",
+            subject: `New Podcast Guest Application - ${formData.name}`,
+            html: `
+              <p>New podcast guest application received:</p>
+              
+              <p><strong>NAME:</strong> ${formData.name}<br>
+              <strong>EMAIL:</strong> ${formData.email}<br>
+              <strong>PHONE:</strong> ${formData.phone}<br>
+              <strong>WEBSITE:</strong> <a href="${formData.website}">${formData.website}</a><br>
+              <strong>FACEBOOK:</strong> ${formData.facebook}<br>
+              <strong>INSTAGRAM:</strong> ${formData.instagram}</p>
+              
+              <p><strong>PROFESSION:</strong><br>
+              ${formData.profession.replace(/\n/g, '<br>')}</p>
+              
+              <p><strong>WHY THEY'D BE A GREAT GUEST:</strong><br>
+              ${formData.why_guest.replace(/\n/g, '<br>')}</p>
+              
+              <p><strong>PRACTICAL EXERCISE THEY'D LEAD:</strong><br>
+              ${formData.exercise.replace(/\n/g, '<br>')}</p>
+              
+              <p><strong>SUBMITTED AT:</strong> ${submittedAt}</p>
+              
+              <hr>
+              
+              <p><em>View all applications in your Pabbly Google Sheet or reply directly to ${formData.email} to schedule.</em></p>
+            `,
+          }),
+        });
+
+        if (notificationResponse.ok) {
+          notificationEmailSuccess = true;
+          console.log("Notification email sent successfully");
+        } else {
+          const errorText = await notificationResponse.text();
+          errors.push(`Notification email failed: ${notificationResponse.status} - ${errorText}`);
+          console.error("Notification email error:", errorText);
+        }
+      } catch (error) {
+        errors.push(`Notification email error: ${error.message}`);
+        console.error("Notification email error:", error);
       }
     } else {
       errors.push("Resend API key not configured");
@@ -126,7 +179,8 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         webhookSuccess,
-        emailSuccess,
+        confirmationEmailSuccess,
+        notificationEmailSuccess,
         errors: errors.length > 0 ? errors : undefined,
         message: "Form submission received",
       }),
