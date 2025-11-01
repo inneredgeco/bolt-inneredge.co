@@ -11,7 +11,9 @@ export function PodcastGuestFormPage() {
     phone: '',
     profession: '',
     whyGuest: '',
-    links: '',
+    website: '',
+    facebook: '',
+    instagram: '',
     exercise: ''
   });
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,9 @@ export function PodcastGuestFormPage() {
         phone: '',
         profession: '',
         whyGuest: '',
-        links: '',
+        website: '',
+        facebook: '',
+        instagram: '',
         exercise: ''
       });
 
@@ -176,16 +180,46 @@ export function PodcastGuestFormPage() {
                 </div>
 
                 <div className="mb-6">
-                  <label htmlFor="links" className="block text-stone-900 font-bold mb-2">
-                    Website or Social Media Links
+                  <label htmlFor="website" className="block text-stone-900 font-bold mb-2">
+                    Website
+                  </label>
+                  <input
+                    type="url"
+                    id="website"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    placeholder="https://yourwebsite.com"
+                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="facebook" className="block text-stone-900 font-bold mb-2">
+                    Facebook
                   </label>
                   <input
                     type="text"
-                    id="links"
-                    name="links"
-                    value={formData.links}
+                    id="facebook"
+                    name="facebook"
+                    value={formData.facebook}
                     onChange={handleChange}
-                    placeholder="https://yourwebsite.com, @yourusername"
+                    placeholder="https://facebook.com/yourprofile or @yourhandle"
+                    className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="instagram" className="block text-stone-900 font-bold mb-2">
+                    Instagram
+                  </label>
+                  <input
+                    type="text"
+                    id="instagram"
+                    name="instagram"
+                    value={formData.instagram}
+                    onChange={handleChange}
+                    placeholder="https://instagram.com/yourhandle or @yourhandle"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
                 </div>
