@@ -65,7 +65,7 @@ export function PodcastGuestPage() {
               <ul className="space-y-3 text-stone-600">
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>A 45-60 minute conversation about your work, philosophy, and journey</span>
+                  <span>A 60-90 minute conversation about your work, philosophy, and journey</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
@@ -77,7 +77,7 @@ export function PodcastGuestPage() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>Potential follow-up: Featured 1-hour live session with the Inner Edge Men's Community members</span>
+                  <span>A featured 1-hour live session for the Inner Edge Men's Community members</span>
                 </li>
               </ul>
             </div>
@@ -117,7 +117,7 @@ export function PodcastGuestPage() {
                   Ready to Connect?
                 </h3>
                 <p className="text-stone-600 mb-6">
-                  Ready to connect with men who are hungry for real transformation? Fill out the application form below and we'll be in touch within 3-5 business days.
+                  Fill out the application form below and we'll be in touch within 3-5 business days.
                 </p>
                 <button
                   className="inline-flex items-center gap-2 bg-brand-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-brand-600 transition-all hover:scale-105"
