@@ -6,9 +6,9 @@ export function PodcastGuestPage() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Be a Podcast Guest - Share Your Story on Inner Edge Podcast"
-        description="Share your transformation story on the Inner Edge Podcast. Connect with men seeking growth and inspire others through your journey of personal development."
-        keywords="podcast guest, mens podcast, personal development podcast, transformation story, inner edge podcast guest"
+        title="Be a Guest on the Inner Edge Podcast - Share Your Wisdom"
+        description="Join the Inner Edge Podcast as a guest. Share your coaching expertise and guide men through transformational embodiment practices. Apply to be featured."
+        keywords="podcast guest, mens coaching podcast, embodiment practices, transformational coaching, inner edge podcast guest"
         ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/podcast-guest"
         ogUrl="https://www.inneredge.co/podcast-guest"
@@ -19,10 +19,10 @@ export function PodcastGuestPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Mic className="w-16 h-16 mx-auto mb-6 text-brand-200" />
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-            Be a Podcast Guest
+            Be a Guest on the Inner Edge Podcast
           </h1>
           <p className="text-xl text-brand-100 max-w-2xl mx-auto">
-            Share your story on the Inner Edge Podcast
+            Share Your Wisdom, Connect with Men Ready to Transform
           </p>
         </div>
       </div>
@@ -32,44 +32,81 @@ export function PodcastGuestPage() {
           <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg">
             <div className="mb-10">
               <h2 className="text-3xl font-bold text-stone-900 mb-6">
-                Your Story Matters
+                About the Podcast
               </h2>
               <div className="space-y-4 text-lg text-stone-600 leading-relaxed">
                 <p>
-                  The Inner Edge Podcast is a space where men share authentic stories of transformation,
-                  growth, and breaking through limitations.
+                  The Inner Edge Podcast features coaches, facilitators, and thought leaders who are dedicated to supporting men in their journey of transformation. We believe true change happens through presence, embodiment, and lived experience—not just theory.
                 </p>
                 <p>
-                  Whether you've overcome adversity, discovered your purpose, or learned valuable lessons
-                  on your journey, your story has the power to inspire others.
-                </p>
-                <p>
-                  We're looking for guests who are willing to speak openly about their experiences and
-                  contribute to a conversation that helps men live with more depth, purpose, and connection.
+                  Each conversation goes beyond traditional interviews. We create space for authentic dialogue about the inner work that transforms men—helping them reconnect with their body, intuition, and purpose.
                 </p>
               </div>
             </div>
 
-            <div className="bg-stone-50 p-8 rounded-xl border border-stone-200">
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-stone-900 mb-6">
+                What Makes This Different
+              </h2>
+              <div className="space-y-4 text-lg text-stone-600 leading-relaxed">
+                <p>
+                  This isn't just another interview. During your podcast conversation, you'll lead a 10-15 minute practical exercise—something listeners can experience directly. We move people from conversation into transformation.
+                </p>
+                <p>
+                  So much of today's content is talk without action. Our goal is to create episodes that help men integrate what they learn through embodied practice, not just intellectual understanding.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-stone-50 p-8 rounded-xl border border-stone-200 mb-10">
               <h3 className="text-2xl font-bold text-stone-900 mb-4">
-                What We'll Explore Together
+                What to Expect
               </h3>
               <ul className="space-y-3 text-stone-600">
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>Your personal journey and transformation</span>
+                  <span>A 45-60 minute conversation about your work, philosophy, and journey</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>Challenges you've overcome and lessons learned</span>
+                  <span>Opportunity to guide listeners through a practical exercise or embodiment practice</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>Insights that could help other men on their path</span>
+                  <span>Your episode will be published publicly and promoted to our audience</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>Your unique perspective on growth and self-discovery</span>
+                  <span>Potential follow-up: Featured 1-hour live session with the Inner Edge Men's Community members</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-stone-900 mb-6">
+                Who This Is For
+              </h2>
+              <div className="space-y-4 text-lg text-stone-600 leading-relaxed mb-6">
+                <p>
+                  We're looking for coaches and facilitators who:
+                </p>
+              </div>
+              <ul className="space-y-3 text-stone-600 pl-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-brand-500 font-bold mt-1">•</span>
+                  <span>Understand that transformation happens through presence and embodiment</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-brand-500 font-bold mt-1">•</span>
+                  <span>Create safe containers where men feel seen, challenged, and supported</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-brand-500 font-bold mt-1">•</span>
+                  <span>Value collaboration over competition and authenticity over performance</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-brand-500 font-bold mt-1">•</span>
+                  <span>Want to serve men who are ready to do deep inner work</span>
                 </li>
               </ul>
             </div>
@@ -77,17 +114,16 @@ export function PodcastGuestPage() {
             <div className="mt-12 p-8 bg-gradient-to-br from-brand-50 to-white rounded-xl border border-brand-100">
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-stone-900 mb-4">
-                  Ready to Share Your Story?
+                  Ready to Connect?
                 </h3>
                 <p className="text-stone-600 mb-6">
-                  The application form will be available here soon. In the meantime, feel free to reach out directly.
+                  Ready to connect with men who are hungry for real transformation? Fill out the application form below and we'll be in touch within 3-5 business days.
                 </p>
-                <a
-                  href="/contact"
+                <button
                   className="inline-flex items-center gap-2 bg-brand-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-brand-600 transition-all hover:scale-105"
                 >
-                  Contact Us
-                </a>
+                  Apply to Be a Guest
+                </button>
               </div>
             </div>
           </div>
