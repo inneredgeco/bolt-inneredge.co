@@ -119,11 +119,12 @@ export function PodcastGuestPage() {
                 <p className="text-stone-600 mb-6">
                   Fill out the application form below and we'll be in touch within 3-5 business days.
                 </p>
-                <button
+                <a
+                  href="/podcast-guest-form"
                   className="inline-flex items-center gap-2 bg-brand-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-brand-600 transition-all hover:scale-105"
                 >
                   Apply to Be a Guest
-                </button>
+                </a>
               </div>
             </div>
           </div>
