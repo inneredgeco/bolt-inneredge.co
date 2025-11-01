@@ -119,7 +119,7 @@ Deno.serve(async (req: Request) => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "Inner Edge Podcast <noreply@send.inneredge.co>",
+            from: "Inner Edge Podcast <podcast@send.inneredge.co>",
             to: formData.email,
             subject: "Thanks for Your Podcast Guest Application!",
             html: `
@@ -161,7 +161,7 @@ Deno.serve(async (req: Request) => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "Inner Edge Podcast <noreply@send.inneredge.co>",
+            from: "Inner Edge Podcast <podcast@send.inneredge.co>",
             to: "soleiman@inneredge.co",
             subject: `New Podcast Guest Application - ${formData.name}`,
             html: `
