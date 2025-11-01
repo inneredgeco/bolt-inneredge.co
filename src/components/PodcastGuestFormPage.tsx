@@ -20,11 +20,32 @@ export function PodcastGuestFormPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
+  const formatPhoneNumber = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
+
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 6) {
+      return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
+    } else {
+      return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+
+    if (name === 'phone') {
+      setFormData({
+        ...formData,
+        [name]: formatPhoneNumber(value)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -47,6 +68,21 @@ export function PodcastGuestFormPage() {
     return `https://${trimmed}`;
   };
 
+  const formatSocialUrl = (value: string, platform: 'facebook' | 'instagram'): string => {
+    if (!value || !value.trim()) return '';
+
+    let formatted = value.trim();
+    formatted = formatted.replace(/^@/, '');
+
+    if (!formatted.startsWith('http')) {
+      const domain = platform === 'facebook' ? 'facebook.com' : 'instagram.com';
+      formatted = formatted.replace(new RegExp(`^(www\\.)?${domain}\\/`), '');
+      formatted = `https://www.${domain}/${formatted}`;
+    }
+
+    return formatted;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -63,8 +99,8 @@ export function PodcastGuestFormPage() {
         email: formData.email,
         phone: formData.phone,
         website: normalizeUrl(formData.website),
-        facebook: formData.facebook,
-        instagram: formData.instagram,
+        facebook: formatSocialUrl(formData.facebook, 'facebook'),
+        instagram: formatSocialUrl(formData.instagram, 'instagram'),
         profession: formData.profession,
         why_guest: formData.whyGuest,
         exercise: formData.exercise,
