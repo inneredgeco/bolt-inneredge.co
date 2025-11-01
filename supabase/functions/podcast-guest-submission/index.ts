@@ -120,7 +120,7 @@ Deno.serve(async (req: Request) => {
           },
           body: JSON.stringify({
             from: "Inner Edge Podcast <podcast@send.inneredge.co>",
-            reply_to: "podcast@inneredge.co",
+            reply_to: "Inner Edge Podcast <podcast@inneredge.co>",
             to: formData.email,
             subject: "Thanks for Your Podcast Guest Application!",
             html: `
