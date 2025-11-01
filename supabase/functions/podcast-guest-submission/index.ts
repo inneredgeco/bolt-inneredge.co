@@ -63,18 +63,20 @@ Deno.serve(async (req: Request) => {
 
     const submittedAt = new Date().toISOString();
 
-    const webhookPayload = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      website: formData.website,
-      facebook: formData.facebook,
-      instagram: formData.instagram,
-      profession: formData.profession,
-      why_guest: formData.why_guest,
-      exercise: formData.exercise,
-      submitted_at: submittedAt,
-    };
+    const webhookPayload: Record<string, string> = {};
+    webhookPayload.name = formData.name || '';
+    webhookPayload.email = formData.email || '';
+    webhookPayload.phone = formData.phone || '';
+    webhookPayload.website = formData.website || '';
+    webhookPayload.facebook = formData.facebook || '';
+    webhookPayload.instagram = formData.instagram || '';
+    webhookPayload.profession = formData.profession || '';
+    webhookPayload.why_guest = formData.why_guest || '';
+    webhookPayload.exercise = formData.exercise || '';
+    webhookPayload.submitted_at = submittedAt;
+
+    console.log('Webhook payload order:', Object.keys(webhookPayload));
+    console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
 
     let webhookSuccess = false;
     let confirmationEmailSuccess = false;
