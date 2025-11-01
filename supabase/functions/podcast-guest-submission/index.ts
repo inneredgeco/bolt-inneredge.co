@@ -18,6 +18,35 @@ interface PodcastGuestSubmission {
   exercise: string;
 }
 
+function formatSocialUrl(input: string, platform: 'facebook' | 'instagram'): string {
+  if (!input || input.trim() === '') {
+    return 'Not provided';
+  }
+
+  const trimmed = input.trim();
+  const baseUrl = platform === 'facebook' ? 'https://www.facebook.com/' : 'https://www.instagram.com/';
+  
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  
+  if (trimmed.startsWith('@')) {
+    return baseUrl + trimmed.substring(1);
+  }
+  
+  if (platform === 'facebook') {
+    if (trimmed.includes('facebook.com/')) {
+      return trimmed.startsWith('www.') ? 'https://' + trimmed : 'https://www.' + trimmed;
+    }
+  } else {
+    if (trimmed.includes('instagram.com/')) {
+      return trimmed.startsWith('www.') ? 'https://' + trimmed : 'https://www.' + trimmed;
+    }
+  }
+  
+  return baseUrl + trimmed;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -120,6 +149,9 @@ Deno.serve(async (req: Request) => {
       }
 
       try {
+        const facebookUrl = formatSocialUrl(formData.facebook, 'facebook');
+        const instagramUrl = formatSocialUrl(formData.instagram, 'instagram');
+
         const notificationResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -137,8 +169,8 @@ Deno.serve(async (req: Request) => {
               <strong>EMAIL:</strong> ${formData.email}<br>
               <strong>PHONE:</strong> ${formData.phone}<br>
               <strong>WEBSITE:</strong> <a href="${formData.website}">${formData.website}</a><br>
-              <strong>FACEBOOK:</strong> ${formData.facebook}<br>
-              <strong>INSTAGRAM:</strong> ${formData.instagram}</p>
+              <strong>FACEBOOK:</strong> ${facebookUrl !== 'Not provided' ? `<a href="${facebookUrl}">${facebookUrl}</a>` : facebookUrl}<br>
+              <strong>INSTAGRAM:</strong> ${instagramUrl !== 'Not provided' ? `<a href="${instagramUrl}">${instagramUrl}</a>` : instagramUrl}</p>
               
               <p><strong>PROFESSION:</strong><br>
               ${formData.profession.replace(/\n/g, '<br>')}</p>
