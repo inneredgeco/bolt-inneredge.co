@@ -33,7 +33,37 @@ export function PodcastGuestFormPage() {
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const apiUrl = `${supabaseUrl}/functions/v1/podcast-guest-submission`;
+
+      const payload = {
+        name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        website: formData.website,
+        facebook: formData.facebook,
+        instagram: formData.instagram,
+        profession: formData.profession,
+        why_guest: formData.whyGuest,
+        exercise: formData.exercise,
+      };
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (result.errors && result.errors.length > 0) {
+        console.error('Submission errors:', result.errors);
+      }
 
       setSuccess(true);
       setFormData({
@@ -50,6 +80,7 @@ export function PodcastGuestFormPage() {
 
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
+      console.error('Form submission error:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -94,7 +125,7 @@ export function PodcastGuestFormPage() {
                   Thank you!
                 </h2>
                 <p className="text-lg text-stone-600">
-                  We've received your application and will be in touch within 3-5 business days.
+                  We've received your application and sent a confirmation email. We'll be in touch within 3-5 business days.
                 </p>
               </div>
             ) : (
