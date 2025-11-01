@@ -120,6 +120,7 @@ Deno.serve(async (req: Request) => {
           },
           body: JSON.stringify({
             from: "Inner Edge Podcast <podcast@send.inneredge.co>",
+            reply_to: "podcast@inneredge.co",
             to: formData.email,
             subject: "Thanks for Your Podcast Guest Application!",
             html: `
@@ -162,7 +163,7 @@ Deno.serve(async (req: Request) => {
           },
           body: JSON.stringify({
             from: "Inner Edge Podcast <podcast@send.inneredge.co>",
-            to: "soleiman@inneredge.co",
+            to: "podcast@inneredge.co",
             subject: `New Podcast Guest Application - ${formData.name}`,
             html: `
               <p>New podcast guest application received:</p>
@@ -186,8 +187,6 @@ Deno.serve(async (req: Request) => {
               <p><strong>SUBMITTED AT:</strong> ${submittedAt}</p>
               
               <hr>
-              
-              <p><em>View all applications in your Pabbly Google Sheet or reply directly to ${formData.email} to schedule.</em></p>
             `,
           }),
         });
