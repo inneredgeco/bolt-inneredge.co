@@ -27,6 +27,17 @@ export function PodcastGuestFormPage() {
     });
   };
 
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const rect = e.target.getBoundingClientRect();
+    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    if (!isVisible) {
+      e.target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  };
+
   const normalizeUrl = (url: string): string => {
     if (!url) return url;
     const trimmed = url.trim();
@@ -150,6 +161,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="John Smith"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -166,6 +178,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.email}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="john@example.com"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -182,6 +195,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.phone}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="(555) 123-4567"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -198,6 +212,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.website}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="yourwebsite.com"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -214,6 +229,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.facebook}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="https://facebook.com/yourprofile or @yourhandle"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -230,6 +246,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.instagram}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     placeholder="https://instagram.com/yourhandle or @yourhandle"
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                   />
@@ -245,6 +262,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.profession}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     rows={3}
                     placeholder="I'm a men's coach specializing in..."
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
@@ -261,6 +279,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.whyGuest}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     rows={6}
                     placeholder="Tell us about your expertise, your story, and what unique perspective you'd bring to our listeners..."
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
@@ -277,6 +296,7 @@ export function PodcastGuestFormPage() {
                     required
                     value={formData.exercise}
                     onChange={handleChange}
+                    onFocus={handleFocus}
                     rows={5}
                     placeholder="Describe the 10-15 minute exercise you'd guide listeners through during the podcast..."
                     className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
