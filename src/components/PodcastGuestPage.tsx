@@ -58,6 +58,25 @@ export function PodcastGuestPage() {
               </div>
             </div>
 
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-stone-900 mb-6">
+                Recording Format
+              </h2>
+              <div className="bg-stone-50 p-8 rounded-xl border border-stone-200">
+                <div className="space-y-4 text-lg text-stone-600 leading-relaxed">
+                  <p>
+                    At this time, we only record in-person video sessions at our studio in San Diego, California. This allows us to create the most authentic, grounded conversations and capture the energy of being in the same space together.
+                  </p>
+                  <p>
+                    The podcast is recorded in video format for YouTube and other platforms, with audio versions distributed to all major podcast platforms (Spotify, Apple Podcasts, etc.).
+                  </p>
+                  <p>
+                    If you're traveling to San Diego or are local to the area, we'd love to have you on the show.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-stone-50 p-8 rounded-xl border border-stone-200 mb-10">
               <h3 className="text-2xl font-bold text-stone-900 mb-4">
                 What to Expect
@@ -65,7 +84,7 @@ export function PodcastGuestPage() {
               <ul className="space-y-3 text-stone-600">
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
-                  <span>A 60-90 minute conversation about your work, philosophy, and journey</span>
+                  <span>A 60-90 minute in-person video conversation in San Diego, CA about your work, philosophy, and journey</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-brand-500 font-bold mt-1">•</span>
