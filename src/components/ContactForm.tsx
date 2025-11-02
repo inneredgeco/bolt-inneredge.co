@@ -259,10 +259,10 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting || !recaptchaVerified}
-          className={`w-full px-8 py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+          className={`w-full px-8 py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
             isSubmitting || !recaptchaVerified
-              ? 'bg-stone-400 cursor-not-allowed'
-              : 'bg-brand-600 hover:bg-brand-700 hover:shadow-lg'
+              ? 'bg-brand-300 text-brand-100 cursor-not-allowed opacity-50'
+              : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg'
           }`}
         >
           {isSubmitting ? (
