@@ -94,9 +94,32 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      console.log('Form submitted:', formData);
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/contact-form-submission`;
 
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          joinNewsletter: formData.joinNewsletter,
+          recaptchaResponse: recaptchaResponse,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
+
+      console.log('Form submitted successfully:', result);
 
       if (window.grecaptcha) {
         window.grecaptcha.reset();
