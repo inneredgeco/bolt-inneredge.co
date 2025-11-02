@@ -62,18 +62,16 @@ export function PodcastGuestPage() {
               <h2 className="text-3xl font-bold text-stone-900 mb-6">
                 Recording Format
               </h2>
-              <div className="bg-stone-50 p-8 rounded-xl border border-stone-200">
-                <div className="space-y-4 text-lg text-stone-600 leading-relaxed">
-                  <p>
-                    At this time, we only record in-person video sessions at our studio in San Diego, California. This allows us to create the most authentic, grounded conversations and capture the energy of being in the same space together.
-                  </p>
-                  <p>
-                    The podcast is recorded in video format for YouTube and other platforms, with audio versions distributed to all major podcast platforms (Spotify, Apple Podcasts, etc.).
-                  </p>
-                  <p>
-                    If you're traveling to San Diego or are local to the area, we'd love to have you on the show.
-                  </p>
-                </div>
+              <div className="space-y-4 text-lg text-stone-600 leading-relaxed">
+                <p>
+                  At this time, we only record in-person video sessions at our studio in San Diego, California. This allows us to create the most authentic, grounded conversations and capture the energy of being in the same space together.
+                </p>
+                <p>
+                  The podcast is recorded in video format for YouTube and other platforms, with audio versions distributed to all major podcast platforms (Spotify, Apple Podcasts, etc.).
+                </p>
+                <p>
+                  If you're traveling to San Diego or are local to the area, we'd love to have you on the show.
+                </p>
               </div>
             </div>
 
