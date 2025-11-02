@@ -1,5 +1,15 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import { Send } from 'lucide-react';
+
+declare global {
+  interface Window {
+    grecaptcha: {
+      getResponse: () => string;
+      reset: () => void;
+    };
+    onRecaptchaLoad: () => void;
+  }
+}
 
 interface ContactFormData {
   firstName: string;
@@ -24,6 +34,8 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+  const [recaptchaError, setRecaptchaError] = useState('');
+  const recaptchaLoadedRef = useRef(false);
 
   const formatPhoneNumber = (value: string): string => {
     const cleaned = value.replace(/\D/g, '');
@@ -72,10 +84,12 @@ export function ContactForm() {
       return;
     }
 
-    if (!recaptchaVerified) {
-      alert('Please complete the reCAPTCHA verification');
+    const recaptchaResponse = window.grecaptcha?.getResponse();
+    if (!recaptchaResponse) {
+      setRecaptchaError('Please complete the reCAPTCHA verification');
       return;
     }
+    setRecaptchaError('');
 
     setIsSubmitting(true);
 
@@ -84,6 +98,9 @@ export function ContactForm() {
 
       await new Promise(resolve => setTimeout(resolve, 1500));
 
+      if (window.grecaptcha) {
+        window.grecaptcha.reset();
+      }
       setSubmitSuccess(true);
       setFormData({
         firstName: '',
@@ -106,9 +123,36 @@ export function ContactForm() {
     }
   };
 
-  const handleRecaptchaChange = () => {
+  useEffect(() => {
+    if (recaptchaLoadedRef.current) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    recaptchaLoadedRef.current = true;
+
+    window.onRecaptchaLoad = () => {
+      console.log('reCAPTCHA loaded');
+    };
+
+    return () => {
+      const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, []);
+
+  const handleRecaptchaSuccess = () => {
     setRecaptchaVerified(true);
+    setRecaptchaError('');
   };
+
+  useEffect(() => {
+    (window as any).onRecaptchaSuccess = handleRecaptchaSuccess;
+  }, []);
 
   if (submitSuccess) {
     return (
@@ -239,28 +283,23 @@ export function ContactForm() {
         </div>
 
         <div className="my-6">
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="recaptcha"
-              checked={recaptchaVerified}
-              onChange={handleRecaptchaChange}
-              className="w-5 h-5 text-brand-600 border-stone-300 rounded focus:ring-2 focus:ring-brand-500"
-            />
-            <label htmlFor="recaptcha" className="text-sm text-stone-700 font-medium">
-              I'm not a robot (reCAPTCHA placeholder)
-            </label>
+          <div className="flex justify-center">
+            <div
+              className="g-recaptcha"
+              data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              data-callback="onRecaptchaSuccess"
+            ></div>
           </div>
-          <p className="text-xs text-stone-500 mt-2 ml-8">
-            Google reCAPTCHA will be integrated in the next step.
-          </p>
+          {recaptchaError && (
+            <p className="mt-2 text-sm text-red-600 text-center">{recaptchaError}</p>
+          )}
         </div>
 
         <button
           type="submit"
-          disabled={isSubmitting || !recaptchaVerified}
+          disabled={isSubmitting}
           className={`w-full px-8 py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-            isSubmitting || !recaptchaVerified
+            isSubmitting
               ? 'bg-brand-300 text-brand-100 cursor-not-allowed opacity-50'
               : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg'
           }`}
