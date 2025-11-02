@@ -173,6 +173,13 @@ export function ContactForm() {
         console.log('reCAPTCHA Enterprise loaded successfully');
         setRecaptchaReady(true);
         clearInterval(checkRecaptcha);
+
+        setTimeout(() => {
+          const recaptchaDiv = document.querySelector('.g-recaptcha');
+          console.log('reCAPTCHA div element:', recaptchaDiv);
+          console.log('reCAPTCHA div visible:', recaptchaDiv ? window.getComputedStyle(recaptchaDiv).display !== 'none' : false);
+          console.log('reCAPTCHA div innerHTML:', recaptchaDiv?.innerHTML);
+        }, 500);
       }
     }, 100);
 
@@ -314,15 +321,14 @@ export function ContactForm() {
         </div>
 
         <div className="my-6">
+          <div className="text-sm text-stone-500 mb-2 text-center">
+            {recaptchaReady ? 'reCAPTCHA Ready' : 'Loading reCAPTCHA...'}
+          </div>
           <div className="flex justify-center">
-            {recaptchaReady ? (
-              <div
-                className="g-recaptcha"
-                data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              ></div>
-            ) : (
-              <div className="text-sm text-stone-500">Loading reCAPTCHA...</div>
-            )}
+            <div
+              className="g-recaptcha"
+              data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            ></div>
           </div>
           {recaptchaError && (
             <p className="mt-2 text-sm text-red-600 text-center">{recaptchaError}</p>
