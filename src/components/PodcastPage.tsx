@@ -15,7 +15,13 @@ export function PodcastPage() {
       <div className="min-h-[80vh] bg-gray-900 text-white flex items-center justify-center px-4">
         <div className="text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-6">Podcast</h1>
-          <p className="text-2xl text-accent">Coming Soon</p>
+          <p className="text-2xl text-accent mb-8">Coming Soon</p>
+          <a
+            href="https://inneredge.co/podcast-guest"
+            className="inline-block bg-accent text-gray-900 font-semibold px-8 py-4 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105"
+          >
+            Be a Podcast Guest
+          </a>
         </div>
       </div>
     </div>
