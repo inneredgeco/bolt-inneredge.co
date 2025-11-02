@@ -113,8 +113,8 @@ export function ContactForm() {
   if (submitSuccess) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -145,7 +145,7 @@ export function ContactForm() {
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               placeholder="First name"
               className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
-                errors.firstName ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
+                errors.firstName ? 'border-red-500' : 'border-stone-200 focus:border-brand-600'
               }`}
             />
             {errors.firstName && (
@@ -164,7 +164,7 @@ export function ContactForm() {
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               placeholder="Last name"
               className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
-                errors.lastName ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
+                errors.lastName ? 'border-red-500' : 'border-stone-200 focus:border-brand-600'
               }`}
             />
             {errors.lastName && (
@@ -184,7 +184,7 @@ export function ContactForm() {
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             placeholder="your@email.com"
             className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
-              errors.email ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
+              errors.email ? 'border-red-500' : 'border-stone-200 focus:border-brand-600'
             }`}
           />
           {errors.email && (
@@ -202,7 +202,7 @@ export function ContactForm() {
             value={formData.phone}
             onChange={(e) => handlePhoneChange(e.target.value)}
             placeholder="(555) 123-4567"
-            className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-teal-600 transition-all"
+            className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all"
           />
         </div>
 
@@ -217,7 +217,7 @@ export function ContactForm() {
             placeholder="How can we help you?"
             rows={6}
             className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all resize-none ${
-              errors.message ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
+              errors.message ? 'border-red-500' : 'border-stone-200 focus:border-brand-600'
             }`}
           />
           {errors.message && (
@@ -231,7 +231,7 @@ export function ContactForm() {
             id="joinNewsletter"
             checked={formData.joinNewsletter}
             onChange={(e) => setFormData({ ...formData, joinNewsletter: e.target.checked })}
-            className="mt-0.5 w-5 h-5 text-teal-600 border-stone-300 rounded focus:ring-2 focus:ring-teal-500"
+            className="mt-0.5 w-5 h-5 text-brand-600 border-stone-300 rounded focus:ring-2 focus:ring-brand-500"
           />
           <label htmlFor="joinNewsletter" className="text-sm text-stone-700 leading-relaxed">
             Yes, I'd like to receive updates and insights from Inner Edge
@@ -245,7 +245,7 @@ export function ContactForm() {
               id="recaptcha"
               checked={recaptchaVerified}
               onChange={handleRecaptchaChange}
-              className="w-5 h-5 text-teal-600 border-stone-300 rounded focus:ring-2 focus:ring-teal-500"
+              className="w-5 h-5 text-brand-600 border-stone-300 rounded focus:ring-2 focus:ring-brand-500"
             />
             <label htmlFor="recaptcha" className="text-sm text-stone-700 font-medium">
               I'm not a robot (reCAPTCHA placeholder)
@@ -262,7 +262,7 @@ export function ContactForm() {
           className={`w-full px-8 py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
             isSubmitting || !recaptchaVerified
               ? 'bg-stone-400 cursor-not-allowed'
-              : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg'
+              : 'bg-brand-600 hover:bg-brand-700 hover:shadow-lg'
           }`}
         >
           {isSubmitting ? (
