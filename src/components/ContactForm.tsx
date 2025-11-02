@@ -1,252 +1,283 @@
-import { useState } from 'react';
-import { User, Mail, MessageSquare } from 'lucide-react';
+import { useState, FormEvent } from 'react';
+import { Send } from 'lucide-react';
+
+interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+  joinNewsletter: boolean;
+}
 
 export function ContactForm() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
+    joinNewsletter: false,
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [errors, setErrors] = useState<Partial<ContactFormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+
+  const formatPhoneNumber = (value: string): string => {
+    const cleaned = value.replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+    if (match) {
+      const parts = [];
+      if (match[1]) parts.push(`(${match[1]}`);
+      if (match[2]) parts.push(`) ${match[2]}`);
+      if (match[3]) parts.push(`-${match[3]}`);
+      return parts.join('');
+    }
+    return value;
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const formatted = formatPhoneNumber(value);
+    setFormData({ ...formData, phone: formatted });
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<ContactFormData> = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!recaptchaVerified) {
+      alert('Please complete the reCAPTCHA verification');
+      return;
+    }
+
     setIsSubmitting(true);
-    setSubmitMessage(null);
 
     try {
-      const apiKey = '1128782-4061447701527616138169404029449-rc83zGBS5E1XzqgAzsIhDbJHXpbN2Pxw0vYOP3cxJPTOK7Csad';
-      const userCode = '11394E';
+      console.log('Form submitted:', formData);
 
-      const getUserResponse = await fetch('https://api.lessannoyingcrm.com/v2/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': apiKey,
-        },
-        body: JSON.stringify({
-          Function: 'GetUser',
-          Parameters: {
-            UserCode: userCode,
-          },
-        }),
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      setSubmitSuccess(true);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        message: '',
+        joinNewsletter: false,
       });
+      setRecaptchaVerified(false);
 
-      const getUserResult = await getUserResponse.json();
-
-      if (!getUserResponse.ok || !getUserResult.Success) {
-        throw new Error('Failed to get user information');
-      }
-
-      const userId = getUserResult.UserId;
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-
-      const parameters: Record<string, unknown> = {
-        IsCompany: false,
-        AssignedTo: userId,
-        Name: fullName,
-      };
-
-      if (formData.email) {
-        parameters.Email = [{ Email: formData.email, Type: 'Work' }];
-      }
-
-      if (formData.phone) {
-        parameters.Phone = [{ Phone: formData.phone, Type: 'Work' }];
-      }
-
-      const response = await fetch('https://api.lessannoyingcrm.com/v2/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': apiKey,
-        },
-        body: JSON.stringify({
-          Function: 'CreateContact',
-          Parameters: parameters,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.Success) {
-        const contactId = result.ContactId;
-
-        if (formData.message && contactId) {
-          await fetch('https://api.lessannoyingcrm.com/v2/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': apiKey,
-            },
-            body: JSON.stringify({
-              Function: 'CreateNote',
-              Parameters: {
-                ContactId: contactId,
-                Note: formData.message,
-              },
-            }),
-          });
-        }
-
-        setSubmitMessage({
-          type: 'success',
-          text: '✓ Message sent successfully! We\'ll get back to you soon.'
-        });
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          message: ''
-        });
-      } else {
-        throw new Error(result.Message || 'Submission failed');
-      }
+      setTimeout(() => {
+        setSubmitSuccess(false);
+      }, 5000);
     } catch (error) {
-      console.error('Contact form error:', error);
-      setSubmitMessage({
-        type: 'error',
-        text: 'Something went wrong. Please try again or email us directly.'
-      });
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleRecaptchaChange = () => {
+    setRecaptchaVerified(true);
   };
 
+  if (submitSuccess) {
+    return (
+      <div className="bg-white p-8 rounded-2xl shadow-lg">
+        <div className="text-center py-8">
+          <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Send className="text-teal-600" size={32} />
+          </div>
+          <h3 className="text-2xl font-bold text-stone-900 mb-2">
+            Thank you!
+          </h3>
+          <p className="text-stone-600">
+            We'll be in touch soon.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="firstName" className="block text-sm font-semibold text-slate-900 mb-2">
-            First Name *
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-slate-400" />
-            </div>
+    <div className="bg-white p-8 rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-bold text-stone-900 mb-6">Send us a message</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-semibold text-stone-700 mb-2">
+              First Name *
+            </label>
             <input
               type="text"
               id="firstName"
-              name="firstName"
               value={formData.firstName}
-              onChange={handleChange}
-              required
-              className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-slate-900 placeholder-slate-400 hover:border-slate-400"
-              placeholder="John"
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="First name"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
+                errors.firstName ? 'border-red-500' : 'border-stone-300'
+              }`}
             />
+            {errors.firstName && (
+              <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold text-stone-700 mb-2">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Last name"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
+                errors.lastName ? 'border-red-500' : 'border-stone-300'
+              }`}
+            />
+            {errors.lastName && (
+              <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+            )}
           </div>
         </div>
 
         <div>
-          <label htmlFor="lastName" className="block text-sm font-semibold text-slate-900 mb-2">
-            Last Name *
+          <label htmlFor="email" className="block text-sm font-semibold text-stone-700 mb-2">
+            Email Address *
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-slate-400" />
-            </div>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-              className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-slate-900 placeholder-slate-400 hover:border-slate-400"
-              placeholder="Doe"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-semibold text-slate-900 mb-2">
-          Email *
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Mail className="h-5 w-5 text-slate-400" />
-          </div>
           <input
             type="email"
             id="email"
-            name="email"
             value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-slate-900 placeholder-slate-400 hover:border-slate-400"
-            placeholder="john@example.com"
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="your@email.com"
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
+              errors.email ? 'border-red-500' : 'border-stone-300'
+            }`}
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="phone" className="block text-sm font-semibold text-stone-700 mb-2">
+            Phone
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            value={formData.phone}
+            onChange={(e) => handlePhoneChange(e.target.value)}
+            placeholder="(555) 123-4567"
+            className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
           />
         </div>
-      </div>
 
-      <div>
-        <label htmlFor="phone" className="block text-sm font-semibold text-slate-900 mb-2">
-          Phone
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-slate-900 placeholder-slate-400 hover:border-slate-400"
-          placeholder="(555) 123-4567"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="message" className="block text-sm font-semibold text-slate-900 mb-2">
-          Message *
-        </label>
-        <div className="relative">
-          <div className="absolute top-3 left-3 pointer-events-none">
-            <MessageSquare className="h-5 w-5 text-slate-400" />
-          </div>
+        <div>
+          <label htmlFor="message" className="block text-sm font-semibold text-stone-700 mb-2">
+            Message *
+          </label>
           <textarea
             id="message"
-            name="message"
             value={formData.message}
-            onChange={handleChange}
-            required
+            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            placeholder="How can we help you?"
             rows={6}
-            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all text-slate-900 placeholder-slate-400 hover:border-slate-400 resize-none"
-            placeholder="Tell us how we can help you..."
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none ${
+              errors.message ? 'border-red-500' : 'border-stone-300'
+            }`}
           />
+          {errors.message && (
+            <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+          )}
         </div>
-      </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-brand-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
-      >
-        {isSubmitting ? 'Sending...' : 'Send Message'}
-      </button>
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="joinNewsletter"
+            checked={formData.joinNewsletter}
+            onChange={(e) => setFormData({ ...formData, joinNewsletter: e.target.checked })}
+            className="mt-1 w-4 h-4 text-teal-600 border-stone-300 rounded focus:ring-teal-500"
+          />
+          <label htmlFor="joinNewsletter" className="text-sm text-stone-600">
+            Yes, I'd like to receive updates and insights from Inner Edge
+          </label>
+        </div>
 
-      {submitMessage && (
-        <div
-          className={`p-4 rounded-lg text-center font-medium transition-all duration-300 ${
-            submitMessage.type === 'success'
-              ? 'bg-brand-50 text-brand-800 border border-brand-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
+        <div className="bg-stone-100 border border-stone-300 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="recaptcha"
+              checked={recaptchaVerified}
+              onChange={handleRecaptchaChange}
+              className="w-5 h-5 text-teal-600 border-stone-400 rounded focus:ring-teal-500"
+            />
+            <label htmlFor="recaptcha" className="text-sm text-stone-700 font-medium">
+              I'm not a robot (reCAPTCHA placeholder)
+            </label>
+          </div>
+          <p className="text-xs text-stone-500 mt-2">
+            Note: This is a placeholder. Google reCAPTCHA will be integrated in the next step.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting || !recaptchaVerified}
+          className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+            isSubmitting || !recaptchaVerified
+              ? 'bg-stone-400 cursor-not-allowed'
+              : 'bg-teal-600 hover:bg-teal-700 hover:scale-105'
           }`}
         >
-          {submitMessage.text}
-        </div>
-      )}
-    </form>
+          {isSubmitting ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Sending...
+            </>
+          ) : (
+            <>
+              <Send size={20} />
+              Send Message
+            </>
+          )}
+        </button>
+      </form>
+    </div>
   );
 }

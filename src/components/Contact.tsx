@@ -1,22 +1,9 @@
-import { useEffect } from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { Header } from './Header';
 import { SEOHead } from './SEOHead';
+import { ContactForm } from './ContactForm';
 
 export function Contact() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://embed.lessannoyingcrm.com/embed.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      const existingScript = document.querySelector('script[src="https://embed.lessannoyingcrm.com/embed.js"]');
-      if (existingScript) {
-        document.body.removeChild(existingScript);
-      }
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -46,17 +33,7 @@ export function Contact() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <blockquote
-                className="lacrm-embed"
-                data-embed-height="650"
-                data-embed-show-header="false"
-              >
-                <a href="https://forms.lessannoyingcrm.com/view/4047589812937929810144110751004">
-                  Contact Us - Inner Edge
-                </a>
-              </blockquote>
-            </div>
+            <ContactForm />
 
             {/* Contact Info */}
             <div className="space-y-8">
