@@ -18,7 +18,7 @@ export function PodcastPage() {
           <p className="text-2xl text-accent mb-8">Coming Soon</p>
           <a
             href="https://inneredge.co/podcast-guest"
-            className="inline-block bg-accent text-gray-900 font-semibold px-8 py-4 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105"
+            className="inline-block bg-white text-brand-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-50 transition-all hover:scale-105"
           >
             Be a Podcast Guest
           </a>
