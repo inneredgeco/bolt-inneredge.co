@@ -4,8 +4,10 @@ import { Send } from 'lucide-react';
 declare global {
   interface Window {
     grecaptcha: {
-      getResponse: () => string;
-      reset: () => void;
+      enterprise: {
+        getResponse: () => string;
+        reset: () => void;
+      };
     };
     onRecaptchaLoad: () => void;
   }
@@ -84,7 +86,7 @@ export function ContactForm() {
       return;
     }
 
-    const recaptchaResponse = window.grecaptcha?.getResponse();
+    const recaptchaResponse = window.grecaptcha?.enterprise?.getResponse();
     if (!recaptchaResponse) {
       setRecaptchaError('Please complete the reCAPTCHA verification');
       return;
@@ -121,8 +123,8 @@ export function ContactForm() {
 
       console.log('Form submitted successfully:', result);
 
-      if (window.grecaptcha) {
-        window.grecaptcha.reset();
+      if (window.grecaptcha && window.grecaptcha.enterprise) {
+        window.grecaptcha.enterprise.reset();
       }
       setSubmitSuccess(true);
       setFormData({
@@ -151,24 +153,24 @@ export function ContactForm() {
     if (recaptchaLoadedRef.current) return;
 
     const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.src = 'https://www.google.com/recaptcha/enterprise.js';
     script.async = true;
     script.defer = true;
 
     script.onload = () => {
-      console.log('reCAPTCHA script loaded');
+      console.log('reCAPTCHA Enterprise script loaded');
     };
 
     script.onerror = () => {
-      console.error('Failed to load reCAPTCHA script');
+      console.error('Failed to load reCAPTCHA Enterprise script');
     };
 
     document.head.appendChild(script);
     recaptchaLoadedRef.current = true;
 
     const checkRecaptcha = setInterval(() => {
-      if (window.grecaptcha && window.grecaptcha.getResponse !== undefined) {
-        console.log('reCAPTCHA loaded successfully');
+      if (window.grecaptcha && window.grecaptcha.enterprise && window.grecaptcha.enterprise.getResponse !== undefined) {
+        console.log('reCAPTCHA Enterprise loaded successfully');
         setRecaptchaReady(true);
         clearInterval(checkRecaptcha);
       }
@@ -176,7 +178,7 @@ export function ContactForm() {
 
     return () => {
       clearInterval(checkRecaptcha);
-      const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]');
+      const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/enterprise.js"]');
       if (existingScript) {
         existingScript.remove();
       }
