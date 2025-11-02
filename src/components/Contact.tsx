@@ -29,11 +29,13 @@ export function Contact() {
       </div>
 
       {/* Contact Content */}
-      <div className="py-16 bg-slate-50">
+      <div className="py-16 bg-stone-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <ContactForm />
+            <div className="bg-white p-8 md:p-10 rounded-2xl shadow-lg">
+              <ContactForm />
+            </div>
 
             {/* Contact Info */}
             <div className="space-y-8">

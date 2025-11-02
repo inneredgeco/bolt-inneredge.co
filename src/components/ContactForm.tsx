@@ -112,30 +112,30 @@ export function ContactForm() {
 
   if (submitSuccess) {
     return (
-      <div className="bg-white p-8 rounded-2xl shadow-lg">
-        <div className="text-center py-8">
-          <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Send className="text-teal-600" size={32} />
-          </div>
-          <h3 className="text-2xl font-bold text-stone-900 mb-2">
-            Thank you!
-          </h3>
-          <p className="text-stone-600">
-            We'll be in touch soon.
-          </p>
+      <div className="text-center py-12">
+        <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
         </div>
+        <h3 className="text-3xl font-bold text-stone-900 mb-4">
+          Thank you!
+        </h3>
+        <p className="text-lg text-stone-600">
+          We'll be in touch soon.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold text-stone-900 mb-6">Send us a message</h2>
+    <div>
+      <h2 className="text-3xl font-semibold text-stone-900 mb-8">Send us a message</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-semibold text-stone-700 mb-2">
+            <label htmlFor="firstName" className="block text-sm font-semibold text-stone-900 mb-2">
               First Name *
             </label>
             <input
@@ -144,8 +144,8 @@ export function ContactForm() {
               value={formData.firstName}
               onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
               placeholder="First name"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-                errors.firstName ? 'border-red-500' : 'border-stone-300'
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
+                errors.firstName ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
               }`}
             />
             {errors.firstName && (
@@ -154,7 +154,7 @@ export function ContactForm() {
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-sm font-semibold text-stone-700 mb-2">
+            <label htmlFor="lastName" className="block text-sm font-semibold text-stone-900 mb-2">
               Last Name *
             </label>
             <input
@@ -163,8 +163,8 @@ export function ContactForm() {
               value={formData.lastName}
               onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
               placeholder="Last name"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-                errors.lastName ? 'border-red-500' : 'border-stone-300'
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
+                errors.lastName ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
               }`}
             />
             {errors.lastName && (
@@ -174,7 +174,7 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-stone-700 mb-2">
+          <label htmlFor="email" className="block text-sm font-semibold text-stone-900 mb-2">
             Email Address *
           </label>
           <input
@@ -183,8 +183,8 @@ export function ContactForm() {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             placeholder="your@email.com"
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${
-              errors.email ? 'border-red-500' : 'border-stone-300'
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all ${
+              errors.email ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
             }`}
           />
           {errors.email && (
@@ -193,7 +193,7 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor="phone" className="block text-sm font-semibold text-stone-700 mb-2">
+          <label htmlFor="phone" className="block text-sm font-semibold text-stone-900 mb-2">
             Phone
           </label>
           <input
@@ -202,12 +202,12 @@ export function ContactForm() {
             value={formData.phone}
             onChange={(e) => handlePhoneChange(e.target.value)}
             placeholder="(555) 123-4567"
-            className="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-teal-600 transition-all"
           />
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-semibold text-stone-700 mb-2">
+          <label htmlFor="message" className="block text-sm font-semibold text-stone-900 mb-2">
             Message *
           </label>
           <textarea
@@ -216,8 +216,8 @@ export function ContactForm() {
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
             placeholder="How can we help you?"
             rows={6}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none ${
-              errors.message ? 'border-red-500' : 'border-stone-300'
+            className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all resize-none ${
+              errors.message ? 'border-red-500' : 'border-stone-200 focus:border-teal-600'
             }`}
           />
           {errors.message && (
@@ -225,44 +225,44 @@ export function ContactForm() {
           )}
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 py-2">
           <input
             type="checkbox"
             id="joinNewsletter"
             checked={formData.joinNewsletter}
             onChange={(e) => setFormData({ ...formData, joinNewsletter: e.target.checked })}
-            className="mt-1 w-4 h-4 text-teal-600 border-stone-300 rounded focus:ring-teal-500"
+            className="mt-0.5 w-5 h-5 text-teal-600 border-stone-300 rounded focus:ring-2 focus:ring-teal-500"
           />
-          <label htmlFor="joinNewsletter" className="text-sm text-stone-600">
+          <label htmlFor="joinNewsletter" className="text-sm text-stone-700 leading-relaxed">
             Yes, I'd like to receive updates and insights from Inner Edge
           </label>
         </div>
 
-        <div className="bg-stone-100 border border-stone-300 rounded-lg p-4">
+        <div className="my-6">
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
               id="recaptcha"
               checked={recaptchaVerified}
               onChange={handleRecaptchaChange}
-              className="w-5 h-5 text-teal-600 border-stone-400 rounded focus:ring-teal-500"
+              className="w-5 h-5 text-teal-600 border-stone-300 rounded focus:ring-2 focus:ring-teal-500"
             />
             <label htmlFor="recaptcha" className="text-sm text-stone-700 font-medium">
               I'm not a robot (reCAPTCHA placeholder)
             </label>
           </div>
-          <p className="text-xs text-stone-500 mt-2">
-            Note: This is a placeholder. Google reCAPTCHA will be integrated in the next step.
+          <p className="text-xs text-stone-500 mt-2 ml-8">
+            Google reCAPTCHA will be integrated in the next step.
           </p>
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting || !recaptchaVerified}
-          className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${
+          className={`w-full px-8 py-4 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 ${
             isSubmitting || !recaptchaVerified
               ? 'bg-stone-400 cursor-not-allowed'
-              : 'bg-teal-600 hover:bg-teal-700 hover:scale-105'
+              : 'bg-teal-600 hover:bg-teal-700 hover:shadow-lg'
           }`}
         >
           {isSubmitting ? (
@@ -271,10 +271,7 @@ export function ContactForm() {
               Sending...
             </>
           ) : (
-            <>
-              <Send size={20} />
-              Send Message
-            </>
+            'Send Message'
           )}
         </button>
       </form>
