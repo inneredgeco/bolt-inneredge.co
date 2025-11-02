@@ -321,9 +321,6 @@ export function ContactForm() {
         </div>
 
         <div className="my-6">
-          <div className="text-sm text-stone-500 mb-2 text-center">
-            {recaptchaReady ? 'reCAPTCHA Ready' : 'Loading reCAPTCHA...'}
-          </div>
           <div className="flex justify-center">
             <div
               className="g-recaptcha"
