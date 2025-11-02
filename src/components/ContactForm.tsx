@@ -33,8 +33,8 @@ export function ContactForm() {
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [recaptchaVerified, setRecaptchaVerified] = useState(false);
   const [recaptchaError, setRecaptchaError] = useState('');
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
   const recaptchaLoadedRef = useRef(false);
 
   const formatPhoneNumber = (value: string): string => {
@@ -110,7 +110,6 @@ export function ContactForm() {
         message: '',
         joinNewsletter: false,
       });
-      setRecaptchaVerified(false);
 
       setTimeout(() => {
         setSubmitSuccess(false);
@@ -124,34 +123,41 @@ export function ContactForm() {
   };
 
   useEffect(() => {
+    console.log('reCAPTCHA Site Key:', import.meta.env.VITE_RECAPTCHA_SITE_KEY);
+
     if (recaptchaLoadedRef.current) return;
 
     const script = document.createElement('script');
     script.src = 'https://www.google.com/recaptcha/api.js';
     script.async = true;
     script.defer = true;
+
+    script.onload = () => {
+      console.log('reCAPTCHA script loaded');
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load reCAPTCHA script');
+    };
+
     document.head.appendChild(script);
     recaptchaLoadedRef.current = true;
 
-    window.onRecaptchaLoad = () => {
-      console.log('reCAPTCHA loaded');
-    };
+    const checkRecaptcha = setInterval(() => {
+      if (window.grecaptcha && window.grecaptcha.getResponse !== undefined) {
+        console.log('reCAPTCHA loaded successfully');
+        setRecaptchaReady(true);
+        clearInterval(checkRecaptcha);
+      }
+    }, 100);
 
     return () => {
+      clearInterval(checkRecaptcha);
       const existingScript = document.querySelector('script[src="https://www.google.com/recaptcha/api.js"]');
       if (existingScript) {
         existingScript.remove();
       }
     };
-  }, []);
-
-  const handleRecaptchaSuccess = () => {
-    setRecaptchaVerified(true);
-    setRecaptchaError('');
-  };
-
-  useEffect(() => {
-    (window as any).onRecaptchaSuccess = handleRecaptchaSuccess;
   }, []);
 
   if (submitSuccess) {
@@ -284,11 +290,14 @@ export function ContactForm() {
 
         <div className="my-6">
           <div className="flex justify-center">
-            <div
-              className="g-recaptcha"
-              data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-              data-callback="onRecaptchaSuccess"
-            ></div>
+            {recaptchaReady ? (
+              <div
+                className="g-recaptcha"
+                data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              ></div>
+            ) : (
+              <div className="text-sm text-stone-500">Loading reCAPTCHA...</div>
+            )}
           </div>
           {recaptchaError && (
             <p className="mt-2 text-sm text-red-600 text-center">{recaptchaError}</p>
