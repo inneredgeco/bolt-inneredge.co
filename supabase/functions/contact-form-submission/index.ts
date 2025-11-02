@@ -130,10 +130,10 @@ Deno.serve(async (req: Request) => {
 
               <p>Thank you for contacting Inner Edge. We've received your message and will get back to you within 1-2 business days.</p>
 
-              <p>In the meantime, feel free to explore our podcast at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a> or learn more about our men's community.</p>
+              <p>In the meantime, feel free to explore our podcast at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a> or learn more about our men's community at <a href="https://links.inneredge.co/menscommunity">https://links.inneredge.co/menscommunity</a></p>
 
               <p>Looking forward to connecting,<br>
-              The Inner Edge Team</p>
+              Inner Edge</p>
             `,
           }),
         });
