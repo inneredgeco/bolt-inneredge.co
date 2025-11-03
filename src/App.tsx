@@ -12,6 +12,7 @@ import { AdminPage } from './components/AdminPage';
 import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RSSPage } from './components/RSSPage';
+import { SitemapPage } from './components/SitemapPage';
 import { LinkPage } from './components/LinkPage';
 import { PodcastPage } from './components/PodcastPage';
 import { PodcastGuestPage } from './components/PodcastGuestPage';
@@ -39,6 +40,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
         <Route path="/rss.xml" element={<RSSPage />} />
+        <Route path="/sitemap.xml" element={<SitemapPage />} />
         <Route path="/link" element={<LinkPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

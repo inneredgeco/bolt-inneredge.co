@@ -71,26 +71,6 @@ export function AdminPage() {
       .replace(/^-+|-+$/g, '');
   }
 
-  async function updateSitemap() {
-    try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/update-sitemap`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        console.error('Failed to update sitemap');
-      }
-    } catch (error) {
-      console.error('Error updating sitemap:', error);
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -158,7 +138,6 @@ export function AdminPage() {
       setShowForm(false);
 
       await fetchAllPosts();
-      await updateSitemap();
     } catch (error) {
       console.error('Error saving post:', error);
       alert('Error saving post. Please try again.');
@@ -174,7 +153,6 @@ export function AdminPage() {
 
       if (error) throw error;
       await fetchAllPosts();
-      await updateSitemap();
     } catch (error) {
       console.error('Error toggling publish status:', error);
     }
@@ -191,7 +169,6 @@ export function AdminPage() {
 
       if (error) throw error;
       await fetchAllPosts();
-      await updateSitemap();
       setDeleteConfirmId(null);
     } catch (error) {
       console.error('Error deleting post:', error);
