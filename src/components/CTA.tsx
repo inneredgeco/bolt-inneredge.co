@@ -15,7 +15,7 @@ const steps = [
   {
     icon: Rocket,
     title: 'Start Transforming',
-    description: 'Begin your journey to becoming the man you were meant to be',
+    description: 'Begin your transformation journey from the inside out',
   },
 ];
 

@@ -16,13 +16,12 @@ export function Hero() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20 flex items-center" style={{ minHeight: '85vh' }}>
         <div className="max-w-3xl">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Stop Settling.
+            The Man You're Meant to Be
             <br />
-            <span style={{ color: '#8ad6ce' }}>Start Living.</span>
+            <span style={{ color: '#8ad6ce' }}>Is Already Within You.</span>
           </h1>
           <p className="text-xl sm:text-2xl text-brand-100 mb-8 leading-relaxed">
-            You know you're capable of more. More confidence, more purpose, more impact.
-            It's time to unlock the man you were meant to be.
+            Transform your life from the inside out. Discover your vision, reconnect with your truth, and step into grounded leadership.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button

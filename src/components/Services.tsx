@@ -42,7 +42,7 @@ export function Services() {
             Transform Every Area of Your Life
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A holistic approach to becoming the man you're meant to be—confident, purpose-driven, and unstoppable.
+            A holistic approach to transformation—confident, purpose-driven, and unstoppable.
           </p>
         </div>
 
