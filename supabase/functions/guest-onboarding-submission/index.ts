@@ -67,11 +67,11 @@ async function uploadToR2(
   fileName: string,
   contentType: string
 ): Promise<string> {
-  const accessKeyId = Deno.env.get("R2_GUESTS_ACCESS_KEY_ID");
-  const secretAccessKey = Deno.env.get("R2_GUESTS_SECRET_ACCESS_KEY");
-  const endpoint = Deno.env.get("R2_GUESTS_ENDPOINT");
-  const bucketName = Deno.env.get("R2_GUESTS_BUCKET_NAME");
-  const publicUrl = Deno.env.get("R2_GUESTS_PUBLIC_URL");
+  const accessKeyId = Deno.env.get("VITE_R2_GUESTS_ACCESS_KEY_ID");
+  const secretAccessKey = Deno.env.get("VITE_R2_GUESTS_SECRET_ACCESS_KEY");
+  const endpoint = Deno.env.get("VITE_R2_GUESTS_ENDPOINT");
+  const bucketName = Deno.env.get("VITE_R2_GUESTS_BUCKET_NAME");
+  const publicUrl = Deno.env.get("VITE_R2_GUESTS_PUBLIC_URL");
 
   if (!accessKeyId || !secretAccessKey || !endpoint || !bucketName || !publicUrl) {
     throw new Error("R2 credentials not configured");
@@ -111,7 +111,7 @@ Deno.serve(async (req: Request) => {
   try {
     const formData: GuestOnboardingSubmission = await req.json();
 
-    const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL_GUEST_ONBOARDING");
+    const webhookUrl = Deno.env.get("VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
     const submittedAt = new Date().toISOString();
@@ -182,7 +182,7 @@ Deno.serve(async (req: Request) => {
       }
     } else {
       errors.push("Webhook URL not configured");
-      console.warn("PABBLY_WEBHOOK_URL_GUEST_ONBOARDING not set");
+      console.warn("VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING not set");
     }
 
     if (resendApiKey) {
