@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
@@ -152,208 +153,173 @@ export function PodcastGuestOnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('=======================================================');
-    console.log('=== FRONTEND: Form Submission Started ===');
-    console.log('=======================================================');
-    console.log('Timestamp:', new Date().toISOString());
-
+    console.log('=== Guest Onboarding: Form Submission Started ===');
     setLoading(true);
     setError('');
 
     if (!photoFile) {
-      console.error('=== FRONTEND: Validation Failed - No Photo ===');
       setError('Please upload your headshot photo.');
       setLoading(false);
       return;
     }
 
-    console.log('=== FRONTEND: Form Data ===');
-    console.log('Name:', formData.firstName, formData.lastName);
-    console.log('Email:', formData.email);
-    console.log('Phone:', formData.phone);
-    console.log('Photo:', photoFile.name, photoFile.size, 'bytes', photoFile.type);
-    console.log('Form data complete:', {
-      hasFirstName: !!formData.firstName,
-      hasLastName: !!formData.lastName,
-      hasEmail: !!formData.email,
-      hasPhone: !!formData.phone,
-      hasProfession: !!formData.profession,
-      hasShortBio: !!formData.shortBio,
-      hasPhoto: !!photoFile
-    });
-
     try {
-      console.log('=== FRONTEND: Starting Photo File Read ===');
-      const reader = new FileReader();
-      reader.readAsDataURL(photoFile);
+      console.log('=== Step 1: Uploading Photo to R2 ===');
 
-      reader.onloadend = async () => {
+      const s3Client = new S3Client({
+        region: 'auto',
+        endpoint: import.meta.env.VITE_R2_GUESTS_ENDPOINT,
+        credentials: {
+          accessKeyId: import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID!,
+          secretAccessKey: import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY!
+        }
+      });
+
+      const timestamp = Date.now();
+      const filename = `${formData.firstName.toLowerCase()}-${formData.lastName.toLowerCase()}-${timestamp}.jpg`;
+
+      const command = new PutObjectCommand({
+        Bucket: import.meta.env.VITE_R2_GUESTS_BUCKET_NAME,
+        Key: `headshots/${filename}`,
+        Body: photoFile,
+        ContentType: photoFile.type
+      });
+
+      await s3Client.send(command);
+      const photoUrl = `${import.meta.env.VITE_R2_GUESTS_PUBLIC_URL}/headshots/${filename}`;
+      console.log('Photo uploaded successfully:', photoUrl);
+
+      console.log('=== Step 2: Generating Slug ===');
+      const slug = `${formData.firstName}-${formData.lastName}`
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+
+      console.log('=== Step 3: Sending to Pabbly Webhook ===');
+      const webhookUrl = import.meta.env.VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING;
+
+      if (webhookUrl) {
+        const webhookPayload = {
+          name: `${formData.firstName} ${formData.lastName}`,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          website: normalizeUrl(formData.website),
+          facebook: formatSocialUrl(formData.facebook, 'facebook'),
+          instagram: formatSocialUrl(formData.instagram, 'instagram'),
+          linkedin: formatLinkedInUrl(formData.linkedin),
+          profession: formData.profession,
+          status: "Draft",
+          slug: slug,
+          photo_url: photoUrl,
+          short_bio: formData.shortBio,
+          long_bio: formData.longBio || '',
+          submitted_at: new Date().toISOString(),
+        };
+
         try {
-          console.log('=== FRONTEND: Photo File Read Complete ===');
-          const base64String = (reader.result as string).split(',')[1];
-          console.log('Base64 string length:', base64String.length);
-
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-          const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-          console.log('=== FRONTEND: Environment Variables ===');
-          console.log('VITE_SUPABASE_URL:', supabaseUrl);
-          console.log('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'SET (length: ' + supabaseAnonKey.length + ')' : 'NOT SET');
-
-          const apiUrl = `${supabaseUrl}/functions/v1/guest-onboarding-submission`;
-
-          console.log('=== ATTEMPTING TO CALL EDGE FUNCTION ===');
-          console.log('URL:', apiUrl);
-          console.log('Method: POST');
-          console.log('Headers:', {
-            'Content-Type': 'application/json',
-            'Authorization': supabaseAnonKey ? 'Bearer [REDACTED]' : 'NOT SET'
+          const webhookResponse = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(webhookPayload)
           });
 
-          const payload = {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone,
-            website: normalizeUrl(formData.website),
-            facebook: formatSocialUrl(formData.facebook, 'facebook'),
-            instagram: formatSocialUrl(formData.instagram, 'instagram'),
-            linkedin: formatLinkedInUrl(formData.linkedin),
-            profession: formData.profession,
-            shortBio: formData.shortBio,
-            longBio: formData.longBio || '',
-            photoFile: base64String,
-            photoFileName: photoFile.name,
-            photoFileType: photoFile.type,
-          };
-
-          console.log('=== FRONTEND: Payload Prepared ===');
-          console.log('Payload fields:', Object.keys(payload));
-          console.log('Photo size:', `${base64String.length} chars`);
-          console.log('Photo file name:', photoFile.name);
-          console.log('Photo file type:', photoFile.type);
-
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => {
-            console.error('=== FRONTEND: Request Timeout - Aborting ===');
-            controller.abort();
-          }, 60000);
-
-          try {
-            console.log('=== FRONTEND: Making fetch request... ===');
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseAnonKey}`,
-              },
-              body: JSON.stringify(payload),
-              signal: controller.signal,
-            });
-
-            clearTimeout(timeoutId);
-
-            console.log('=== FRONTEND: Response Received ===');
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-            console.log('Response headers:', {
-              'content-type': response.headers.get('content-type'),
-              'access-control-allow-origin': response.headers.get('access-control-allow-origin')
-            });
-
-            const result = await response.json();
-            console.log('=== FRONTEND: Response Parsed ===');
-
-            if (!response.ok) {
-              console.error('=== FRONTEND: Submission Failed ===');
-              console.error('Status:', response.status);
-              console.error('Error:', result.error);
-
-              let errorMessage = 'Submission failed. Please try again.';
-              if (result.error) {
-                if (result.error.includes('R2 credentials not configured')) {
-                  errorMessage = 'Server configuration error. Please contact support.';
-                } else if (result.error.includes('Failed to upload photo')) {
-                  errorMessage = 'Photo upload failed. Please try a different image or contact support.';
-                } else {
-                  errorMessage = result.error;
-                }
-              }
-              throw new Error(errorMessage);
-            }
-
-            if (result.errors && result.errors.length > 0) {
-              console.warn('=== FRONTEND: Partial Success ===');
-              console.warn('Some operations failed:', result.errors);
-            }
-
-            console.log('=== FRONTEND: Form Submitted Successfully ===');
-            console.log('Photo uploaded:', result.photoUrl);
-
-            setSuccess(true);
-            setLoading(false);
-            setFormData({
-              firstName: '',
-              lastName: '',
-              email: '',
-              phone: '',
-              website: '',
-              facebook: '',
-              instagram: '',
-              linkedin: '',
-              profession: '',
-              shortBio: '',
-              longBio: ''
-            });
-            removePhoto();
-
-            setTimeout(() => {
-              setSuccess(false);
-            }, 8000);
-          } catch (fetchError: unknown) {
-            clearTimeout(timeoutId);
-            console.error('=== FETCH ERROR ===');
-            console.error('Error type:', fetchError instanceof Error ? fetchError.constructor.name : typeof fetchError);
-            console.error('Error message:', fetchError instanceof Error ? fetchError.message : String(fetchError));
-            console.error('Full error:', fetchError);
-
-            if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-              console.error('Reason: Request aborted due to timeout');
-              throw new Error('Upload took too long. Please check your internet connection and try again.');
-            }
-
-            if (fetchError instanceof TypeError) {
-              console.error('Reason: Network error or CORS issue');
-              throw new Error('Network error: Unable to reach the server. Please check your internet connection.');
-            }
-
-            throw fetchError;
+          if (webhookResponse.ok) {
+            console.log('Webhook sent successfully');
+          } else {
+            console.error('Webhook failed:', webhookResponse.status);
           }
-        } catch (err) {
-          console.error('=== FRONTEND: Submission Error (Outer Catch) ===');
-          console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
-          console.error('Error message:', err instanceof Error ? err.message : String(err));
-          console.error('Error stack:', err instanceof Error ? err.stack : 'N/A');
-          console.error('Full error object:', err);
-
-          const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
-          setError(errorMessage);
-          setLoading(false);
+        } catch (error) {
+          console.error('Webhook error:', error);
         }
-      };
+      }
 
-      reader.onerror = (error) => {
-        console.error('=== FRONTEND: FileReader Error ===');
-        console.error('Error:', error);
-        setError('Failed to read image file. Please try again.');
-        setLoading(false);
-      };
+      console.log('=== Step 4: Sending Confirmation Emails ===');
+      const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
+
+      if (resendApiKey) {
+        try {
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${resendApiKey}`
+            },
+            body: JSON.stringify({
+              from: 'Inner Edge Podcast <podcast@send.inneredge.co>',
+              reply_to: 'Inner Edge Podcast <podcast@inneredge.co>',
+              to: formData.email,
+              subject: 'Profile Received - Inner Edge Podcast',
+              html: `
+                <p>Hi ${formData.firstName},</p>
+                <p>Thank you for completing your guest profile! We've received all your information and your headshot looks great.</p>
+                <p>We'll be in touch soon with recording details and episode scheduling.</p>
+                <p>Looking forward to our conversation,<br>The Inner Edge Team</p>
+              `
+            })
+          });
+
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${resendApiKey}`
+            },
+            body: JSON.stringify({
+              from: 'Inner Edge Podcast <podcast@send.inneredge.co>',
+              to: 'podcast@inneredge.co',
+              subject: `Guest Profile Completed - ${formData.firstName} ${formData.lastName}`,
+              html: `
+                <p><strong>Guest profile completed:</strong></p>
+                <p><strong>NAME:</strong> ${formData.firstName} ${formData.lastName}<br>
+                <strong>EMAIL:</strong> ${formData.email}<br>
+                <strong>PHONE:</strong> ${formData.phone}<br>
+                <strong>PROFESSION:</strong> ${formData.profession}</p>
+                <p><strong>SHORT BIO:</strong><br>${formData.shortBio}</p>
+                ${formData.longBio ? `<p><strong>LONG BIO:</strong><br>${formData.longBio.replace(/\n/g, '<br>')}</p>` : ''}
+                <p><strong>PHOTO:</strong> <a href="${photoUrl}">${photoUrl}</a></p>
+                <p><strong>SOCIAL LINKS:</strong><br>
+                Website: ${formData.website ? `<a href="${normalizeUrl(formData.website)}">${normalizeUrl(formData.website)}</a>` : 'Not provided'}<br>
+                Facebook: ${formData.facebook ? `<a href="${formatSocialUrl(formData.facebook, 'facebook')}">${formatSocialUrl(formData.facebook, 'facebook')}</a>` : 'Not provided'}<br>
+                Instagram: ${formData.instagram ? `<a href="${formatSocialUrl(formData.instagram, 'instagram')}">${formatSocialUrl(formData.instagram, 'instagram')}</a>` : 'Not provided'}<br>
+                LinkedIn: ${formData.linkedin ? `<a href="${formatLinkedInUrl(formData.linkedin)}">${formatLinkedInUrl(formData.linkedin)}</a>` : 'Not provided'}</p>
+              `
+            })
+          });
+
+          console.log('Emails sent successfully');
+        } catch (error) {
+          console.error('Email error:', error);
+        }
+      }
+
+      console.log('=== Form Submitted Successfully ===');
+      setSuccess(true);
+      setLoading(false);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        website: '',
+        facebook: '',
+        instagram: '',
+        linkedin: '',
+        profession: '',
+        shortBio: '',
+        longBio: ''
+      });
+      removePhoto();
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 8000);
     } catch (err) {
-      console.error('=== FRONTEND: Submission Error (Outer) ===');
-      console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
-      console.error('Error message:', err instanceof Error ? err.message : String(err));
-      console.error('Full error:', err);
-      setError('Something went wrong. Please try again.');
+      console.error('Submission error:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
       setLoading(false);
     }
   };
