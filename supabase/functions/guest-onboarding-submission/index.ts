@@ -109,24 +109,53 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const formData: GuestOnboardingSubmission = await req.json();
+    console.log("=== EDGE FUNCTION: Request Received ===");
+    console.log("Method:", req.method);
+    console.log("URL:", req.url);
 
+    const formData: GuestOnboardingSubmission = await req.json();
+    console.log("=== EDGE FUNCTION: Form Data Received ===");
+    console.log("Name:", formData.firstName, formData.lastName);
+    console.log("Email:", formData.email);
+
+    console.log("=== EDGE FUNCTION: Environment Variables Check ===");
     const webhookUrl = Deno.env.get("VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const r2AccessKeyId = Deno.env.get("VITE_R2_GUESTS_ACCESS_KEY_ID");
+    const r2SecretAccessKey = Deno.env.get("VITE_R2_GUESTS_SECRET_ACCESS_KEY");
+    const r2Endpoint = Deno.env.get("VITE_R2_GUESTS_ENDPOINT");
+    const r2BucketName = Deno.env.get("VITE_R2_GUESTS_BUCKET_NAME");
+    const r2PublicUrl = Deno.env.get("VITE_R2_GUESTS_PUBLIC_URL");
+
+    console.log("Webhook URL:", webhookUrl ? "SET" : "NOT SET");
+    console.log("Resend API Key:", resendApiKey ? "SET" : "NOT SET");
+    console.log("R2 Access Key ID:", r2AccessKeyId ? "SET" : "NOT SET");
+    console.log("R2 Secret Access Key:", r2SecretAccessKey ? "SET" : "NOT SET");
+    console.log("R2 Endpoint:", r2Endpoint || "NOT SET");
+    console.log("R2 Bucket Name:", r2BucketName || "NOT SET");
+    console.log("R2 Public URL:", r2PublicUrl || "NOT SET");
 
     const submittedAt = new Date().toISOString();
     const slug = generateSlug(formData.firstName, formData.lastName);
 
+    console.log("=== EDGE FUNCTION: Processing Photo ===");
     const photoBuffer = Uint8Array.from(atob(formData.photoFile), c => c.charCodeAt(0));
+    console.log("Photo buffer size:", photoBuffer.length, "bytes");
     const timestamp = Date.now();
     const photoFileName = `${formData.firstName.toLowerCase()}-${formData.lastName.toLowerCase()}-${timestamp}.jpg`;
+    console.log("Photo filename:", photoFileName);
 
     let photoUrl = '';
     try {
+      console.log("=== EDGE FUNCTION: Uploading to R2 ===");
       photoUrl = await uploadToR2(photoBuffer, photoFileName, formData.photoFileType);
-      console.log("Photo uploaded successfully to R2:", photoUrl);
+      console.log("=== EDGE FUNCTION: R2 Upload Successful ===");
+      console.log("Photo URL:", photoUrl);
     } catch (error) {
-      console.error("R2 upload error:", error);
+      console.error("=== EDGE FUNCTION: R2 Upload Failed ===");
+      console.error("Error:", error);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
       throw new Error(`Failed to upload photo: ${error.message}`);
     }
 
@@ -276,6 +305,13 @@ Deno.serve(async (req: Request) => {
       console.warn("RESEND_API_KEY not set");
     }
 
+    console.log("=== EDGE FUNCTION: Preparing Response ===");
+    console.log("Photo URL:", photoUrl);
+    console.log("Webhook Success:", webhookSuccess);
+    console.log("Confirmation Email Success:", confirmationEmailSuccess);
+    console.log("Notification Email Success:", notificationEmailSuccess);
+    console.log("Errors:", errors);
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -295,7 +331,11 @@ Deno.serve(async (req: Request) => {
       }
     );
   } catch (error) {
-    console.error("Error processing guest onboarding submission:", error);
+    console.error("=== EDGE FUNCTION: Fatal Error ===");
+    console.error("Error type:", error.constructor.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
+    console.error("Full error:", error);
 
     return new Response(
       JSON.stringify({
