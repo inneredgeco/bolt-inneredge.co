@@ -151,7 +151,12 @@ export function PodcastGuestOnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log('=======================================================');
     console.log('=== FRONTEND: Form Submission Started ===');
+    console.log('=======================================================');
+    console.log('Timestamp:', new Date().toISOString());
+
     setLoading(true);
     setError('');
 
@@ -167,6 +172,15 @@ export function PodcastGuestOnboardingPage() {
     console.log('Email:', formData.email);
     console.log('Phone:', formData.phone);
     console.log('Photo:', photoFile.name, photoFile.size, 'bytes', photoFile.type);
+    console.log('Form data complete:', {
+      hasFirstName: !!formData.firstName,
+      hasLastName: !!formData.lastName,
+      hasEmail: !!formData.email,
+      hasPhone: !!formData.phone,
+      hasProfession: !!formData.profession,
+      hasShortBio: !!formData.shortBio,
+      hasPhoto: !!photoFile
+    });
 
     try {
       console.log('=== FRONTEND: Starting Photo File Read ===');
@@ -182,8 +196,19 @@ export function PodcastGuestOnboardingPage() {
           const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
           const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+          console.log('=== FRONTEND: Environment Variables ===');
+          console.log('VITE_SUPABASE_URL:', supabaseUrl);
+          console.log('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'SET (length: ' + supabaseAnonKey.length + ')' : 'NOT SET');
+
           const apiUrl = `${supabaseUrl}/functions/v1/guest-onboarding-submission`;
-          console.log('=== FRONTEND: Submitting to Edge Function ===');
+
+          console.log('=== ATTEMPTING TO CALL EDGE FUNCTION ===');
+          console.log('URL:', apiUrl);
+          console.log('Method: POST');
+          console.log('Headers:', {
+            'Content-Type': 'application/json',
+            'Authorization': supabaseAnonKey ? 'Bearer [REDACTED]' : 'NOT SET'
+          });
 
           const payload = {
             firstName: formData.firstName,
@@ -203,12 +228,19 @@ export function PodcastGuestOnboardingPage() {
           };
 
           console.log('=== FRONTEND: Payload Prepared ===');
+          console.log('Payload fields:', Object.keys(payload));
           console.log('Photo size:', `${base64String.length} chars`);
+          console.log('Photo file name:', photoFile.name);
+          console.log('Photo file type:', photoFile.type);
 
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 60000);
+          const timeoutId = setTimeout(() => {
+            console.error('=== FRONTEND: Request Timeout - Aborting ===');
+            controller.abort();
+          }, 60000);
 
           try {
+            console.log('=== FRONTEND: Making fetch request... ===');
             const response = await fetch(apiUrl, {
               method: 'POST',
               headers: {
@@ -223,6 +255,11 @@ export function PodcastGuestOnboardingPage() {
 
             console.log('=== FRONTEND: Response Received ===');
             console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            console.log('Response headers:', {
+              'content-type': response.headers.get('content-type'),
+              'access-control-allow-origin': response.headers.get('access-control-allow-origin')
+            });
 
             const result = await response.json();
             console.log('=== FRONTEND: Response Parsed ===');
@@ -275,15 +312,32 @@ export function PodcastGuestOnboardingPage() {
             }, 8000);
           } catch (fetchError: unknown) {
             clearTimeout(timeoutId);
+            console.error('=== FETCH ERROR ===');
+            console.error('Error type:', fetchError instanceof Error ? fetchError.constructor.name : typeof fetchError);
+            console.error('Error message:', fetchError instanceof Error ? fetchError.message : String(fetchError));
+            console.error('Full error:', fetchError);
+
             if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+              console.error('Reason: Request aborted due to timeout');
               throw new Error('Upload took too long. Please check your internet connection and try again.');
             }
+
+            if (fetchError instanceof TypeError) {
+              console.error('Reason: Network error or CORS issue');
+              throw new Error('Network error: Unable to reach the server. Please check your internet connection.');
+            }
+
             throw fetchError;
           }
         } catch (err) {
-          console.error('=== FRONTEND: Submission Error ===');
-          console.error('Error:', err instanceof Error ? err.message : String(err));
-          setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+          console.error('=== FRONTEND: Submission Error (Outer Catch) ===');
+          console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
+          console.error('Error message:', err instanceof Error ? err.message : String(err));
+          console.error('Error stack:', err instanceof Error ? err.stack : 'N/A');
+          console.error('Full error object:', err);
+
+          const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+          setError(errorMessage);
           setLoading(false);
         }
       };
