@@ -166,27 +166,55 @@ export function PodcastGuestOnboardingPage() {
     try {
       console.log('=== Step 1: Uploading Photo to R2 ===');
 
+      console.log('R2 Upload Configuration:');
+      console.log('Bucket:', import.meta.env.VITE_R2_GUESTS_BUCKET_NAME);
+      console.log('Endpoint:', import.meta.env.VITE_R2_GUESTS_ENDPOINT);
+      console.log('Access Key ID:', import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID ? 'SET' : 'NOT SET');
+      console.log('Secret Access Key:', import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY ? 'SET' : 'NOT SET');
+      console.log('Public URL:', import.meta.env.VITE_R2_GUESTS_PUBLIC_URL);
+
+      const bucketName = import.meta.env.VITE_R2_GUESTS_BUCKET_NAME;
+      const endpoint = import.meta.env.VITE_R2_GUESTS_ENDPOINT;
+      const accessKeyId = import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID;
+      const secretAccessKey = import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY;
+      const publicUrl = import.meta.env.VITE_R2_GUESTS_PUBLIC_URL;
+
+      if (!bucketName || !endpoint || !accessKeyId || !secretAccessKey || !publicUrl) {
+        const missing = [];
+        if (!bucketName) missing.push('VITE_R2_GUESTS_BUCKET_NAME');
+        if (!endpoint) missing.push('VITE_R2_GUESTS_ENDPOINT');
+        if (!accessKeyId) missing.push('VITE_R2_GUESTS_ACCESS_KEY_ID');
+        if (!secretAccessKey) missing.push('VITE_R2_GUESTS_SECRET_ACCESS_KEY');
+        if (!publicUrl) missing.push('VITE_R2_GUESTS_PUBLIC_URL');
+        throw new Error(`Missing R2 configuration: ${missing.join(', ')}`);
+      }
+
       const s3Client = new S3Client({
         region: 'auto',
-        endpoint: import.meta.env.VITE_R2_GUESTS_ENDPOINT,
+        endpoint: endpoint,
         credentials: {
-          accessKeyId: import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID!,
-          secretAccessKey: import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY!
+          accessKeyId: accessKeyId,
+          secretAccessKey: secretAccessKey
         }
       });
 
       const timestamp = Date.now();
       const filename = `${formData.firstName.toLowerCase()}-${formData.lastName.toLowerCase()}-${timestamp}.jpg`;
 
+      console.log('Filename:', filename);
+      console.log('Creating PutObjectCommand...');
+
       const command = new PutObjectCommand({
-        Bucket: import.meta.env.VITE_R2_GUESTS_BUCKET_NAME,
+        Bucket: bucketName,
         Key: `headshots/${filename}`,
         Body: photoFile,
         ContentType: photoFile.type
       });
 
+      console.log('Sending upload command to R2...');
       await s3Client.send(command);
-      const photoUrl = `${import.meta.env.VITE_R2_GUESTS_PUBLIC_URL}/headshots/${filename}`;
+
+      const photoUrl = `${publicUrl}/headshots/${filename}`;
       console.log('Photo uploaded successfully:', photoUrl);
 
       console.log('=== Step 2: Generating Slug ===');
