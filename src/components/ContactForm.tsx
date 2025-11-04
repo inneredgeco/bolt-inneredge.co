@@ -98,50 +98,73 @@ export function ContactForm() {
     try {
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/contact-form-submission`;
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-          joinNewsletter: formData.joinNewsletter,
-          recaptchaResponse: recaptchaResponse,
-        }),
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      const result = await response.json();
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message,
+            joinNewsletter: formData.joinNewsletter,
+            recaptchaResponse: recaptchaResponse,
+          }),
+          signal: controller.signal,
+        });
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to submit form');
+        clearTimeout(timeoutId);
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          let errorMessage = 'Failed to submit form. Please try again.';
+          if (result.error) {
+            if (result.error.includes('reCAPTCHA verification failed')) {
+              errorMessage = 'Security verification failed. Please try again.';
+            } else {
+              errorMessage = result.error;
+            }
+          }
+          throw new Error(errorMessage);
+        }
+
+        console.log('Form submitted successfully:', result);
+
+        if (window.grecaptcha && window.grecaptcha.enterprise) {
+          window.grecaptcha.enterprise.reset();
+        }
+        setSubmitSuccess(true);
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          message: '',
+          joinNewsletter: false,
+        });
+
+        setTimeout(() => {
+          setSubmitSuccess(false);
+        }, 5000);
+      } catch (fetchError: unknown) {
+        clearTimeout(timeoutId);
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          throw new Error('Request took too long. Please check your internet connection and try again.');
+        }
+        throw fetchError;
       }
-
-      console.log('Form submitted successfully:', result);
-
-      if (window.grecaptcha && window.grecaptcha.enterprise) {
-        window.grecaptcha.enterprise.reset();
-      }
-      setSubmitSuccess(true);
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        message: '',
-        joinNewsletter: false,
-      });
-
-      setTimeout(() => {
-        setSubmitSuccess(false);
-      }, 5000);
     } catch (error) {
       console.error('Error submitting form:', error);
-      alert('There was an error submitting your message. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'There was an error submitting your message. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

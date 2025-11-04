@@ -106,38 +106,57 @@ export function PodcastGuestFormPage() {
         exercise: formData.exercise,
       };
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      const result = await response.json();
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseAnonKey}`,
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
 
-      if (result.errors && result.errors.length > 0) {
-        console.error('Submission errors:', result.errors);
+        clearTimeout(timeoutId);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          const errorMessage = result.error || 'Submission failed. Please try again.';
+          throw new Error(errorMessage);
+        }
+
+        if (result.errors && result.errors.length > 0) {
+          console.error('Submission errors:', result.errors);
+        }
+
+        setSuccess(true);
+        setFormData({
+          fullName: '',
+          email: '',
+          phone: '',
+          profession: '',
+          whyGuest: '',
+          website: '',
+          facebook: '',
+          instagram: '',
+          exercise: ''
+        });
+
+        setTimeout(() => setSuccess(false), 5000);
+      } catch (fetchError: unknown) {
+        clearTimeout(timeoutId);
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          throw new Error('Request took too long. Please check your internet connection and try again.');
+        }
+        throw fetchError;
       }
-
-      setSuccess(true);
-      setFormData({
-        fullName: '',
-        email: '',
-        phone: '',
-        profession: '',
-        whyGuest: '',
-        website: '',
-        facebook: '',
-        instagram: '',
-        exercise: ''
-      });
-
-      setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('Form submission error:', err);
-      setError('Something went wrong. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

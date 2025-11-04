@@ -174,12 +174,6 @@ export function PodcastGuestOnboardingPage() {
       reader.readAsDataURL(photoFile);
 
       reader.onloadend = async () => {
-        const timeoutId = setTimeout(() => {
-          setLoading(false);
-          setError('Request timed out. Please check your internet connection and try again.');
-          console.error('=== FRONTEND: Request Timeout ===');
-        }, 30000);
-
         try {
           console.log('=== FRONTEND: Photo File Read Complete ===');
           const base64String = (reader.result as string).split(',')[1];
@@ -211,60 +205,82 @@ export function PodcastGuestOnboardingPage() {
           console.log('=== FRONTEND: Payload Prepared ===');
           console.log('Photo size:', `${base64String.length} chars`);
 
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify(payload),
-          });
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-          clearTimeout(timeoutId);
+          try {
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${supabaseAnonKey}`,
+              },
+              body: JSON.stringify(payload),
+              signal: controller.signal,
+            });
 
-          console.log('=== FRONTEND: Response Received ===');
-          console.log('Response status:', response.status);
+            clearTimeout(timeoutId);
 
-          const result = await response.json();
-          console.log('=== FRONTEND: Response Parsed ===');
+            console.log('=== FRONTEND: Response Received ===');
+            console.log('Response status:', response.status);
 
-          if (!response.ok) {
-            console.error('=== FRONTEND: Submission Failed ===');
-            console.error('Status:', response.status);
-            console.error('Error:', result.error);
-            throw new Error(result.error || 'Submission failed. Please try again.');
+            const result = await response.json();
+            console.log('=== FRONTEND: Response Parsed ===');
+
+            if (!response.ok) {
+              console.error('=== FRONTEND: Submission Failed ===');
+              console.error('Status:', response.status);
+              console.error('Error:', result.error);
+
+              let errorMessage = 'Submission failed. Please try again.';
+              if (result.error) {
+                if (result.error.includes('R2 credentials not configured')) {
+                  errorMessage = 'Server configuration error. Please contact support.';
+                } else if (result.error.includes('Failed to upload photo')) {
+                  errorMessage = 'Photo upload failed. Please try a different image or contact support.';
+                } else {
+                  errorMessage = result.error;
+                }
+              }
+              throw new Error(errorMessage);
+            }
+
+            if (result.errors && result.errors.length > 0) {
+              console.warn('=== FRONTEND: Partial Success ===');
+              console.warn('Some operations failed:', result.errors);
+            }
+
+            console.log('=== FRONTEND: Form Submitted Successfully ===');
+            console.log('Photo uploaded:', result.photoUrl);
+
+            setSuccess(true);
+            setLoading(false);
+            setFormData({
+              firstName: '',
+              lastName: '',
+              email: '',
+              phone: '',
+              website: '',
+              facebook: '',
+              instagram: '',
+              linkedin: '',
+              profession: '',
+              shortBio: '',
+              longBio: ''
+            });
+            removePhoto();
+
+            setTimeout(() => {
+              setSuccess(false);
+            }, 8000);
+          } catch (fetchError: unknown) {
+            clearTimeout(timeoutId);
+            if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+              throw new Error('Upload took too long. Please check your internet connection and try again.');
+            }
+            throw fetchError;
           }
-
-          if (result.errors && result.errors.length > 0) {
-            console.warn('=== FRONTEND: Partial Success ===');
-            console.warn('Some operations failed:', result.errors);
-          }
-
-          console.log('=== FRONTEND: Form Submitted Successfully ===');
-          console.log('Photo uploaded:', result.photoUrl);
-
-          setSuccess(true);
-          setLoading(false);
-          setFormData({
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            website: '',
-            facebook: '',
-            instagram: '',
-            linkedin: '',
-            profession: '',
-            shortBio: '',
-            longBio: ''
-          });
-          removePhoto();
-
-          setTimeout(() => {
-            setSuccess(false);
-          }, 8000);
         } catch (err) {
-          clearTimeout(timeoutId);
           console.error('=== FRONTEND: Submission Error ===');
           console.error('Error:', err instanceof Error ? err.message : String(err));
           setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
