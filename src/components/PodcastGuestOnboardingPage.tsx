@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
@@ -41,17 +40,10 @@ export function PodcastGuestOnboardingPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'phone') {
-      setFormData({
-        ...formData,
-        [name]: formatPhoneNumber(value)
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: name === 'phone' ? formatPhoneNumber(value) : value
+    });
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -153,7 +145,6 @@ export function PodcastGuestOnboardingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log('=== Guest Onboarding: Form Submission Started ===');
     setLoading(true);
     setError('');
 
@@ -163,168 +154,50 @@ export function PodcastGuestOnboardingPage() {
       return;
     }
 
+    if (formData.shortBio.length > shortBioMaxChars) {
+      setError(`Short bio must be ${shortBioMaxChars} characters or less.`);
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim() ||
+        !formData.phone.trim() || !formData.profession.trim() || !formData.shortBio.trim()) {
+      setError('Please fill in all required fields.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      console.log('=== Step 1: Uploading Photo to R2 ===');
+      const submissionData = new FormData();
+      submissionData.append('firstName', formData.firstName);
+      submissionData.append('lastName', formData.lastName);
+      submissionData.append('email', formData.email);
+      submissionData.append('phone', formData.phone);
+      submissionData.append('website', formData.website);
+      submissionData.append('facebook', formData.facebook);
+      submissionData.append('instagram', formData.instagram);
+      submissionData.append('linkedin', formData.linkedin);
+      submissionData.append('profession', formData.profession);
+      submissionData.append('shortBio', formData.shortBio);
+      submissionData.append('longBio', formData.longBio);
+      submissionData.append('headshot', photoFile);
 
-      console.log('R2 Upload Configuration:');
-      console.log('Bucket:', import.meta.env.VITE_R2_GUESTS_BUCKET_NAME);
-      console.log('Endpoint:', import.meta.env.VITE_R2_GUESTS_ENDPOINT);
-      console.log('Access Key ID:', import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID ? 'SET' : 'NOT SET');
-      console.log('Secret Access Key:', import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY ? 'SET' : 'NOT SET');
-      console.log('Public URL:', import.meta.env.VITE_R2_GUESTS_PUBLIC_URL);
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/podcast-guest-onboarding`;
 
-      const bucketName = import.meta.env.VITE_R2_GUESTS_BUCKET_NAME;
-      const endpoint = import.meta.env.VITE_R2_GUESTS_ENDPOINT;
-      const accessKeyId = import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID;
-      const secretAccessKey = import.meta.env.VITE_R2_GUESTS_SECRET_ACCESS_KEY;
-      const publicUrl = import.meta.env.VITE_R2_GUESTS_PUBLIC_URL;
-
-      if (!bucketName || !endpoint || !accessKeyId || !secretAccessKey || !publicUrl) {
-        const missing = [];
-        if (!bucketName) missing.push('VITE_R2_GUESTS_BUCKET_NAME');
-        if (!endpoint) missing.push('VITE_R2_GUESTS_ENDPOINT');
-        if (!accessKeyId) missing.push('VITE_R2_GUESTS_ACCESS_KEY_ID');
-        if (!secretAccessKey) missing.push('VITE_R2_GUESTS_SECRET_ACCESS_KEY');
-        if (!publicUrl) missing.push('VITE_R2_GUESTS_PUBLIC_URL');
-        throw new Error(`Missing R2 configuration: ${missing.join(', ')}`);
-      }
-
-      const s3Client = new S3Client({
-        region: 'auto',
-        endpoint: endpoint,
-        credentials: {
-          accessKeyId: accessKeyId,
-          secretAccessKey: secretAccessKey
-        }
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: submissionData
       });
 
-      const timestamp = Date.now();
-      const filename = `${formData.firstName.toLowerCase()}-${formData.lastName.toLowerCase()}-${timestamp}.jpg`;
+      const result = await response.json();
 
-      console.log('Filename:', filename);
-      console.log('Creating PutObjectCommand...');
-
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: `headshots/${filename}`,
-        Body: photoFile,
-        ContentType: photoFile.type
-      });
-
-      console.log('Sending upload command to R2...');
-      await s3Client.send(command);
-
-      const photoUrl = `${publicUrl}/headshots/${filename}`;
-      console.log('Photo uploaded successfully:', photoUrl);
-
-      console.log('=== Step 2: Generating Slug ===');
-      const slug = `${formData.firstName}-${formData.lastName}`
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-
-      console.log('=== Step 3: Sending to Pabbly Webhook ===');
-      const webhookUrl = import.meta.env.VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING;
-
-      if (webhookUrl) {
-        const webhookPayload = {
-          name: `${formData.firstName} ${formData.lastName}`,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          website: normalizeUrl(formData.website),
-          facebook: formatSocialUrl(formData.facebook, 'facebook'),
-          instagram: formatSocialUrl(formData.instagram, 'instagram'),
-          linkedin: formatLinkedInUrl(formData.linkedin),
-          profession: formData.profession,
-          status: "Draft",
-          slug: slug,
-          photo_url: photoUrl,
-          short_bio: formData.shortBio,
-          long_bio: formData.longBio || '',
-          submitted_at: new Date().toISOString(),
-        };
-
-        try {
-          const webhookResponse = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(webhookPayload)
-          });
-
-          if (webhookResponse.ok) {
-            console.log('Webhook sent successfully');
-          } else {
-            console.error('Webhook failed:', webhookResponse.status);
-          }
-        } catch (error) {
-          console.error('Webhook error:', error);
-        }
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to submit profile. Please try again.');
       }
 
-      console.log('=== Step 4: Sending Confirmation Emails ===');
-      const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
-
-      if (resendApiKey) {
-        try {
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${resendApiKey}`
-            },
-            body: JSON.stringify({
-              from: 'Inner Edge Podcast <podcast@send.inneredge.co>',
-              reply_to: 'Inner Edge Podcast <podcast@inneredge.co>',
-              to: formData.email,
-              subject: 'Profile Received - Inner Edge Podcast',
-              html: `
-                <p>Hi ${formData.firstName},</p>
-                <p>Thank you for completing your guest profile! We've received all your information and your headshot looks great.</p>
-                <p>We'll be in touch soon with recording details and episode scheduling.</p>
-                <p>Looking forward to our conversation,<br>The Inner Edge Team</p>
-              `
-            })
-          });
-
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${resendApiKey}`
-            },
-            body: JSON.stringify({
-              from: 'Inner Edge Podcast <podcast@send.inneredge.co>',
-              to: 'podcast@inneredge.co',
-              subject: `Guest Profile Completed - ${formData.firstName} ${formData.lastName}`,
-              html: `
-                <p><strong>Guest profile completed:</strong></p>
-                <p><strong>NAME:</strong> ${formData.firstName} ${formData.lastName}<br>
-                <strong>EMAIL:</strong> ${formData.email}<br>
-                <strong>PHONE:</strong> ${formData.phone}<br>
-                <strong>PROFESSION:</strong> ${formData.profession}</p>
-                <p><strong>SHORT BIO:</strong><br>${formData.shortBio}</p>
-                ${formData.longBio ? `<p><strong>LONG BIO:</strong><br>${formData.longBio.replace(/\n/g, '<br>')}</p>` : ''}
-                <p><strong>PHOTO:</strong> <a href="${photoUrl}">${photoUrl}</a></p>
-                <p><strong>SOCIAL LINKS:</strong><br>
-                Website: ${formData.website ? `<a href="${normalizeUrl(formData.website)}">${normalizeUrl(formData.website)}</a>` : 'Not provided'}<br>
-                Facebook: ${formData.facebook ? `<a href="${formatSocialUrl(formData.facebook, 'facebook')}">${formatSocialUrl(formData.facebook, 'facebook')}</a>` : 'Not provided'}<br>
-                Instagram: ${formData.instagram ? `<a href="${formatSocialUrl(formData.instagram, 'instagram')}">${formatSocialUrl(formData.instagram, 'instagram')}</a>` : 'Not provided'}<br>
-                LinkedIn: ${formData.linkedin ? `<a href="${formatLinkedInUrl(formData.linkedin)}">${formatLinkedInUrl(formData.linkedin)}</a>` : 'Not provided'}</p>
-              `
-            })
-          });
-
-          console.log('Emails sent successfully');
-        } catch (error) {
-          console.error('Email error:', error);
-        }
-      }
-
-      console.log('=== Form Submitted Successfully ===');
       setSuccess(true);
       setLoading(false);
       setFormData({
