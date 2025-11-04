@@ -151,27 +151,46 @@ export function PodcastGuestOnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('=== FRONTEND: Form Submission Started ===');
     setLoading(true);
     setError('');
 
+    console.log('=== FRONTEND: Environment Variables Check ===');
+    console.log('Webhook URL:', import.meta.env.VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING || 'NOT SET');
+    console.log('R2 Bucket:', import.meta.env.VITE_R2_GUESTS_BUCKET_NAME || 'NOT SET');
+    console.log('R2 Endpoint:', import.meta.env.VITE_R2_GUESTS_ENDPOINT || 'NOT SET');
+    console.log('R2 Access Key ID:', import.meta.env.VITE_R2_GUESTS_ACCESS_KEY_ID ? 'SET' : 'NOT SET');
+    console.log('R2 Public URL:', import.meta.env.VITE_R2_GUESTS_PUBLIC_URL || 'NOT SET');
+
     if (!photoFile) {
+      console.error('=== FRONTEND: Validation Failed - No Photo ===');
       setError('Please upload your headshot photo.');
       setLoading(false);
       return;
     }
 
+    console.log('=== FRONTEND: Form Data ===');
+    console.log('Name:', formData.firstName, formData.lastName);
+    console.log('Email:', formData.email);
+    console.log('Phone:', formData.phone);
+    console.log('Photo:', photoFile.name, photoFile.size, 'bytes', photoFile.type);
+
     try {
+      console.log('=== FRONTEND: Starting Photo File Read ===');
       const reader = new FileReader();
       reader.readAsDataURL(photoFile);
 
       reader.onloadend = async () => {
         try {
+          console.log('=== FRONTEND: Photo File Read Complete ===');
           const base64String = (reader.result as string).split(',')[1];
+          console.log('Base64 string length:', base64String.length);
 
           const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
           const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
           const apiUrl = `${supabaseUrl}/functions/v1/guest-onboarding-submission`;
+          console.log('=== FRONTEND: API URL ===', apiUrl);
 
           const payload = {
             firstName: formData.firstName,
@@ -190,6 +209,10 @@ export function PodcastGuestOnboardingPage() {
             photoFileType: photoFile.type,
           };
 
+          console.log('=== FRONTEND: Payload Prepared ===');
+          console.log('Payload (without photo):', { ...payload, photoFile: `[${base64String.length} chars]` });
+
+          console.log('=== FRONTEND: Sending Request to Edge Function ===');
           const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -199,15 +222,31 @@ export function PodcastGuestOnboardingPage() {
             body: JSON.stringify(payload),
           });
 
+          console.log('=== FRONTEND: Response Received ===');
+          console.log('Response status:', response.status);
+          console.log('Response ok:', response.ok);
+
           const result = await response.json();
+          console.log('=== FRONTEND: Response Parsed ===');
+          console.log('Result:', result);
 
           if (!response.ok) {
+            console.error('=== FRONTEND: Submission Failed ===');
+            console.error('Status:', response.status);
+            console.error('Error:', result.error);
             throw new Error(result.error || 'Submission failed');
           }
 
           if (result.errors && result.errors.length > 0) {
-            console.error('Submission errors:', result.errors);
+            console.warn('=== FRONTEND: Partial Success ===');
+            console.warn('Some operations failed:', result.errors);
           }
+
+          console.log('=== FRONTEND: Form Submitted Successfully ===');
+          console.log('Photo URL:', result.photoUrl);
+          console.log('Webhook success:', result.webhookSuccess);
+          console.log('Confirmation email:', result.confirmationEmailSuccess);
+          console.log('Notification email:', result.notificationEmailSuccess);
 
           setSuccess(true);
           setFormData({
@@ -225,21 +264,32 @@ export function PodcastGuestOnboardingPage() {
           });
           removePhoto();
 
-          setTimeout(() => setSuccess(false), 8000);
+          setTimeout(() => {
+            console.log('=== FRONTEND: Success Message Cleared ===');
+            setSuccess(false);
+          }, 8000);
         } catch (err) {
-          console.error('Form submission error:', err);
+          console.error('=== FRONTEND: Submission Error (Inner) ===');
+          console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
+          console.error('Error message:', err instanceof Error ? err.message : String(err));
+          console.error('Error stack:', err instanceof Error ? err.stack : 'N/A');
+          console.error('Full error:', err);
           setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-        } finally {
           setLoading(false);
         }
       };
 
-      reader.onerror = () => {
+      reader.onerror = (error) => {
+        console.error('=== FRONTEND: FileReader Error ===');
+        console.error('Error:', error);
         setError('Failed to read image file. Please try again.');
         setLoading(false);
       };
     } catch (err) {
-      console.error('Form submission error:', err);
+      console.error('=== FRONTEND: Submission Error (Outer) ===');
+      console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
+      console.error('Error message:', err instanceof Error ? err.message : String(err));
+      console.error('Full error:', err);
       setError('Something went wrong. Please try again.');
       setLoading(false);
     }
