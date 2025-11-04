@@ -7,6 +7,43 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+const getEnvVar = (name: string): string | undefined => {
+  return Deno.env.get(`VITE_${name}`) || Deno.env.get(name);
+};
+
+const config = {
+  r2: {
+    accessKeyId: getEnvVar('R2_GUESTS_ACCESS_KEY_ID'),
+    secretAccessKey: getEnvVar('R2_GUESTS_SECRET_ACCESS_KEY'),
+    endpoint: getEnvVar('R2_GUESTS_ENDPOINT'),
+    bucketName: getEnvVar('R2_GUESTS_BUCKET_NAME'),
+    publicUrl: getEnvVar('R2_GUESTS_PUBLIC_URL')
+  },
+  webhookUrl: getEnvVar('PABBLY_WEBHOOK_URL_GUEST_ONBOARDING'),
+  resendApiKey: getEnvVar('RESEND_API_KEY')
+};
+
+console.log('=== EDGE FUNCTION: Environment Variables Check ===');
+console.log('Environment variables loaded:', {
+  r2AccessKey: config.r2.accessKeyId ? 'FOUND' : 'MISSING',
+  r2SecretKey: config.r2.secretAccessKey ? 'FOUND' : 'MISSING',
+  r2Endpoint: config.r2.endpoint ? 'FOUND' : 'MISSING',
+  r2Bucket: config.r2.bucketName ? 'FOUND' : 'MISSING',
+  r2PublicUrl: config.r2.publicUrl ? 'FOUND' : 'MISSING',
+  webhookUrl: config.webhookUrl ? 'FOUND' : 'MISSING',
+  resendKey: config.resendApiKey ? 'FOUND' : 'MISSING'
+});
+
+try {
+  const allEnvVars = Object.keys(Deno.env.toObject());
+  console.log('Total environment variables available:', allEnvVars.length);
+  console.log('Available env var names:', allEnvVars.filter(key =>
+    key.includes('R2') || key.includes('PABBLY') || key.includes('RESEND') || key.includes('VITE')
+  ));
+} catch (error) {
+  console.log('Could not list environment variables:', error);
+}
+
 interface GuestOnboardingSubmission {
   firstName: string;
   lastName: string;
@@ -67,29 +104,30 @@ async function uploadToR2(
   fileName: string,
   contentType: string
 ): Promise<string> {
-  const accessKeyId = Deno.env.get("VITE_R2_GUESTS_ACCESS_KEY_ID");
-  const secretAccessKey = Deno.env.get("VITE_R2_GUESTS_SECRET_ACCESS_KEY");
-  const endpoint = Deno.env.get("VITE_R2_GUESTS_ENDPOINT");
-  const bucketName = Deno.env.get("VITE_R2_GUESTS_BUCKET_NAME");
-  const publicUrl = Deno.env.get("VITE_R2_GUESTS_PUBLIC_URL");
-
-  if (!accessKeyId || !secretAccessKey || !endpoint || !bucketName || !publicUrl) {
-    throw new Error("R2 credentials not configured");
+  if (!config.r2.accessKeyId || !config.r2.secretAccessKey || !config.r2.endpoint || !config.r2.bucketName || !config.r2.publicUrl) {
+    console.error('Missing R2 credentials:', {
+      accessKeyId: config.r2.accessKeyId ? 'present' : 'MISSING',
+      secretAccessKey: config.r2.secretAccessKey ? 'present' : 'MISSING',
+      endpoint: config.r2.endpoint ? 'present' : 'MISSING',
+      bucketName: config.r2.bucketName ? 'present' : 'MISSING',
+      publicUrl: config.r2.publicUrl ? 'present' : 'MISSING'
+    });
+    throw new Error("R2 credentials not configured. Please add VITE_R2_GUESTS_* environment variables in Supabase Edge Function secrets.");
   }
 
   const s3Client = new S3Client({
     region: "auto",
-    endpoint: endpoint,
+    endpoint: config.r2.endpoint,
     credentials: {
-      accessKeyId,
-      secretAccessKey,
+      accessKeyId: config.r2.accessKeyId,
+      secretAccessKey: config.r2.secretAccessKey,
     },
   });
 
   const key = `headshots/${fileName}`;
 
   const command = new PutObjectCommand({
-    Bucket: bucketName,
+    Bucket: config.r2.bucketName,
     Key: key,
     Body: fileData,
     ContentType: contentType,
@@ -97,7 +135,7 @@ async function uploadToR2(
 
   await s3Client.send(command);
 
-  return `${publicUrl}/headshots/${fileName}`;
+  return `${config.r2.publicUrl}/headshots/${fileName}`;
 }
 
 Deno.serve(async (req: Request) => {
@@ -118,22 +156,14 @@ Deno.serve(async (req: Request) => {
     console.log("Name:", formData.firstName, formData.lastName);
     console.log("Email:", formData.email);
 
-    console.log("=== EDGE FUNCTION: Environment Variables Check ===");
-    const webhookUrl = Deno.env.get("VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING");
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const r2AccessKeyId = Deno.env.get("VITE_R2_GUESTS_ACCESS_KEY_ID");
-    const r2SecretAccessKey = Deno.env.get("VITE_R2_GUESTS_SECRET_ACCESS_KEY");
-    const r2Endpoint = Deno.env.get("VITE_R2_GUESTS_ENDPOINT");
-    const r2BucketName = Deno.env.get("VITE_R2_GUESTS_BUCKET_NAME");
-    const r2PublicUrl = Deno.env.get("VITE_R2_GUESTS_PUBLIC_URL");
-
-    console.log("Webhook URL:", webhookUrl ? "SET" : "NOT SET");
-    console.log("Resend API Key:", resendApiKey ? "SET" : "NOT SET");
-    console.log("R2 Access Key ID:", r2AccessKeyId ? "SET" : "NOT SET");
-    console.log("R2 Secret Access Key:", r2SecretAccessKey ? "SET" : "NOT SET");
-    console.log("R2 Endpoint:", r2Endpoint || "NOT SET");
-    console.log("R2 Bucket Name:", r2BucketName || "NOT SET");
-    console.log("R2 Public URL:", r2PublicUrl || "NOT SET");
+    console.log("=== EDGE FUNCTION: Using Config from Startup ===");
+    console.log("Webhook URL:", config.webhookUrl ? "SET" : "NOT SET");
+    console.log("Resend API Key:", config.resendApiKey ? "SET" : "NOT SET");
+    console.log("R2 Access Key ID:", config.r2.accessKeyId ? "SET" : "NOT SET");
+    console.log("R2 Secret Access Key:", config.r2.secretAccessKey ? "SET" : "NOT SET");
+    console.log("R2 Endpoint:", config.r2.endpoint || "NOT SET");
+    console.log("R2 Bucket Name:", config.r2.bucketName || "NOT SET");
+    console.log("R2 Public URL:", config.r2.publicUrl || "NOT SET");
 
     const submittedAt = new Date().toISOString();
     const slug = generateSlug(formData.firstName, formData.lastName);
@@ -187,9 +217,9 @@ Deno.serve(async (req: Request) => {
     let notificationEmailSuccess = false;
     const errors: string[] = [];
 
-    if (webhookUrl) {
+    if (config.webhookUrl) {
       try {
-        const webhookResponse = await fetch(webhookUrl, {
+        const webhookResponse = await fetch(config.webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -214,13 +244,13 @@ Deno.serve(async (req: Request) => {
       console.warn("VITE_PABBLY_WEBHOOK_URL_GUEST_ONBOARDING not set");
     }
 
-    if (resendApiKey) {
+    if (config.resendApiKey) {
       try {
         const confirmationResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${resendApiKey}`,
+            "Authorization": `Bearer ${config.resendApiKey}`,
           },
           body: JSON.stringify({
             from: "Inner Edge Podcast <podcast@send.inneredge.co>",
@@ -258,7 +288,7 @@ Deno.serve(async (req: Request) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${resendApiKey}`,
+            "Authorization": `Bearer ${config.resendApiKey}`,
           },
           body: JSON.stringify({
             from: "Inner Edge Podcast <podcast@send.inneredge.co>",
