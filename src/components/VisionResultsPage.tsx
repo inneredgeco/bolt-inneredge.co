@@ -30,6 +30,9 @@ export function VisionResultsPage() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const AREA_TITLES: Record<string, string> = {
     'health-fitness': 'Health & Fitness',
@@ -206,7 +209,48 @@ export function VisionResultsPage() {
   };
 
   const handleEmailCopy = async () => {
-    alert('Email functionality coming soon! For now, you can print or download this page.');
+    if (!visionData || !submissionId) return;
+
+    setIsSendingEmail(true);
+    setEmailSuccess(false);
+    setEmailError(null);
+
+    try {
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/email-vision`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          submissionId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Email API error:', errorData);
+        throw new Error(errorData.error || 'Failed to send email');
+      }
+
+      const data = await response.json();
+      console.log('Email sent successfully:', data);
+
+      setEmailSuccess(true);
+      setTimeout(() => {
+        setEmailSuccess(false);
+      }, 5000);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setEmailError('Failed to send email. Please try downloading the PDF instead.');
+      setTimeout(() => {
+        setEmailError(null);
+      }, 5000);
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   const handleCopyLink = () => {
@@ -309,6 +353,22 @@ export function VisionResultsPage() {
             </div>
           )}
 
+          {emailSuccess && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Check className="text-green-600" size={24} />
+                <span className="text-green-800 font-semibold">Email sent to {visionData.email}!</span>
+              </div>
+              <p className="text-green-700 text-sm">Check your inbox (and spam folder)</p>
+            </div>
+          )}
+
+          {emailError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
+              {emailError}
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-4 justify-center mb-8 print:hidden">
             <button
               onClick={handleDownloadPDF}
@@ -329,10 +389,20 @@ export function VisionResultsPage() {
             </button>
             <button
               onClick={handleEmailCopy}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors"
+              disabled={isSendingEmail}
+              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Mail size={20} />
-              Email Me a Copy
+              {isSendingEmail ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+                  Sending Email...
+                </>
+              ) : (
+                <>
+                  <Mail size={20} />
+                  Email Me a Copy
+                </>
+              )}
             </button>
             <Link
               to="/vision-builder"
@@ -465,10 +535,20 @@ export function VisionResultsPage() {
             </button>
             <button
               onClick={handleEmailCopy}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors"
+              disabled={isSendingEmail}
+              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Mail size={20} />
-              Email Me a Copy
+              {isSendingEmail ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+                  Sending Email...
+                </>
+              ) : (
+                <>
+                  <Mail size={20} />
+                  Email Me a Copy
+                </>
+              )}
             </button>
             <Link
               to="/vision-builder"
