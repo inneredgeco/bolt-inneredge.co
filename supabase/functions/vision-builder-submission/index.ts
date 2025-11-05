@@ -24,6 +24,7 @@ Deno.serve(async (req: Request) => {
     const formData: VisionBuilderSubmission = await req.json();
 
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const flodeskApiKey = Deno.env.get("FLODESK_API_KEY");
     const baseUrl = "https://www.inneredge.co";
 
     if (!resendApiKey) {
@@ -43,6 +44,35 @@ Deno.serve(async (req: Request) => {
     }
 
     const resumeUrl = `${baseUrl}/vision-builder/resume/${formData.submissionId}`;
+
+    if (flodeskApiKey) {
+      try {
+        const flodeskResponse = await fetch(
+          "https://api.flodesk.com/v1/subscribers",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Basic " + btoa(flodeskApiKey + ":"),
+            },
+            body: JSON.stringify({
+              first_name: formData.name,
+              email: formData.email,
+              segment_ids: ["VISION_BUILDER_SEGMENT_ID"],
+              double_optin: true,
+            }),
+          }
+        );
+
+        if (!flodeskResponse.ok) {
+          console.error("Failed to add to Flodesk segment:", await flodeskResponse.text());
+        } else {
+          console.log("Successfully added to Vision Builder Flodesk segment");
+        }
+      } catch (flodeskError) {
+        console.error("Error adding to Flodesk:", flodeskError);
+      }
+    }
 
     try {
       const confirmationResponse = await fetch("https://api.resend.com/emails", {

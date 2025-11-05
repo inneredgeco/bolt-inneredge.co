@@ -13,23 +13,23 @@ export function BlogNewsletterSignup() {
     setMessage(null);
 
     try {
-      const API_KEY = 'fd_key_6f6209abe2024b23ab120d0b79eadf8b.K22hdBBKP7iLAmxhcqIv8M6LhLhMvekQEsTBp3tC5XbGTM0ljLSgHHBYuEzH5z8FLoi1zgzxGPBxIJnap4lZoawV33XaUHA2y3JTbNNJc6NVckqrPbDKFECoUvEsVKUXg6bV0riyo6TVnSqLMli7DuUnzEPaokhvAdOxJsPh4aMmnFKBetRu9oDdMPRAhdqM';
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/blog-newsletter-signup`;
 
-      const response = await fetch('https://api.flodesk.com/v1/subscribers', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa(API_KEY + ':'),
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
-          first_name: firstName,
+          firstName: firstName,
           email: email,
-          segment_ids: ['68f80ada11436db6d8879f73'],
-          double_optin: true,
         }),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setMessage({ type: 'success', text: '✓ Check your email (spam folder) to confirm your subscription!' });
         setFirstName('');
         setEmail('');
