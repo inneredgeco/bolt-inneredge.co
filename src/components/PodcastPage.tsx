@@ -134,7 +134,7 @@ export function PodcastPage() {
                     Hosted by Soleiman Bolour
                   </p>
                   <p className="text-stone-600">
-                    Men's Coach & Facilitator
+                    Coach, Facilitator, and Community Founder
                   </p>
                 </div>
               </div>
