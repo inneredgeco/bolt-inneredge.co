@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { SEOHead } from './SEOHead';
-import { Globe, Facebook, Instagram, ExternalLink } from 'lucide-react';
+import { Globe, Facebook, Instagram, Linkedin, Music2, Play } from 'lucide-react';
 
 interface Guest {
   id: string;
@@ -18,6 +18,7 @@ interface Guest {
   website_url: string | null;
   facebook_url: string | null;
   instagram_url: string | null;
+  linkedin_url: string | null;
   episode_title: string | null;
   episode_date: string | null;
   spotify_url: string | null;
@@ -125,16 +126,27 @@ export function GuestProfilePage() {
                 {guest.profession}
               </p>
 
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-3">
                 {guest.website_url && (
                   <a
                     href={guest.website_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white text-brand-700 px-4 py-2 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="Website"
                   >
-                    <Globe size={20} />
-                    Website
+                    <Globe size={24} />
+                  </a>
+                )}
+                {guest.linkedin_url && (
+                  <a
+                    href={guest.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin size={24} />
                   </a>
                 )}
                 {guest.facebook_url && (
@@ -142,10 +154,10 @@ export function GuestProfilePage() {
                     href={guest.facebook_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white text-brand-700 px-4 py-2 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="Facebook"
                   >
-                    <Facebook size={20} />
-                    Facebook
+                    <Facebook size={24} />
                   </a>
                 )}
                 {guest.instagram_url && (
@@ -153,10 +165,10 @@ export function GuestProfilePage() {
                     href={guest.instagram_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white text-brand-700 px-4 py-2 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="Instagram"
                   >
-                    <Instagram size={20} />
-                    Instagram
+                    <Instagram size={24} />
                   </a>
                 )}
               </div>
@@ -206,10 +218,10 @@ export function GuestProfilePage() {
                         href={guest.spotify_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white text-brand-700 px-6 py-3 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                        className="inline-flex items-center gap-2 bg-[#1DB954] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#1ed760] transition-colors"
                       >
-                        <ExternalLink size={20} />
-                        Listen on Spotify
+                        <Music2 size={20} />
+                        Spotify
                       </a>
                     )}
                     {guest.apple_url && (
@@ -217,10 +229,10 @@ export function GuestProfilePage() {
                         href={guest.apple_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white text-brand-700 px-6 py-3 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FA57C1] to-[#B14FE0] text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
                       >
-                        <ExternalLink size={20} />
-                        Listen on Apple Podcasts
+                        <Play size={20} />
+                        Apple Podcasts
                       </a>
                     )}
                     {guest.youtube_url && (
@@ -228,10 +240,10 @@ export function GuestProfilePage() {
                         href={guest.youtube_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-white text-brand-700 px-6 py-3 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                        className="inline-flex items-center gap-2 bg-[#FF0000] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#cc0000] transition-colors"
                       >
-                        <ExternalLink size={20} />
-                        Watch on YouTube
+                        <Play size={20} />
+                        YouTube
                       </a>
                     )}
                   </div>
