@@ -118,11 +118,11 @@ export function GuestProfilePage() {
                 alt={guest.full_name}
                 className="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-white shadow-xl object-cover"
               />
-              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
                 {guest.full_name}
               </h1>
-              <p className="text-xl text-brand-100 mb-6">
-                {guest.short_bio}
+              <p className="text-xl text-brand-100 font-semibold mb-6">
+                {guest.profession}
               </p>
 
               <div className="flex items-center justify-center gap-4">
@@ -167,8 +167,8 @@ export function GuestProfilePage() {
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
                   About {guest.first_name}
                 </h2>
-                <p className="text-lg text-gray-700 mb-4">
-                  <span className="font-semibold">{guest.profession}</span>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  {guest.short_bio}
                 </p>
               </section>
 
