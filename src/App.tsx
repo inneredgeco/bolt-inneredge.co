@@ -21,6 +21,7 @@ import { PodcastGuestPage } from './components/PodcastGuestPage';
 import { PodcastGuestFormPage } from './components/PodcastGuestFormPage';
 import { PodcastGuestOnboardingPage } from './components/PodcastGuestOnboardingPage';
 import { GuestProfilePage } from './components/GuestProfilePage';
+import { GuestsDirectoryPage } from './components/GuestsDirectoryPage';
 import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
@@ -42,6 +43,7 @@ function App() {
         <Route path="/podcast-guest" element={<><PodcastGuestPage /><Footer /></>} />
         <Route path="/podcast-guest-form" element={<PodcastGuestFormPage />} />
         <Route path="/podcast-guest-onboarding" element={<PodcastGuestOnboardingPage />} />
+        <Route path="/guests" element={<GuestsDirectoryPage />} />
         <Route path="/guests/:slug" element={<><GuestProfilePage /><Footer /></>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
