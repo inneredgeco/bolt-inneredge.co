@@ -24,6 +24,7 @@ import { PodcastGuestFormPage } from './components/PodcastGuestFormPage';
 import { PodcastGuestOnboardingPage } from './components/PodcastGuestOnboardingPage';
 import { GuestProfilePage } from './components/GuestProfilePage';
 import { GuestsDirectoryPage } from './components/GuestsDirectoryPage';
+import { VisionBuilderPage } from './components/VisionBuilderPage';
 import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
@@ -58,6 +59,8 @@ function App() {
         <Route path="/podcast-guest-onboarding" element={<PodcastGuestOnboardingPage />} />
         <Route path="/guests" element={<GuestsDirectoryPage />} />
         <Route path="/guests/:slug" element={<><GuestProfilePage /><Footer /></>} />
+        <Route path="/vision-builder" element={<VisionBuilderPage />} />
+        <Route path="/vision-builder/resume/:submissionId" element={<VisionBuilderPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/blog-posts" element={<ProtectedRoute><BlogPostsAdminPage /></ProtectedRoute>} />
