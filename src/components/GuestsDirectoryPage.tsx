@@ -44,7 +44,7 @@ export function GuestsDirectoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-stone-50">
       <SEOHead
         title="Podcast Guests - Inner Edge"
         description="Meet the inspiring guests who have appeared on the Inner Edge Podcast, sharing their expertise in men's personal development and transformation."
@@ -85,24 +85,24 @@ export function GuestsDirectoryPage() {
               <Link
                 key={guest.id}
                 to={`/guests/${guest.slug}`}
-                className="flex-shrink-0 w-64 bg-black rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden group"
+                className="flex-shrink-0 w-64 bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden group"
               >
                 <div className="p-6 text-center">
                   <div className="mb-4">
                     <img
                       src={guest.photo_url}
                       alt={guest.full_name}
-                      className="w-[150px] h-[150px] rounded-full object-cover mx-auto border-4 border-white"
+                      className="w-[150px] h-[150px] rounded-full object-cover mx-auto border-4 border-stone-100 group-hover:border-teal-200 transition-colors"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = 'https://via.placeholder.com/150x150/000000/ffffff?text=' + guest.first_name.charAt(0);
+                        target.src = 'https://via.placeholder.com/150x150/e7e5e4/78716c?text=' + guest.first_name.charAt(0);
                       }}
                     />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">
+                  <h3 className="text-lg font-bold text-stone-900 mb-1">
                     {guest.full_name}
                   </h3>
-                  <p className="text-sm text-teal-400 font-medium">
+                  <p className="text-sm text-teal-600 font-semibold">
                     {guest.profession}
                   </p>
                 </div>
