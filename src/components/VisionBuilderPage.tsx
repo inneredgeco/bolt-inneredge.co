@@ -5,6 +5,10 @@ import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { VisionBuilderStep1 } from './VisionBuilderStep1';
 import { VisionBuilderStep2 } from './VisionBuilderStep2';
+import { VisionBuilderStep3 } from './VisionBuilderStep3';
+import { VisionBuilderStep4 } from './VisionBuilderStep4';
+import { VisionBuilderStep5 } from './VisionBuilderStep5';
+import { VisionBuilderStep6 } from './VisionBuilderStep6';
 import { supabase } from '../lib/supabase';
 
 export interface VisionSubmissionData {
@@ -137,6 +141,173 @@ export function VisionBuilderPage() {
     }
   };
 
+  const handleStep3Complete = async (currentReality: string, whyImportant: string) => {
+    if (!submissionData.id) {
+      setError('Missing submission ID. Please start over.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          current_reality: currentReality,
+          why_important: whyImportant,
+          current_step: 4,
+          step_3_completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionData.id);
+
+      if (updateError) {
+        console.error('Error updating submission:', updateError);
+        setError('Failed to save your progress. Please try again.');
+        return;
+      }
+
+      setSubmissionData({
+        ...submissionData,
+        current_reality: currentReality,
+        why_important: whyImportant,
+        current_step: 4,
+      });
+
+      setCurrentStep(4);
+    } catch (err) {
+      console.error('Error saving step 3:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStep4Complete = async (beingWords: string[]) => {
+    if (!submissionData.id) {
+      setError('Missing submission ID. Please start over.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          being_words: beingWords,
+          current_step: 5,
+          step_4_completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionData.id);
+
+      if (updateError) {
+        console.error('Error updating submission:', updateError);
+        setError('Failed to save your progress. Please try again.');
+        return;
+      }
+
+      setSubmissionData({
+        ...submissionData,
+        being_words: beingWords,
+        current_step: 5,
+      });
+
+      setCurrentStep(5);
+    } catch (err) {
+      console.error('Error saving step 4:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStep5Complete = async (doingActions: string[]) => {
+    if (!submissionData.id) {
+      setError('Missing submission ID. Please start over.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          doing_actions: doingActions,
+          current_step: 6,
+          step_5_completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionData.id);
+
+      if (updateError) {
+        console.error('Error updating submission:', updateError);
+        setError('Failed to save your progress. Please try again.');
+        return;
+      }
+
+      setSubmissionData({
+        ...submissionData,
+        doing_actions: doingActions,
+        current_step: 6,
+      });
+
+      setCurrentStep(6);
+    } catch (err) {
+      console.error('Error saving step 5:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStep6Complete = async (havingOutcomes: string[]) => {
+    if (!submissionData.id) {
+      setError('Missing submission ID. Please start over.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          having_outcomes: havingOutcomes,
+          current_step: 7,
+          step_6_completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          status: 'generating',
+        })
+        .eq('id', submissionData.id);
+
+      if (updateError) {
+        console.error('Error updating submission:', updateError);
+        setError('Failed to save your progress. Please try again.');
+        return;
+      }
+
+      setSubmissionData({
+        ...submissionData,
+        having_outcomes: havingOutcomes,
+        current_step: 7,
+      });
+
+      setCurrentStep(7);
+    } catch (err) {
+      console.error('Error saving step 6:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -220,15 +391,51 @@ export function VisionBuilderPage() {
           />
         )}
 
-        {currentStep >= 3 && (
-          <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-            <h2 className="text-3xl font-bold text-stone-900 mb-4">Coming Soon</h2>
-            <p className="text-lg text-stone-600">
-              Steps 3-6 are currently being developed.
-            </p>
-            <p className="text-stone-500 mt-4">
-              Your progress has been saved. We'll notify you when the remaining steps are available.
-            </p>
+        {currentStep === 3 && (
+          <VisionBuilderStep3
+            onComplete={handleStep3Complete}
+            onBack={handleBack}
+            initialData={submissionData}
+            isLoading={isLoading}
+          />
+        )}
+
+        {currentStep === 4 && (
+          <VisionBuilderStep4
+            onComplete={handleStep4Complete}
+            onBack={handleBack}
+            initialData={submissionData}
+            isLoading={isLoading}
+          />
+        )}
+
+        {currentStep === 5 && (
+          <VisionBuilderStep5
+            onComplete={handleStep5Complete}
+            onBack={handleBack}
+            initialData={submissionData}
+            isLoading={isLoading}
+          />
+        )}
+
+        {currentStep === 6 && (
+          <VisionBuilderStep6
+            onComplete={handleStep6Complete}
+            onBack={handleBack}
+            initialData={submissionData}
+            isLoading={isLoading}
+          />
+        )}
+
+        {currentStep >= 7 && (
+          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-500 via-brand-600 to-brand-800">
+            <div className="text-center px-4">
+              <div className="w-24 h-24 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
+              <h2 className="text-4xl font-bold text-white mb-4">Creating your vision...</h2>
+              <p className="text-xl text-brand-100 max-w-md mx-auto">
+                We're crafting your personalized 1-year vision based on your responses
+              </p>
+            </div>
           </div>
         )}
       </div>
