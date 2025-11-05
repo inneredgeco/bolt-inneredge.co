@@ -290,6 +290,7 @@ export function VisionBuilderPage() {
       if (updateError) {
         console.error('Error updating submission:', updateError);
         setError('Failed to save your progress. Please try again.');
+        setIsLoading(false);
         return;
       }
 
@@ -300,10 +301,43 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(7);
+
+      try {
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-vision`;
+
+        const visionResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            submissionId: submissionData.id,
+          }),
+        });
+
+        if (!visionResponse.ok) {
+          const errorData = await visionResponse.json();
+          console.error('Vision generation error:', errorData);
+          setError('Failed to generate your vision. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+
+        const visionData = await visionResponse.json();
+        console.log('Vision generated successfully:', visionData);
+
+        // TODO: Navigate to results page in Part 2
+        // For now, keep showing loading screen
+
+      } catch (visionError) {
+        console.error('Error calling vision generation:', visionError);
+        setError('Failed to generate your vision. Please try again.');
+        setIsLoading(false);
+      }
     } catch (err) {
       console.error('Error saving step 6:', err);
       setError('An unexpected error occurred. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -430,10 +464,16 @@ export function VisionBuilderPage() {
         {currentStep >= 7 && (
           <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-500 via-brand-600 to-brand-800">
             <div className="text-center px-4">
-              <div className="w-24 h-24 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-8"></div>
+              <div className="relative w-24 h-24 mx-auto mb-8">
+                <div className="absolute inset-0 border-4 border-white/30 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
               <h2 className="text-4xl font-bold text-white mb-4">Creating your vision...</h2>
-              <p className="text-xl text-brand-100 max-w-md mx-auto">
+              <p className="text-xl text-brand-100 max-w-md mx-auto mb-2">
                 We're crafting your personalized 1-year vision based on your responses
+              </p>
+              <p className="text-lg text-brand-200 max-w-md mx-auto">
+                This may take 30-60 seconds
               </p>
             </div>
           </div>
