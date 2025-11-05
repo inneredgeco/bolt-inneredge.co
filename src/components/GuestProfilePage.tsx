@@ -191,19 +191,19 @@ export function GuestProfilePage() {
                   </h3>
                   {guest.episode_title && (
                     <p className="text-xl mb-2 font-semibold text-brand-100">
-                      {guest.episode_title}
+                      <span className="text-white">Title:</span> {guest.episode_title}
                     </p>
                   )}
                   {guest.episode_date && (
                     <p className="text-brand-100 mb-6">
-                      {new Date(guest.episode_date).toLocaleDateString('en-US', {
+                      <span className="text-white">Date:</span> {new Date(guest.episode_date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                       })}
                     </p>
                   )}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap justify-center gap-3">
                     {guest.spotify_url && (
                       <a
                         href={guest.spotify_url}
