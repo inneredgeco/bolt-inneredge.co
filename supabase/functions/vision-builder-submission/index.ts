@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
             body: JSON.stringify({
               first_name: formData.name,
               email: formData.email,
-              segment_ids: ["VISION_BUILDER_SEGMENT_ID"],
+              segment_ids: ["690b95e1446cc061a40e38e9"],
               double_optin: true,
             }),
           }
