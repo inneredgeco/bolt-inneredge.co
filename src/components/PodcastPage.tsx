@@ -202,7 +202,7 @@ export function PodcastPage() {
               <div className="text-center mt-8">
                 <Link
                   to="/guests"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white rounded-lg hover:bg-stone-800 font-semibold transition-all hover:scale-105 shadow-lg"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 text-white rounded-lg hover:bg-brand-700 font-semibold transition-all hover:scale-105 shadow-lg"
                 >
                   View All Guests
                   <ArrowRight className="w-5 h-5" />
