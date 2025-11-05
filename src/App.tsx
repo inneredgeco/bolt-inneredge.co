@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { HomePage } from './components/HomePage';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { EmotionalReleaseTechniques } from './components/EmotionalReleaseTechniques';
@@ -27,9 +28,20 @@ import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <div className="min-h-screen bg-white">
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<><HomePage /><Footer /></>} />
         <Route path="/privacy-policy" element={<><PrivacyPolicy /><Footer /></>} />
