@@ -22,7 +22,7 @@ interface Guest {
   episode_title: string | null;
   episode_date: string | null;
   spotify_url: string | null;
-  apple_url: string | null;
+  apple_podcast_url: string | null;
   youtube_url: string | null;
   status: string;
 }
@@ -97,7 +97,7 @@ export function GuestProfilePage() {
     );
   }
 
-  const hasEpisode = guest.episode_title || guest.spotify_url || guest.apple_url || guest.youtube_url;
+  const hasEpisode = guest.episode_title || guest.spotify_url || guest.apple_podcast_url || guest.youtube_url;
 
   return (
     <>
@@ -224,9 +224,9 @@ export function GuestProfilePage() {
                         Spotify
                       </a>
                     )}
-                    {guest.apple_url && (
+                    {guest.apple_podcast_url && (
                       <a
-                        href={guest.apple_url}
+                        href={guest.apple_podcast_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FA57C1] to-[#B14FE0] text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
