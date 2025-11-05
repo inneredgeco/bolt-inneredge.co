@@ -327,8 +327,7 @@ export function VisionBuilderPage() {
         const visionData = await visionResponse.json();
         console.log('Vision generated successfully:', visionData);
 
-        // TODO: Navigate to results page in Part 2
-        // For now, keep showing loading screen
+        navigate(`/vision-builder/results/${submissionData.id}`);
 
       } catch (visionError) {
         console.error('Error calling vision generation:', visionError);

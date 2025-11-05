@@ -26,6 +26,7 @@ import { GuestProfilePage } from './components/GuestProfilePage';
 import { GuestsDirectoryPage } from './components/GuestsDirectoryPage';
 import { VisionBuilderPage } from './components/VisionBuilderPage';
 import { VisionAnalyticsPage } from './components/VisionAnalyticsPage';
+import { VisionResultsPage } from './components/VisionResultsPage';
 import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
@@ -62,6 +63,7 @@ function App() {
         <Route path="/guests/:slug" element={<><GuestProfilePage /><Footer /></>} />
         <Route path="/vision-builder" element={<VisionBuilderPage />} />
         <Route path="/vision-builder/resume/:submissionId" element={<VisionBuilderPage />} />
+        <Route path="/vision-builder/results/:submissionId" element={<VisionResultsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/blog-posts" element={<ProtectedRoute><BlogPostsAdminPage /></ProtectedRoute>} />
