@@ -65,7 +65,7 @@ export default function NewsletterForm() {
                 FREE RESOURCE
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                The 3 Part Vision Formula
+                Vision Formula
               </h2>
               <p className="text-base text-gray-700 max-w-xl mx-auto">
                 Download your free guide and learn what is required to create a vision for your life.
