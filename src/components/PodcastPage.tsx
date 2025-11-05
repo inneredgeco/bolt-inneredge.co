@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from './Header';
-import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { supabase } from '../lib/supabase';
 import { Mic, ArrowRight, Play, Music2, Users } from 'lucide-react';
@@ -232,8 +231,6 @@ export function PodcastPage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }
