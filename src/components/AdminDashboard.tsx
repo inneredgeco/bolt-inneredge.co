@@ -1,6 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { LogOut, FileText, Mail, Users } from 'lucide-react';
+import { LogOut, FileText, Mail, Users, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface DashboardCard {
@@ -35,6 +35,13 @@ export function AdminDashboard() {
       icon: <Mail className="w-8 h-8 text-teal-600" />,
       link: '/admin/email-templates',
       buttonText: 'Edit Email Templates'
+    },
+    {
+      title: 'Vision Analytics',
+      description: 'View Vision Builder submissions and completion data',
+      icon: <BarChart3 className="w-8 h-8 text-teal-600" />,
+      link: '/admin/vision-analytics',
+      buttonText: 'View Analytics'
     }
   ];
 
@@ -99,12 +106,6 @@ export function AdminDashboard() {
           ))}
         </div>
 
-        <div className="mt-12 p-6 bg-stone-100 rounded-lg border border-stone-200 max-w-5xl">
-          <h3 className="text-lg font-semibold text-stone-900 mb-2">Coming Soon</h3>
-          <p className="text-stone-600">
-            Additional management features like Analytics and more will be added here.
-          </p>
-        </div>
       </div>
     </div>
   );

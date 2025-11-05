@@ -25,6 +25,7 @@ import { PodcastGuestOnboardingPage } from './components/PodcastGuestOnboardingP
 import { GuestProfilePage } from './components/GuestProfilePage';
 import { GuestsDirectoryPage } from './components/GuestsDirectoryPage';
 import { VisionBuilderPage } from './components/VisionBuilderPage';
+import { VisionAnalyticsPage } from './components/VisionAnalyticsPage';
 import { NotFound } from './components/NotFound';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
@@ -66,6 +67,7 @@ function App() {
         <Route path="/admin/blog-posts" element={<ProtectedRoute><BlogPostsAdminPage /></ProtectedRoute>} />
         <Route path="/admin/guest-profiles" element={<ProtectedRoute><GuestProfilesAdminPage /></ProtectedRoute>} />
         <Route path="/admin/email-templates" element={<ProtectedRoute><EmailTemplatesPage /></ProtectedRoute>} />
+        <Route path="/admin/vision-analytics" element={<ProtectedRoute><VisionAnalyticsPage /></ProtectedRoute>} />
         <Route path="/rss.xml" element={<RSSPage />} />
         <Route path="/sitemap.xml" element={<SitemapPage />} />
         <Route path="/link" element={<LinkPage />} />
