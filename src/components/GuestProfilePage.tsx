@@ -184,15 +184,6 @@ export function GuestProfilePage() {
                 </p>
               </section>
 
-              <section className="mb-10 bg-brand-50 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Why {guest.first_name} is a Great Guest
-                </h3>
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {guest.pitch}
-                </p>
-              </section>
-
               {hasEpisode && (
                 <section className="mb-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl p-8 text-white">
                   <h3 className="text-2xl font-bold mb-4">
