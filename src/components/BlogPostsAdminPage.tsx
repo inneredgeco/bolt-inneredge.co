@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut, ExternalLink } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { RichTextEditor } from './RichTextEditor';
 import { htmlToMarkdown, markdownToHtml } from '../utils/htmlToMarkdown';
 import ReactMarkdown from 'react-markdown';
@@ -22,7 +23,7 @@ interface Post {
   created_at: string;
 }
 
-export function AdminPage() {
+export function BlogPostsAdminPage() {
   const { signOut } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -221,8 +222,16 @@ export function AdminPage() {
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Link
+          to="/admin"
+          className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-semibold mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Admin
+        </Link>
+
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-stone-900">Blog Admin</h1>
+          <h1 className="text-4xl font-bold text-stone-900">Blog Posts Management</h1>
           <div className="flex items-center gap-4">
             <button
               onClick={handleLogout}

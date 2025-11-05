@@ -8,7 +8,9 @@ import { Contact } from './components/Contact';
 import { AboutPage } from './components/AboutPage';
 import { BlogPage } from './components/BlogPage';
 import { BlogPostPage } from './components/BlogPostPage';
-import { AdminPage } from './components/AdminPage';
+import { AdminDashboard } from './components/AdminDashboard';
+import { BlogPostsAdminPage } from './components/BlogPostsAdminPage';
+import { EmailTemplatesPage } from './components/EmailTemplatesPage';
 import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RSSPage } from './components/RSSPage';
@@ -42,7 +44,9 @@ function App() {
         <Route path="/podcast-guest-onboarding" element={<PodcastGuestOnboardingPage />} />
         <Route path="/guests/:slug" element={<><GuestProfilePage /><Footer /></>} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/blog-posts" element={<ProtectedRoute><BlogPostsAdminPage /></ProtectedRoute>} />
+        <Route path="/admin/email-templates" element={<ProtectedRoute><EmailTemplatesPage /></ProtectedRoute>} />
         <Route path="/rss.xml" element={<RSSPage />} />
         <Route path="/sitemap.xml" element={<SitemapPage />} />
         <Route path="/link" element={<LinkPage />} />
