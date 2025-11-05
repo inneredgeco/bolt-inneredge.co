@@ -202,7 +202,7 @@ export function PodcastPage() {
               <div className="text-center mt-8">
                 <Link
                   to="/guests"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold transition-all hover:scale-105 shadow-lg"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-stone-900 text-white rounded-lg hover:bg-stone-800 font-semibold transition-all hover:scale-105 shadow-lg"
                 >
                   View All Guests
                   <ArrowRight className="w-5 h-5" />
@@ -213,20 +213,20 @@ export function PodcastPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-teal-600">
+      <section className="py-20 bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Users className="w-16 h-16 mx-auto mb-6 text-white" />
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Want to be a guest?
           </h2>
-          <p className="text-xl text-teal-50 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-brand-100 mb-8 max-w-2xl mx-auto">
             Share your wisdom and connect with men ready to transform. We're looking for coaches, facilitators, and thought leaders with unique perspectives on personal growth.
           </p>
           <Link
             to="/podcast-guest"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-teal-600 rounded-lg hover:bg-teal-50 font-semibold transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 rounded-lg hover:bg-stone-100 font-semibold transition-all hover:scale-105 shadow-lg"
           >
-            Apply to Be a Guest
+            Learn More
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
