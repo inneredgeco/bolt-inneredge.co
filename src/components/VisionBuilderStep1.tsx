@@ -34,13 +34,21 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
+    console.log('=== STEP 1 SUBMISSION STARTED ===');
+    console.log('Name:', name);
+    console.log('Email:', email);
+
     if (!validateForm()) {
+      console.log('Form validation failed');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      console.log('Attempting to save to database...');
+      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+
       const { data, error: insertError } = await supabase
         .from('vision_submissions')
         .insert({
@@ -54,19 +62,30 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
         .single();
 
       if (insertError) {
-        console.error('Error creating submission:', insertError);
+        console.error('=== DATABASE INSERT ERROR ===');
+        console.error('Error message:', insertError.message);
+        console.error('Error code:', insertError.code);
+        console.error('Error details:', insertError.details);
+        console.error('Full error:', insertError);
         alert('Failed to start your vision. Please try again.');
+        setIsSubmitting(false);
         return;
       }
 
       if (!data) {
+        console.error('=== NO DATA RETURNED ===');
         alert('Failed to create submission. Please try again.');
+        setIsSubmitting(false);
         return;
       }
+
+      console.log('Database save successful!');
+      console.log('Submission ID:', data.id);
 
       const submissionId = data.id;
 
       try {
+        console.log('Attempting to send confirmation email...');
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/vision-builder-submission`;
 
         const emailResponse = await fetch(apiUrl, {
@@ -83,15 +102,23 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
         });
 
         if (!emailResponse.ok) {
-          console.error('Failed to send confirmation email');
+          console.warn('Failed to send confirmation email (non-critical)');
+          const errorText = await emailResponse.text();
+          console.warn('Email error response:', errorText);
+        } else {
+          console.log('Email sent successfully!');
         }
       } catch (emailError) {
-        console.error('Error sending confirmation email:', emailError);
+        console.warn('Error sending confirmation email (non-critical):', emailError);
       }
 
+      console.log('=== STEP 1 COMPLETE - Moving to Step 2 ===');
       onComplete(name.trim(), email.trim(), submissionId);
     } catch (err) {
-      console.error('Error submitting form:', err);
+      console.error('=== UNEXPECTED ERROR ===');
+      console.error('Error message:', err instanceof Error ? err.message : 'Unknown error');
+      console.error('Error stack:', err instanceof Error ? err.stack : 'No stack');
+      console.error('Full error:', err);
       alert('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
