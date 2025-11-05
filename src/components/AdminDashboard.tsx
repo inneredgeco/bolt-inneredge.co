@@ -1,6 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { LogOut, FileText, Mail } from 'lucide-react';
+import { LogOut, FileText, Mail, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface DashboardCard {
@@ -21,6 +21,13 @@ export function AdminDashboard() {
       icon: <FileText className="w-8 h-8 text-teal-600" />,
       link: '/admin/blog-posts',
       buttonText: 'Manage Blog Posts'
+    },
+    {
+      title: 'Guest Profiles',
+      description: 'Manage podcast guest profiles and episodes',
+      icon: <Users className="w-8 h-8 text-teal-600" />,
+      link: '/admin/guest-profiles',
+      buttonText: 'Manage Guests'
     },
     {
       title: 'Email Templates',
@@ -95,7 +102,7 @@ export function AdminDashboard() {
         <div className="mt-12 p-6 bg-stone-100 rounded-lg border border-stone-200 max-w-5xl">
           <h3 className="text-lg font-semibold text-stone-900 mb-2">Coming Soon</h3>
           <p className="text-stone-600">
-            Additional management features like Analytics, Guest Profiles, and more will be added here.
+            Additional management features like Analytics and more will be added here.
           </p>
         </div>
       </div>
