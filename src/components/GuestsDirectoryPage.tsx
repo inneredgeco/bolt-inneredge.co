@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
-import { Mic, ArrowRight } from 'lucide-react';
+import { Mic } from 'lucide-react';
 
 interface Guest {
   id: string;
@@ -43,13 +43,8 @@ export function GuestsDirectoryPage() {
     }
   }
 
-  function truncateBio(bio: string, maxLength: number = 120): string {
-    if (bio.length <= maxLength) return bio;
-    return bio.substring(0, maxLength).trim() + '...';
-  }
-
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-white">
       <SEOHead
         title="Podcast Guests - Inner Edge"
         description="Meet the inspiring guests who have appeared on the Inner Edge Podcast, sharing their expertise in men's personal development and transformation."
@@ -85,42 +80,31 @@ export function GuestsDirectoryPage() {
             <p className="text-stone-500">Check back soon!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             {guests.map((guest) => (
               <Link
                 key={guest.id}
                 to={`/guests/${guest.slug}`}
-                className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden group"
+                className="flex-shrink-0 w-64 bg-black rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden group"
               >
-                <div className="p-8 text-center">
-                  <div className="mb-6">
+                <div className="p-6 text-center">
+                  <div className="mb-4">
                     <img
                       src={guest.photo_url}
                       alt={guest.full_name}
-                      className="w-48 h-48 rounded-full object-cover mx-auto border-4 border-stone-100 group-hover:border-teal-200 transition-colors"
+                      className="w-[150px] h-[150px] rounded-full object-cover mx-auto border-4 border-white"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = 'https://via.placeholder.com/200x200/e7e5e4/78716c?text=' + guest.first_name.charAt(0);
+                        target.src = 'https://via.placeholder.com/150x150/000000/ffffff?text=' + guest.first_name.charAt(0);
                       }}
                     />
                   </div>
-
-                  <h2 className="text-2xl font-bold text-stone-900 mb-2">
+                  <h3 className="text-lg font-bold text-white mb-2">
                     {guest.full_name}
-                  </h2>
-
-                  <p className="text-teal-600 font-semibold mb-4">
+                  </h3>
+                  <p className="text-sm text-teal-400 font-medium">
                     {guest.profession}
                   </p>
-
-                  <p className="text-stone-600 mb-6 min-h-[3rem]">
-                    {truncateBio(guest.short_bio)}
-                  </p>
-
-                  <div className="flex items-center justify-center gap-2 text-teal-600 font-semibold group-hover:text-teal-700 transition-colors">
-                    <span>View Profile</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </div>
                 </div>
               </Link>
             ))}
