@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { S3Client, PutObjectCommand } from "npm:@aws-sdk/client-s3@3.922.0";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -173,7 +174,120 @@ Deno.serve(async (req: Request) => {
       .replace(/-+/g, '-')
       .trim();
 
-    console.log("=== Step 3: Sending to Pabbly Webhook ===");
+    console.log("=== Step 3: Saving to Database ===");
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Missing Supabase configuration");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Server configuration error",
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const fullName = `${firstName} ${lastName}`;
+    const guestData = {
+      first_name: firstName,
+      last_name: lastName,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      website_url: normalizeUrl(website),
+      facebook_url: formatSocialUrl(facebook, 'facebook'),
+      instagram_url: formatSocialUrl(instagram, 'instagram'),
+      linkedin_url: formatLinkedInUrl(linkedin),
+      profession: profession,
+      short_bio: shortBio,
+      long_bio: longBio || '',
+      slug: slug,
+      photo_url: photoUrl,
+      status: 'Draft',
+      pitch: '',
+      exercise_description: '',
+      episode_title: null,
+      episode_date: null,
+      spotify_url: null,
+      apple_podcast_url: null,
+      youtube_url: null,
+    };
+
+    const { data: existingGuest, error: checkError } = await supabase
+      .from('podcast_guests')
+      .select('email')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error("Error checking for existing guest:", checkError);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Database error. Please try again.",
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    if (existingGuest) {
+      console.log("Email already registered:", email);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "This email is already registered. Please contact us if you need to update your profile.",
+        }),
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const { error: insertError } = await supabase
+      .from('podcast_guests')
+      .insert(guestData);
+
+    if (insertError) {
+      console.error("Error inserting guest into database:", insertError);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Failed to save your profile. Please try again.",
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    console.log("Guest saved to database successfully");
+
+    console.log("=== Step 4: Sending to Pabbly Webhook ===");
 
     const errors: string[] = [];
     let webhookSuccess = false;
@@ -223,7 +337,7 @@ Deno.serve(async (req: Request) => {
       console.warn("PABBLY_WEBHOOK_URL_GUEST_ONBOARDING not set");
     }
 
-    console.log("=== Step 4: Sending Confirmation Emails ===");
+    console.log("=== Step 5: Sending Confirmation Emails ===");
 
     if (resendApiKey) {
       try {
