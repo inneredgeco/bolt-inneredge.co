@@ -5,6 +5,7 @@ import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { supabase } from '../lib/supabase';
 import { ChevronDown, ChevronUp, Download, Mail, Plus, Share2, Check } from 'lucide-react';
+import { generateVisionPDF } from '../utils/generateVisionPDF';
 
 interface VisionData {
   id: string;
@@ -27,6 +28,8 @@ export function VisionResultsPage() {
   const [activeTab, setActiveTab] = useState<'narrative' | 'plan'>('narrative');
   const [expandedMonths, setExpandedMonths] = useState<Set<number>>(new Set([1]));
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   const AREA_TITLES: Record<string, string> = {
     'health-fitness': 'Health & Fitness',
@@ -163,8 +166,43 @@ export function VisionResultsPage() {
     return months.reverse();
   };
 
-  const handleDownloadPDF = () => {
-    window.print();
+  const handleDownloadPDF = async () => {
+    if (!visionData) return;
+
+    setIsGeneratingPDF(true);
+    setPdfError(null);
+
+    try {
+      const createdDate = new Date(visionData.created_at).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      const visionDate = oneYearFromNow.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+      });
+
+      generateVisionPDF({
+        name: visionData.name,
+        areaOfLife: getAreaTitle(visionData.area_of_life),
+        visionNarrative: visionData.vision_narrative,
+        actionPlan: visionData.action_plan,
+        createdDate,
+        visionDate,
+      });
+
+      setTimeout(() => {
+        setIsGeneratingPDF(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setPdfError('PDF generation failed. Please try again or use the print option.');
+      setIsGeneratingPDF(false);
+    }
   };
 
   const handleEmailCopy = async () => {
@@ -265,13 +303,29 @@ export function VisionResultsPage() {
         </div>
 
         <div className="max-w-4xl mx-auto px-4 py-8">
+          {pdfError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
+              {pdfError}
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-4 justify-center mb-8 print:hidden">
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-6 py-3 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition-colors shadow-md"
+              disabled={isGeneratingPDF}
+              className="flex items-center gap-2 px-6 py-3 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download size={20} />
-              Download as PDF
+              {isGeneratingPDF ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating PDF...
+                </>
+              ) : (
+                <>
+                  <Download size={20} />
+                  Download as PDF
+                </>
+              )}
             </button>
             <button
               onClick={handleEmailCopy}
@@ -394,10 +448,20 @@ export function VisionResultsPage() {
           <div className="flex flex-wrap gap-4 justify-center mb-12 print:hidden">
             <button
               onClick={handleDownloadPDF}
-              className="flex items-center gap-2 px-6 py-3 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition-colors shadow-md"
+              disabled={isGeneratingPDF}
+              className="flex items-center gap-2 px-6 py-3 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download size={20} />
-              Download as PDF
+              {isGeneratingPDF ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating PDF...
+                </>
+              ) : (
+                <>
+                  <Download size={20} />
+                  Download as PDF
+                </>
+              )}
             </button>
             <button
               onClick={handleEmailCopy}
