@@ -105,7 +105,7 @@ export function PodcastPage() {
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="lg:w-1/3">
               <img
-                src="/soleiman-portrait.jpg"
+                src="https://guests.inneredge.co/headshots/soleiman-bolour-1762304576351.jpg"
                 alt="Soleiman Bolour - Host"
                 className="w-64 h-64 rounded-full object-cover mx-auto shadow-2xl border-4 border-stone-100"
                 onError={(e) => {
