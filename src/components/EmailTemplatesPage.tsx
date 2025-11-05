@@ -19,6 +19,75 @@ interface EmailTemplate {
   updated_at: string;
 }
 
+const DEFAULT_TEMPLATES: EmailTemplate[] = [
+  {
+    id: 'contact-confirmation',
+    template_name: 'Contact Form Confirmation',
+    template_key: 'contact_form_confirmation',
+    subject: 'Thanks for Reaching Out - Inner Edge',
+    content: '<h1>Thank You for Your Message</h1>\n<p>Hi {name},</p>\n<p>Thank you for reaching out through Inner Edge. I have received your message and will get back to you within 24-48 hours.</p>\n<h2>Your Message</h2>\n<p><strong>Subject:</strong> {subject}</p>\n<p>{message}</p>\n<p>If your inquiry is urgent, feel free to connect with me on social media:</p>\n<ul>\n<li><a href="https://www.instagram.com/inneredge.co">Instagram</a></li>\n<li><a href="https://www.facebook.com/inneredge.co">Facebook</a></li>\n</ul>\n<p>Best regards,<br>Soleiman Bolour<br>Inner Edge</p>',
+    variables: ['name', 'email', 'subject', 'message'],
+    description: 'Sent to users after they submit the contact form',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'contact-notification',
+    template_name: 'Contact Form Notification',
+    template_key: 'contact_form_notification',
+    subject: 'New Contact Form Submission - {firstName} {lastName}',
+    content: '<h2>New Contact Form Submission</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>NEWSLETTER:</strong> {newsletter}</p>\n<h3>Message:</h3>\n<p>{message}</p>\n<p><strong>SUBMITTED AT:</strong> {submittedAt}</p>',
+    variables: ['firstName', 'lastName', 'email', 'phone', 'message', 'newsletter', 'submittedAt'],
+    description: 'Internal notification sent when someone submits the contact form',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'podcast-guest-confirmation',
+    template_name: 'Podcast Guest Application Confirmation',
+    template_key: 'podcast_guest_confirmation',
+    subject: 'Thanks for Your Podcast Guest Application!',
+    content: '<h1>Thank You for Your Application!</h1>\n<p>Hi {firstName},</p>\n<p>Thank you for your interest in being a guest on the Inner Edge Podcast! We have received your application and are excited to learn more about your work.</p>\n<p>We will review your submission and get back to you within 3-5 business days.</p>\n<p>In the meantime, feel free to explore our podcast episodes at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a>.</p>\n<p>Looking forward to connecting,<br>The Inner Edge Team</p>',
+    variables: ['firstName', 'email'],
+    description: 'Sent to users after they submit the podcast guest application form',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'podcast-guest-notification',
+    template_name: 'Podcast Guest Application Notification',
+    template_key: 'podcast_guest_notification',
+    subject: 'New Podcast Guest Application - {firstName} {lastName}',
+    content: '<h2>New Podcast Guest Application</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>PROFESSION:</strong> {profession}</p>\n<h3>Why They Would Be a Great Guest:</h3>\n<p>{whyGuest}</p>\n<h3>Practical Exercise:</h3>\n<p>{exercise}</p>\n<h3>Social Media:</h3>\n<ul>\n<li><strong>Website:</strong> {website}</li>\n<li><strong>Facebook:</strong> {facebook}</li>\n<li><strong>Instagram:</strong> {instagram}</li>\n</ul>\n<p><strong>SUBMITTED AT:</strong> {submittedAt}</p>',
+    variables: ['firstName', 'lastName', 'email', 'phone', 'website', 'facebook', 'instagram', 'profession', 'whyGuest', 'exercise', 'submittedAt'],
+    description: 'Internal notification sent when someone submits a podcast guest application',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'guest-onboarding-confirmation',
+    template_name: 'Guest Onboarding Confirmation',
+    template_key: 'guest_onboarding_confirmation',
+    subject: 'Profile Received - Inner Edge Podcast',
+    content: '<h1>Thank You for Completing Your Profile!</h1>\n<p>Hi {firstName},</p>\n<p>Thank you for completing your guest profile! We have received all your information and your headshot looks great.</p>\n<p>We will be in touch soon with recording details and episode scheduling.</p>\n<p>Looking forward to our conversation,<br>The Inner Edge Team</p>',
+    variables: ['firstName', 'email'],
+    description: 'Sent to guests after they complete the onboarding form',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: 'guest-onboarding-notification',
+    template_name: 'Guest Onboarding Notification',
+    template_key: 'guest_onboarding_notification',
+    subject: 'Guest Profile Completed - {firstName} {lastName}',
+    content: '<h2>Guest Profile Completed</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>PROFESSION:</strong> {profession}</p>\n<h3>Short Bio:</h3>\n<p>{shortBio}</p>\n<p><strong>PHOTO:</strong> {photoUrl}</p>\n<h3>Social Links:</h3>\n<ul>\n<li><strong>Website:</strong> {website}</li>\n<li><strong>Facebook:</strong> {facebook}</li>\n<li><strong>Instagram:</strong> {instagram}</li>\n<li><strong>LinkedIn:</strong> {linkedin}</li>\n</ul>',
+    variables: ['firstName', 'lastName', 'email', 'phone', 'profession', 'shortBio', 'photoUrl', 'website', 'facebook', 'instagram', 'linkedin'],
+    description: 'Internal notification sent when a guest completes their onboarding profile',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+];
+
 export function EmailTemplatesPage() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
@@ -42,14 +111,19 @@ export function EmailTemplatesPage() {
         .order('template_name');
 
       if (error) throw error;
-      setTemplates(data || []);
 
-      if (data && data.length > 0 && !selectedTemplateId) {
-        selectTemplate(data[0]);
+      const loadedTemplates = data && data.length > 0 ? data : DEFAULT_TEMPLATES;
+      setTemplates(loadedTemplates);
+
+      if (loadedTemplates.length > 0 && !selectedTemplateId) {
+        selectTemplate(loadedTemplates[0]);
       }
     } catch (error) {
       console.error('Error fetching templates:', error);
-      showMessage('error', 'Failed to load email templates');
+      setTemplates(DEFAULT_TEMPLATES);
+      if (DEFAULT_TEMPLATES.length > 0) {
+        selectTemplate(DEFAULT_TEMPLATES[0]);
+      }
     }
   }
 
