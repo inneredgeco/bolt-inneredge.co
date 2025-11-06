@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { sendTemplatedEmail } from "../_shared/emailHelpers.ts";
+import { sendTemplatedEmail } from "./emailHelpers.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -101,10 +101,71 @@ Structure:
 Make it vivid, specific, and emotionally powerful. Use sensory details.
 
 DOCUMENT 2 - 12-MONTH ACTION PLAN:
-Create a chronological 12-month plan starting from TODAY (${todayFormatted}) and moving forward to the vision date (${futureFormatted}).
+Create a REALISTIC and ACHIEVABLE chronological 12-month plan starting from TODAY (${todayFormatted}) and moving forward to the vision date (${futureFormatted}).
 
 CRITICAL: Month 1 is the STARTING POINT (current month), Month 12 is the END GOAL (vision achievement).
 Work FORWARD from where they are now to where they want to be.
+
+IMPORTANT PRINCIPLES FOR REALISTIC ACTION PLANS:
+
+1. START SMALL - Month 1 should have the EASIEST, most foundational actions
+   - Focus on clarity, planning, and small first steps
+   - No overwhelming tasks or large commitments
+   - Build confidence with achievable wins
+
+2. GRADUAL PROGRESSION - Each month builds naturally on the previous
+   - Increase complexity slowly
+   - Don't jump from 0 to 100
+   - Respect learning curves and capacity
+   - Month 2-3 should still be building foundations
+   - Month 4-6 is early execution and learning
+   - Month 7-9 is building momentum
+   - Month 10-12 is optimization and achievement
+
+3. REALISTIC TIMEFRAMES - Consider actual human capacity
+   - Account for learning new skills (takes weeks/months, not days)
+   - Allow time for systems to be built
+   - Don't overload weekly breakdowns
+   - Remember people have other life responsibilities
+   - Building habits takes 2-3 months minimum
+
+4. BALANCED WORKLOAD - Weekly actions should be doable
+   - 2-4 actionable items per week maximum
+   - Mix of big and small tasks
+   - Include rest and reflection time
+   - Build in buffer for life happening
+
+5. CONTEXT-AWARE SCALING:
+   - If starting from zero (like new business, podcast, fitness routine): Start with foundation work, not production
+   - If building on existing (like current job, established routine): Focus on optimization and growth
+   - Match intensity to their current reality and resources
+   - Consider their current reality description to gauge starting point
+
+MONTH 1 GUIDANCE - THE FOUNDATION MONTH:
+Month 1 should focus ONLY on:
+- Clarity and vision setting
+- Planning and research
+- Small foundational actions (not big outputs)
+- Building basic systems and routines
+- 1-2 simple, achievable outputs maximum
+- Getting comfortable with the basics
+
+EXAMPLES OF REALISTIC MONTH 1 PROGRESSION:
+
+For someone starting a podcast:
+✓ GOOD: Week 1: Research formats, Week 2: Buy equipment, Week 3: Practice recording, Week 4: Record first episode
+✗ BAD: Week 4: Batch record 4 episodes (assumes mastery too quickly)
+
+For someone starting fitness:
+✓ GOOD: Week 1: Assessment and goal setting, Week 2: 2-3 workouts, Week 3: Build to 3-4 workouts, Week 4: Establish routine
+✗ BAD: Week 1: Train 5 days/week (too aggressive for beginners)
+
+For someone starting a business:
+✓ GOOD: Week 1: Market research, Week 2: Define offering, Week 3: Build basic website, Week 4: Soft launch to friends
+✗ BAD: Week 4: Launch marketing campaign to 1000 people (too fast)
+
+Make the plan feel supportive and achievable, not overwhelming and intimidating.
+The goal is for users to feel EXCITED and CONFIDENT, not anxious and overwhelmed.
 
 For each month (1 through 12 in chronological order), provide:
 
@@ -459,7 +520,6 @@ Rules:
 
     console.log("✓ Vision saved to database successfully");
 
-    // Send completion email to user
     console.log("Sending completion email to user...");
     const visionLink = `https://inneredge.co/vision-builder/results/${submissionId}`;
     const communityLink = "https://inneredge.co/community";
@@ -482,7 +542,6 @@ Rules:
       console.warn("⚠ Failed to send completion email to user (non-critical)");
     }
 
-    // Send notification to admin
     console.log("Sending notification to admin...");
     const adminEmail = "info@inneredge.co";
     const adminLink = "https://inneredge.co/admin/vision-analytics";
