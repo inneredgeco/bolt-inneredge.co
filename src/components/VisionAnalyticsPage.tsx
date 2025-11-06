@@ -12,7 +12,8 @@ import {
   X,
   Calendar,
   Mail,
-  User
+  User,
+  ExternalLink
 } from 'lucide-react';
 
 interface VisionSubmission {
@@ -484,6 +485,22 @@ export function VisionAnalyticsPage() {
                   <p className="text-sm font-semibold text-stone-900">{formatDate(selectedSubmission.created_at)}</p>
                 </div>
               </div>
+
+              {selectedSubmission.status === 'completed' && (
+                <Link
+                  to={`/vision-builder/results/${selectedSubmission.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 p-4 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors border-2 border-teal-200"
+                >
+                  <ExternalLink className="text-teal-600" size={24} />
+                  <div className="flex-1">
+                    <p className="text-sm text-teal-600 font-semibold uppercase">Vision</p>
+                    <p className="text-lg font-semibold text-teal-900">View Generated Vision Results</p>
+                  </div>
+                  <ExternalLink className="text-teal-400" size={20} />
+                </Link>
+              )}
 
               {selectedSubmission.current_reality && (
                 <div>
