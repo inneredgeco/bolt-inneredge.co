@@ -15,6 +15,9 @@ interface EmailTemplate {
   content: string;
   variables: string[];
   description: string | null;
+  from_email: string;
+  from_name: string;
+  reply_to_email: string;
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +31,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h1>Thank You for Your Message</h1>\n<p>Hi {name},</p>\n<p>Thank you for reaching out through Inner Edge. I have received your message and will get back to you within 24-48 hours.</p>\n<h2>Your Message</h2>\n<p><strong>Subject:</strong> {subject}</p>\n<p>{message}</p>\n<p>If your inquiry is urgent, feel free to connect with me on social media:</p>\n<ul>\n<li><a href="https://www.instagram.com/inneredge.co">Instagram</a></li>\n<li><a href="https://www.facebook.com/inneredge.co">Facebook</a></li>\n</ul>\n<p>Best regards,<br>Soleiman Bolour<br>Inner Edge</p>',
     variables: ['name', 'email', 'subject', 'message'],
     description: 'Sent to users after they submit the contact form',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
@@ -39,6 +45,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h2>New Contact Form Submission</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>NEWSLETTER:</strong> {newsletter}</p>\n<h3>Message:</h3>\n<p>{message}</p>\n<p><strong>SUBMITTED AT:</strong> {submittedAt}</p>',
     variables: ['firstName', 'lastName', 'email', 'phone', 'message', 'newsletter', 'submittedAt'],
     description: 'Internal notification sent when someone submits the contact form',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
@@ -50,6 +59,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h1>Thank You for Your Application!</h1>\n<p>Hi {firstName},</p>\n<p>Thank you for your interest in being a guest on the Inner Edge Podcast! We have received your application and are excited to learn more about your work.</p>\n<p>We will review your submission and get back to you within 3-5 business days.</p>\n<p>In the meantime, feel free to explore our podcast episodes at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a>.</p>\n<p>Looking forward to connecting,<br>The Inner Edge Team</p>',
     variables: ['firstName', 'email'],
     description: 'Sent to users after they submit the podcast guest application form',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
@@ -61,6 +73,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h2>New Podcast Guest Application</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>PROFESSION:</strong> {profession}</p>\n<h3>Why They Would Be a Great Guest:</h3>\n<p>{whyGuest}</p>\n<h3>Practical Exercise:</h3>\n<p>{exercise}</p>\n<h3>Social Media:</h3>\n<ul>\n<li><strong>Website:</strong> {website}</li>\n<li><strong>Facebook:</strong> {facebook}</li>\n<li><strong>Instagram:</strong> {instagram}</li>\n</ul>\n<p><strong>SUBMITTED AT:</strong> {submittedAt}</p>',
     variables: ['firstName', 'lastName', 'email', 'phone', 'website', 'facebook', 'instagram', 'profession', 'whyGuest', 'exercise', 'submittedAt'],
     description: 'Internal notification sent when someone submits a podcast guest application',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
@@ -72,6 +87,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h1>Thank You for Completing Your Profile!</h1>\n<p>Hi {firstName},</p>\n<p>Thank you for completing your guest profile! We have received all your information and your headshot looks great.</p>\n<p>We will be in touch soon with recording details and episode scheduling.</p>\n<p>Looking forward to our conversation,<br>The Inner Edge Team</p>',
     variables: ['firstName', 'email'],
     description: 'Sent to guests after they complete the onboarding form',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   },
@@ -83,6 +101,9 @@ const DEFAULT_TEMPLATES: EmailTemplate[] = [
     content: '<h2>Guest Profile Completed</h2>\n<p><strong>NAME:</strong> {firstName} {lastName}</p>\n<p><strong>EMAIL:</strong> {email}</p>\n<p><strong>PHONE:</strong> {phone}</p>\n<p><strong>PROFESSION:</strong> {profession}</p>\n<h3>Short Bio:</h3>\n<p>{shortBio}</p>\n<p><strong>PHOTO:</strong> {photoUrl}</p>\n<h3>Social Links:</h3>\n<ul>\n<li><strong>Website:</strong> {website}</li>\n<li><strong>Facebook:</strong> {facebook}</li>\n<li><strong>Instagram:</strong> {instagram}</li>\n<li><strong>LinkedIn:</strong> {linkedin}</li>\n</ul>',
     variables: ['firstName', 'lastName', 'email', 'phone', 'profession', 'shortBio', 'photoUrl', 'website', 'facebook', 'instagram', 'linkedin'],
     description: 'Internal notification sent when a guest completes their onboarding profile',
+    from_email: 'vision@send.inneredge.co',
+    from_name: 'Inner Edge',
+    reply_to_email: 'info@inneredge.co',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   }
@@ -92,9 +113,15 @@ export function EmailTemplatesPage() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [subject, setSubject] = useState('');
+  const [fromEmail, setFromEmail] = useState('');
+  const [fromName, setFromName] = useState('');
+  const [replyToEmail, setReplyToEmail] = useState('');
   const [editorHtml, setEditorHtml] = useState('');
   const [originalContent, setOriginalContent] = useState('');
   const [originalSubject, setOriginalSubject] = useState('');
+  const [originalFromEmail, setOriginalFromEmail] = useState('');
+  const [originalFromName, setOriginalFromName] = useState('');
+  const [originalReplyToEmail, setOriginalReplyToEmail] = useState('');
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -131,6 +158,12 @@ export function EmailTemplatesPage() {
     setSelectedTemplateId(template.id);
     setSubject(template.subject);
     setOriginalSubject(template.subject);
+    setFromEmail(template.from_email || 'vision@send.inneredge.co');
+    setOriginalFromEmail(template.from_email || 'vision@send.inneredge.co');
+    setFromName(template.from_name || 'Inner Edge');
+    setOriginalFromName(template.from_name || 'Inner Edge');
+    setReplyToEmail(template.reply_to_email || 'info@inneredge.co');
+    setOriginalReplyToEmail(template.reply_to_email || 'info@inneredge.co');
     const htmlContent = template.content;
     setEditorHtml(htmlContent);
     setOriginalContent(htmlContent);
@@ -140,12 +173,25 @@ export function EmailTemplatesPage() {
   async function handleSave() {
     if (!selectedTemplateId) return;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(fromEmail)) {
+      showMessage('error', 'Please enter a valid From Email address');
+      return;
+    }
+    if (!emailRegex.test(replyToEmail)) {
+      showMessage('error', 'Please enter a valid Reply-To Email address');
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase
         .from('email_templates')
         .update({
           subject,
+          from_email: fromEmail,
+          from_name: fromName,
+          reply_to_email: replyToEmail,
           content: editorHtml,
           updated_at: new Date().toISOString()
         })
@@ -155,6 +201,9 @@ export function EmailTemplatesPage() {
 
       setOriginalContent(editorHtml);
       setOriginalSubject(subject);
+      setOriginalFromEmail(fromEmail);
+      setOriginalFromName(fromName);
+      setOriginalReplyToEmail(replyToEmail);
       showMessage('success', 'Template saved successfully');
       await fetchTemplates();
     } catch (error) {
@@ -168,6 +217,9 @@ export function EmailTemplatesPage() {
   function handleReset() {
     setEditorHtml(originalContent);
     setSubject(originalSubject);
+    setFromEmail(originalFromEmail);
+    setFromName(originalFromName);
+    setReplyToEmail(originalReplyToEmail);
     showMessage('success', 'Template reset to last saved version');
   }
 
@@ -177,7 +229,8 @@ export function EmailTemplatesPage() {
   }
 
   const selectedTemplate = templates.find(t => t.id === selectedTemplateId);
-  const hasChanges = editorHtml !== originalContent || subject !== originalSubject;
+  const hasChanges = editorHtml !== originalContent || subject !== originalSubject ||
+    fromEmail !== originalFromEmail || fromName !== originalFromName || replyToEmail !== originalReplyToEmail;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -282,6 +335,55 @@ export function EmailTemplatesPage() {
                       </p>
                     </div>
                   )}
+                </div>
+
+                <div className="mb-6 p-4 bg-stone-50 border border-stone-200 rounded-lg">
+                  <p className="text-sm font-semibold text-stone-700 mb-3">Email Sender Settings</p>
+                  <p className="text-xs text-stone-600 mb-4">
+                    This email will be sent from: <strong>{fromName} &lt;{fromEmail}&gt;</strong><br />
+                    Replies will go to: <strong>{replyToEmail}</strong>
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-stone-700 mb-2">
+                        From Name
+                      </label>
+                      <input
+                        type="text"
+                        value={fromName}
+                        onChange={(e) => setFromName(e.target.value)}
+                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        placeholder="Inner Edge"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-stone-700 mb-2">
+                        From Email
+                      </label>
+                      <input
+                        type="email"
+                        value={fromEmail}
+                        onChange={(e) => setFromEmail(e.target.value)}
+                        className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        placeholder="vision@send.inneredge.co"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-semibold text-stone-700 mb-2">
+                      Reply-To Email
+                    </label>
+                    <input
+                      type="email"
+                      value={replyToEmail}
+                      onChange={(e) => setReplyToEmail(e.target.value)}
+                      className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      placeholder="info@inneredge.co"
+                    />
+                  </div>
                 </div>
 
                 <div className="mb-4">

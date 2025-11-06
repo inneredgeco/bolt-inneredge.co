@@ -3,11 +3,13 @@
  */
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
-const FROM_EMAIL = 'Inner Edge <info@inneredge.co>';
 
 interface EmailTemplate {
   subject: string;
   content: string;
+  from_email?: string;
+  from_name?: string;
+  reply_to_email?: string;
 }
 
 interface SendEmailOptions {
@@ -49,6 +51,12 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     const subject = replaceTemplateVariables(template.subject, variables);
     const html = replaceTemplateVariables(template.content, variables);
 
+    const fromEmail = template.from_email || 'vision@send.inneredge.co';
+    const fromName = template.from_name || 'Inner Edge';
+    const replyTo = template.reply_to_email || 'info@inneredge.co';
+
+    const from = `${fromName} <${fromEmail}>`;
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -56,7 +64,8 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: FROM_EMAIL,
+        from: from,
+        reply_to: replyTo,
         to: to,
         subject: subject,
         html: html,
@@ -88,7 +97,7 @@ export async function getEmailTemplate(
   try {
     const { data, error } = await supabaseClient
       .from('email_templates')
-      .select('subject, content')
+      .select('subject, content, from_email, from_name, reply_to_email')
       .eq('template_key', templateKey)
       .single();
 
