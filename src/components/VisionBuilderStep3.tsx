@@ -9,6 +9,7 @@ interface VisionBuilderStep3Props {
   isLoading: boolean;
 }
 
+const MIN_CHARS = 250;
 const MAX_CHARS = 500;
 
 export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep3Props) {
@@ -35,11 +36,17 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onComplete(currentReality.trim(), whyImportant.trim());
+    if (currentReality.trim().length >= MIN_CHARS && whyImportant.trim().length >= MIN_CHARS) {
+      onComplete(currentReality.trim(), whyImportant.trim());
+    }
   };
 
   const currentRealityLength = currentReality.length;
   const whyImportantLength = whyImportant.length;
+
+  const currentRealityValid = currentRealityLength >= MIN_CHARS;
+  const whyImportantValid = whyImportantLength >= MIN_CHARS;
+  const canContinue = currentRealityValid && whyImportantValid;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -73,14 +80,14 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
             Tell us about your {getAreaTitle(initialData.area_of_life)} journey
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            These questions are optional, but they'll help us create a more personalized vision for you
+            Help us personalize your vision by sharing where you are now and why this matters to you
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-8 sm:p-10 space-y-8">
           <div>
             <label htmlFor="currentReality" className="block text-lg font-semibold text-stone-900 mb-3">
-              Where are you now? <span className="text-stone-500 font-normal text-base">(optional)</span>
+              Where are you now? <span className="text-red-600">*</span>
             </label>
             <textarea
               id="currentReality"
@@ -92,22 +99,37 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
               }}
               placeholder="Describe your current situation or the challenge you're facing..."
               rows={4}
-              className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all resize-none ${
+                currentRealityValid || currentRealityLength === 0
+                  ? 'border-stone-200 focus:border-brand-600'
+                  : 'border-red-300 focus:border-red-500'
+              }`}
               disabled={isLoading}
+              required
             />
             <div className="flex items-center justify-between mt-2">
-              <p className="text-sm text-stone-500">
-                This helps us personalize your vision (optional)
+              <p className={`text-sm ${currentRealityValid ? 'text-stone-500' : 'text-red-600'}`}>
+                {currentRealityValid
+                  ? 'Great! Continue writing if you want (optional)'
+                  : currentRealityLength > 0
+                  ? 'Please write at least 250 characters to help us personalize your vision'
+                  : 'Required field - minimum 250 characters'}
               </p>
-              <p className={`text-sm ${currentRealityLength > MAX_CHARS * 0.9 ? 'text-orange-600' : 'text-stone-400'}`}>
-                {currentRealityLength}/{MAX_CHARS}
+              <p className={`text-sm font-medium ${
+                currentRealityValid
+                  ? 'text-green-600'
+                  : currentRealityLength > MIN_CHARS * 0.5
+                  ? 'text-orange-600'
+                  : 'text-stone-400'
+              }`}>
+                {currentRealityLength}/{MIN_CHARS} minimum
               </p>
             </div>
           </div>
 
           <div>
             <label htmlFor="whyImportant" className="block text-lg font-semibold text-stone-900 mb-3">
-              Why is this transformation important to you? <span className="text-stone-500 font-normal text-base">(optional)</span>
+              Why is this transformation important to you? <span className="text-red-600">*</span>
             </label>
             <textarea
               id="whyImportant"
@@ -119,15 +141,30 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
               }}
               placeholder="What will this change mean for your life?..."
               rows={4}
-              className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-all resize-none ${
+                whyImportantValid || whyImportantLength === 0
+                  ? 'border-stone-200 focus:border-brand-600'
+                  : 'border-red-300 focus:border-red-500'
+              }`}
               disabled={isLoading}
+              required
             />
             <div className="flex items-center justify-between mt-2">
-              <p className="text-sm text-stone-500">
-                Your 'why' will make your vision more powerful (optional)
+              <p className={`text-sm ${whyImportantValid ? 'text-stone-500' : 'text-red-600'}`}>
+                {whyImportantValid
+                  ? 'Great! Continue writing if you want (optional)'
+                  : whyImportantLength > 0
+                  ? 'Please write at least 250 characters to help us personalize your vision'
+                  : 'Required field - minimum 250 characters'}
               </p>
-              <p className={`text-sm ${whyImportantLength > MAX_CHARS * 0.9 ? 'text-orange-600' : 'text-stone-400'}`}>
-                {whyImportantLength}/{MAX_CHARS}
+              <p className={`text-sm font-medium ${
+                whyImportantValid
+                  ? 'text-green-600'
+                  : whyImportantLength > MIN_CHARS * 0.5
+                  ? 'text-orange-600'
+                  : 'text-stone-400'
+              }`}>
+                {whyImportantLength}/{MIN_CHARS} minimum
               </p>
             </div>
           </div>
@@ -145,10 +182,10 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !canContinue}
               className={`group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                isLoading
-                  ? 'bg-brand-300 text-brand-100 cursor-not-allowed'
+                isLoading || !canContinue
+                  ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
                   : 'bg-brand-600 text-white hover:bg-brand-700 hover:shadow-lg hover:scale-105'
               }`}
             >

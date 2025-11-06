@@ -10,8 +10,8 @@ interface VisionBuilderStep5Props {
 }
 
 const MIN_ACTIONS = 8;
-const MAX_ACTIONS = 12;
-const MAX_CUSTOM_ACTIONS = 5;
+const MAX_ACTIONS = 10;
+const REQUIRED_CUSTOM_ACTIONS = 2;
 
 const actionsByArea: Record<string, string[]> = {
   'health-fitness': [
@@ -198,8 +198,7 @@ const actionsByArea: Record<string, string[]> = {
 
 export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep5Props) {
   const [selectedActions, setSelectedActions] = useState<string[]>(initialData.doing_actions || []);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
-  const [customActions, setCustomActions] = useState<string[]>(['', '', '', '', '']);
+  const [customActions, setCustomActions] = useState<string[]>(['', '']);
 
   const getAreaTitle = (areaId: string | undefined): string => {
     if (!areaId) return 'your selected area';
@@ -250,7 +249,8 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
 
   const validCustomActionsCount = customActions.filter(a => a.trim().length > 0).length;
   const totalSelected = selectedActions.length + validCustomActionsCount;
-  const canContinue = totalSelected >= MIN_ACTIONS && totalSelected <= MAX_ACTIONS;
+  const hasRequiredCustomActions = validCustomActionsCount >= REQUIRED_CUSTOM_ACTIONS;
+  const canContinue = totalSelected >= MIN_ACTIONS && totalSelected <= MAX_ACTIONS && hasRequiredCustomActions;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -284,7 +284,7 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
             What will you be DOING in your ideal {getAreaTitle(initialData.area_of_life)}?
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            Choose or write {MIN_ACTIONS}-{MAX_ACTIONS} actions. Write in present tense: "I am enjoying...", "I am..."
+            Select 6-8 actions from the list, and add 2 of your own
           </p>
         </div>
 
@@ -297,7 +297,7 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
                 totalSelected > MAX_ACTIONS ? 'text-red-600' :
                 'text-brand-600'
               }`}>
-                {totalSelected}/{MAX_ACTIONS} selected
+                {totalSelected}/{MAX_ACTIONS} actions selected
               </div>
             </div>
 
@@ -332,44 +332,34 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
               })}
             </div>
 
-            {!showCustomInputs ? (
-              <button
-                type="button"
-                onClick={() => setShowCustomInputs(true)}
-                disabled={isLoading}
-                className="flex items-center gap-2 text-brand-600 hover:text-brand-700 font-semibold transition-colors"
-              >
-                <Plus size={20} />
-                Add your own actions
-              </button>
-            ) : (
-              <div className="border-t-2 border-stone-100 pt-6">
-                <h4 className="text-lg font-bold text-stone-900 mb-2">Add Your Own Actions (up to {MAX_CUSTOM_ACTIONS})</h4>
-                <p className="text-sm text-stone-600 mb-4">Write in present tense (I am...)</p>
-                <div className="space-y-3">
-                  {customActions.map((action, index) => (
-                    <textarea
-                      key={index}
-                      value={action}
-                      onChange={(e) => handleCustomActionChange(index, e.target.value)}
-                      placeholder={`I am... (custom action ${index + 1})`}
-                      rows={2}
-                      maxLength={150}
-                      className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
-                      disabled={isLoading}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-stone-500 mt-3">
-                  These custom actions count toward your {MIN_ACTIONS}-{MAX_ACTIONS} total
-                </p>
+            <div className="border-t-2 border-stone-100 pt-6 mt-6">
+              <h4 className="text-lg font-bold text-stone-900 mb-2">
+                Add 2 custom actions <span className="text-red-600">*</span>
+              </h4>
+              <p className="text-sm text-stone-600 mb-4">Write in present tense (I am...) - These are required</p>
+              <div className="space-y-3">
+                {customActions.map((action, index) => (
+                  <textarea
+                    key={index}
+                    value={action}
+                    onChange={(e) => handleCustomActionChange(index, e.target.value)}
+                    placeholder={`I am... (custom action ${index + 1} - required)`}
+                    rows={2}
+                    maxLength={150}
+                    className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
+                    disabled={isLoading}
+                    required
+                  />
+                ))}
               </div>
-            )}
+            </div>
 
-            {totalSelected < MIN_ACTIONS && (
+            {(totalSelected < MIN_ACTIONS || !hasRequiredCustomActions) && (
               <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded">
                 <p className="text-sm text-orange-800">
-                  Please select at least {MIN_ACTIONS - totalSelected} more action{MIN_ACTIONS - totalSelected !== 1 ? 's' : ''} to continue
+                  {!hasRequiredCustomActions
+                    ? `You must add ${REQUIRED_CUSTOM_ACTIONS} custom actions to continue`
+                    : `Please select at least ${MIN_ACTIONS - totalSelected} more action${MIN_ACTIONS - totalSelected !== 1 ? 's' : ''} to continue`}
                 </p>
               </div>
             )}

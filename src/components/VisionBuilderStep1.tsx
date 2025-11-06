@@ -99,34 +99,6 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
         console.log('current_step updated to 2 successfully');
       }
 
-      try {
-        console.log('Attempting to send confirmation email...');
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/vision-builder-submission`;
-
-        const emailResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            name: name.trim(),
-            email: email.trim(),
-            submissionId: submissionId,
-          }),
-        });
-
-        if (!emailResponse.ok) {
-          console.warn('Failed to send confirmation email (non-critical)');
-          const errorText = await emailResponse.text();
-          console.warn('Email error response:', errorText);
-        } else {
-          console.log('Email sent successfully!');
-        }
-      } catch (emailError) {
-        console.warn('Error sending confirmation email (non-critical):', emailError);
-      }
-
       console.log('=== STEP 1 COMPLETE - Moving to Step 2 ===');
       onComplete(name.trim(), email.trim(), submissionId);
     } catch (err) {
@@ -198,7 +170,7 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
               <p className="mt-2 text-xs text-stone-500">
-                We'll email you a link to save your progress and continue anytime
+                We'll use this to send you your completed vision
               </p>
             </div>
 
@@ -232,7 +204,7 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
 
         <div className="text-center mt-8">
           <p className="text-brand-100 text-sm">
-            Takes about 15-20 minutes to complete
+            Takes about 10 minutes to complete
           </p>
         </div>
       </div>

@@ -9,9 +9,9 @@ interface VisionBuilderStep4Props {
   isLoading: boolean;
 }
 
-const MIN_WORDS = 5;
-const MAX_WORDS = 8;
-const MAX_CUSTOM_WORDS = 3;
+const MIN_WORDS = 8;
+const MAX_WORDS = 10;
+const REQUIRED_CUSTOM_WORDS = 2;
 
 const wordsByArea: Record<string, string[]> = {
   'health-fitness': [
@@ -63,8 +63,7 @@ const wordsByArea: Record<string, string[]> = {
 
 export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep4Props) {
   const [selectedWords, setSelectedWords] = useState<string[]>(initialData.being_words || []);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
-  const [customWords, setCustomWords] = useState<string[]>(['', '', '']);
+  const [customWords, setCustomWords] = useState<string[]>(['', '']);
 
   const getAreaTitle = (areaId: string | undefined): string => {
     if (!areaId) return 'your selected area';
@@ -115,7 +114,8 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
 
   const validCustomWordsCount = customWords.filter(w => w.trim().length > 0).length;
   const totalSelected = selectedWords.length + validCustomWordsCount;
-  const canContinue = totalSelected >= MIN_WORDS && totalSelected <= MAX_WORDS;
+  const hasRequiredCustomWords = validCustomWordsCount >= REQUIRED_CUSTOM_WORDS;
+  const canContinue = totalSelected >= MIN_WORDS && totalSelected <= MAX_WORDS && hasRequiredCustomWords;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -149,7 +149,7 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
             How do you want to BE in your {getAreaTitle(initialData.area_of_life)}?
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            Choose {MIN_WORDS}-{MAX_WORDS} words that describe who you're becoming
+            Select 6-8 from the list below, and add 2 of your own
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
                 totalSelected > MAX_WORDS ? 'text-red-600' :
                 'text-brand-600'
               }`}>
-                {totalSelected}/{MAX_WORDS} selected
+                {totalSelected}/{MAX_WORDS} words selected
               </div>
             </div>
 
@@ -194,43 +194,34 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
               })}
             </div>
 
-            {!showCustomInputs ? (
-              <button
-                type="button"
-                onClick={() => setShowCustomInputs(true)}
-                disabled={isLoading}
-                className="flex items-center gap-2 text-brand-600 hover:text-brand-700 font-semibold transition-colors"
-              >
-                <Plus size={20} />
-                Add your own words
-              </button>
-            ) : (
-              <div className="border-t-2 border-stone-100 pt-6">
-                <h4 className="text-lg font-bold text-stone-900 mb-4">Add Your Own Words (up to {MAX_CUSTOM_WORDS})</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {customWords.map((word, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={word}
-                      onChange={(e) => handleCustomWordChange(index, e.target.value)}
-                      placeholder={`Custom word ${index + 1}`}
-                      maxLength={20}
-                      className="px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all"
-                      disabled={isLoading}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-stone-500 mt-3">
-                  These custom words count toward your {MIN_WORDS}-{MAX_WORDS} total
-                </p>
+            <div className="border-t-2 border-stone-100 pt-6 mt-6">
+              <h4 className="text-lg font-bold text-stone-900 mb-2">
+                Add 2 custom words <span className="text-red-600">*</span>
+              </h4>
+              <p className="text-sm text-stone-600 mb-4">These are required and count toward your total</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {customWords.map((word, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    value={word}
+                    onChange={(e) => handleCustomWordChange(index, e.target.value)}
+                    placeholder={`Custom word ${index + 1} (required)`}
+                    maxLength={20}
+                    className="px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all"
+                    disabled={isLoading}
+                    required
+                  />
+                ))}
               </div>
-            )}
+            </div>
 
-            {totalSelected < MIN_WORDS && (
+            {(totalSelected < MIN_WORDS || !hasRequiredCustomWords) && (
               <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded">
                 <p className="text-sm text-orange-800">
-                  Please select at least {MIN_WORDS - totalSelected} more word{MIN_WORDS - totalSelected !== 1 ? 's' : ''} to continue
+                  {!hasRequiredCustomWords
+                    ? `You must add ${REQUIRED_CUSTOM_WORDS} custom words to continue`
+                    : `Please select at least ${MIN_WORDS - totalSelected} more word${MIN_WORDS - totalSelected !== 1 ? 's' : ''} to continue`}
                 </p>
               </div>
             )}

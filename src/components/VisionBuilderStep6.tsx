@@ -9,9 +9,9 @@ interface VisionBuilderStep6Props {
   isLoading: boolean;
 }
 
-const MIN_OUTCOMES = 6;
+const MIN_OUTCOMES = 8;
 const MAX_OUTCOMES = 10;
-const MAX_CUSTOM_OUTCOMES = 5;
+const REQUIRED_CUSTOM_OUTCOMES = 2;
 
 const outcomesByArea: Record<string, string[]> = {
   'health-fitness': [
@@ -162,8 +162,7 @@ const outcomesByArea: Record<string, string[]> = {
 
 export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep6Props) {
   const [selectedOutcomes, setSelectedOutcomes] = useState<string[]>(initialData.having_outcomes || []);
-  const [showCustomInputs, setShowCustomInputs] = useState(false);
-  const [customOutcomes, setCustomOutcomes] = useState<string[]>(['', '', '', '', '']);
+  const [customOutcomes, setCustomOutcomes] = useState<string[]>(['', '']);
 
   const getAreaTitle = (areaId: string | undefined): string => {
     if (!areaId) return 'your selected area';
@@ -214,7 +213,8 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
 
   const validCustomOutcomesCount = customOutcomes.filter(o => o.trim().length > 0).length;
   const totalSelected = selectedOutcomes.length + validCustomOutcomesCount;
-  const canContinue = totalSelected >= MIN_OUTCOMES && totalSelected <= MAX_OUTCOMES;
+  const hasRequiredCustomOutcomes = validCustomOutcomesCount >= REQUIRED_CUSTOM_OUTCOMES;
+  const canContinue = totalSelected >= MIN_OUTCOMES && totalSelected <= MAX_OUTCOMES && hasRequiredCustomOutcomes;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -248,7 +248,7 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
             What will you HAVE as a result of this transformation?
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            Choose or write {MIN_OUTCOMES}-{MAX_OUTCOMES} outcomes. Write in present tense: "I have...", "I am experiencing..."
+            Select 6-8 outcomes from the list, and add 2 of your own
           </p>
         </div>
 
@@ -261,7 +261,7 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
                 totalSelected > MAX_OUTCOMES ? 'text-red-600' :
                 'text-brand-600'
               }`}>
-                {totalSelected}/{MAX_OUTCOMES} selected
+                {totalSelected}/{MAX_OUTCOMES} outcomes selected
               </div>
             </div>
 
@@ -296,44 +296,34 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
               })}
             </div>
 
-            {!showCustomInputs ? (
-              <button
-                type="button"
-                onClick={() => setShowCustomInputs(true)}
-                disabled={isLoading}
-                className="flex items-center gap-2 text-brand-600 hover:text-brand-700 font-semibold transition-colors"
-              >
-                <Plus size={20} />
-                Add your own outcomes
-              </button>
-            ) : (
-              <div className="border-t-2 border-stone-100 pt-6">
-                <h4 className="text-lg font-bold text-stone-900 mb-2">Add Your Own Outcomes (up to {MAX_CUSTOM_OUTCOMES})</h4>
-                <p className="text-sm text-stone-600 mb-4">Write in present tense (I have...)</p>
-                <div className="space-y-3">
-                  {customOutcomes.map((outcome, index) => (
-                    <textarea
-                      key={index}
-                      value={outcome}
-                      onChange={(e) => handleCustomOutcomeChange(index, e.target.value)}
-                      placeholder={`I have... (custom outcome ${index + 1})`}
-                      rows={2}
-                      maxLength={150}
-                      className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
-                      disabled={isLoading}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-stone-500 mt-3">
-                  These custom outcomes count toward your {MIN_OUTCOMES}-{MAX_OUTCOMES} total
-                </p>
+            <div className="border-t-2 border-stone-100 pt-6 mt-6">
+              <h4 className="text-lg font-bold text-stone-900 mb-2">
+                Add 2 custom outcomes <span className="text-red-600">*</span>
+              </h4>
+              <p className="text-sm text-stone-600 mb-4">Write in present tense (I have...) - These are required</p>
+              <div className="space-y-3">
+                {customOutcomes.map((outcome, index) => (
+                  <textarea
+                    key={index}
+                    value={outcome}
+                    onChange={(e) => handleCustomOutcomeChange(index, e.target.value)}
+                    placeholder={`I have... (custom outcome ${index + 1} - required)`}
+                    rows={2}
+                    maxLength={150}
+                    className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
+                    disabled={isLoading}
+                    required
+                  />
+                ))}
               </div>
-            )}
+            </div>
 
-            {totalSelected < MIN_OUTCOMES && (
+            {(totalSelected < MIN_OUTCOMES || !hasRequiredCustomOutcomes) && (
               <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded">
                 <p className="text-sm text-orange-800">
-                  Please select at least {MIN_OUTCOMES - totalSelected} more outcome{MIN_OUTCOMES - totalSelected !== 1 ? 's' : ''} to continue
+                  {!hasRequiredCustomOutcomes
+                    ? `You must add ${REQUIRED_CUSTOM_OUTCOMES} custom outcomes to continue`
+                    : `Please select at least ${MIN_OUTCOMES - totalSelected} more outcome${MIN_OUTCOMES - totalSelected !== 1 ? 's' : ''} to continue`}
                 </p>
               </div>
             )}
