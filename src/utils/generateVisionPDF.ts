@@ -85,7 +85,7 @@ export function generateVisionPDF(data: VisionPDFData): void {
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25.4;
+  const margin = 19.05; // 0.75 inch margins
   const contentWidth = pageWidth - (margin * 2);
   let currentPage = 1;
 
@@ -117,27 +117,28 @@ export function generateVisionPDF(data: VisionPDFData): void {
 
     doc.setTextColor(255, 255, 255);
 
-    let yPosition = 50;
+    let yPosition = 40;
 
     try {
       const logoPath = '/inner-edge-logo.png';
       const img = new Image();
       img.src = logoPath;
 
-      const logoWidth = 40;
-      const logoHeight = 40;
+      // Higher resolution logo - 120px equivalent (about 42mm)
+      const logoWidth = 42;
+      const logoHeight = 42;
       const logoX = (pageWidth - logoWidth) / 2;
 
-      doc.addImage(img, 'PNG', logoX, yPosition, logoWidth, logoHeight);
-      yPosition += logoHeight + 10;
+      doc.addImage(img, 'PNG', logoX, yPosition, logoWidth, logoHeight, undefined, 'FAST');
+      yPosition += logoHeight + 7; // 20px spacing equivalent
     } catch (error) {
       console.warn('Could not load logo, continuing without it');
     }
 
-    doc.setFontSize(14);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     doc.text('inneredge.co', pageWidth / 2, yPosition, { align: 'center' });
-    yPosition += 30;
+    yPosition += 20; // Proper spacing before title
 
     doc.setFontSize(32);
     doc.setFont('helvetica', 'bold');
@@ -176,18 +177,18 @@ export function generateVisionPDF(data: VisionPDFData): void {
     let yPosition = margin;
 
     doc.setTextColor(BRAND_COLOR);
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text('Your Vision Narrative', margin, yPosition);
-    yPosition += 15;
+    yPosition += 12;
 
     doc.setDrawColor(BRAND_COLOR);
     doc.setLineWidth(0.5);
     doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 10;
+    yPosition += 8;
 
     doc.setTextColor(TEXT_COLOR);
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
 
     const cleanNarrative = stripMarkdown(data.visionNarrative);
@@ -198,6 +199,7 @@ export function generateVisionPDF(data: VisionPDFData): void {
       if (!processedParagraph) return;
 
       const lines = wrapText(processedParagraph, contentWidth);
+      const lineHeight = 5.5; // 1.4 line spacing for 11pt
 
       lines.forEach((line) => {
         if (yPosition > pageHeight - margin - 20) {
@@ -206,13 +208,13 @@ export function generateVisionPDF(data: VisionPDFData): void {
         }
 
         doc.text(line, margin, yPosition);
-        yPosition += 7;
+        yPosition += lineHeight;
       });
 
-      yPosition += 3;
+      yPosition += 3; // 8pt space between paragraphs
     });
 
-    if (yPosition > pageHeight - margin - 40) {
+    if (yPosition > pageHeight - margin - 60) {
       addNewPage();
     }
   };
@@ -220,55 +222,59 @@ export function generateVisionPDF(data: VisionPDFData): void {
   const addActionPlan = () => {
     let yPosition = margin;
 
-    if (currentPage > 2) {
-      addNewPage();
-      yPosition = margin;
-    } else {
-      yPosition = margin + 20;
-    }
+    // Always start action plan on a new page for better organization
+    addNewPage();
+    yPosition = margin;
 
     doc.setTextColor(BRAND_COLOR);
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text('Your 12-Month Action Plan', margin, yPosition);
-    yPosition += 15;
+    yPosition += 12;
 
     doc.setDrawColor(BRAND_COLOR);
     doc.setLineWidth(0.5);
     doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 12;
+    yPosition += 10;
 
     const months = parseActionPlan(data.actionPlan);
 
-    months.forEach((month) => {
-      if (yPosition > pageHeight - margin - 70) {
+    months.forEach((month, monthIndex) => {
+      // Check if we need a new page for this month
+      if (yPosition > pageHeight - margin - 80) {
         addNewPage();
         yPosition = margin;
       }
 
-      yPosition += 5;
+      // Add spacing between months (16pt space)
+      if (monthIndex > 0) {
+        yPosition += 6;
+      }
 
       const cleanTitle = stripMarkdown(month.title);
       const cleanDate = stripMarkdown(month.date);
 
-      doc.setFontSize(14);
+      // Month header - 16pt bold
+      doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(BRAND_COLOR);
       doc.text(`Month ${month.number}: ${cleanTitle}`, margin, yPosition);
-      yPosition += 7;
+      yPosition += 8;
 
+      // Date subtitle - 12pt
       if (cleanDate) {
-        doc.setFontSize(10);
+        doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(LIGHT_TEXT_COLOR);
         doc.text(cleanDate, margin, yPosition);
-        yPosition += 8;
+        yPosition += 7;
       }
 
       doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(TEXT_COLOR);
 
+      // SMART Goal section - 11pt
       if (month.goal) {
         const cleanGoal = stripMarkdown(month.goal);
 
@@ -284,15 +290,17 @@ export function generateVisionPDF(data: VisionPDFData): void {
             yPosition = margin;
           }
           doc.text(goalLine, margin + 5, yPosition);
-          yPosition += 5;
+          yPosition += 5.5;
         });
-        yPosition += 4;
+        yPosition += 3;
       }
 
+      // Weekly breakdown section - 10pt
       if (month.weeks.length > 0) {
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.text('Weekly Breakdown:', margin + 5, yPosition);
-        yPosition += 6;
+        yPosition += 5.5;
         doc.setFont('helvetica', 'normal');
 
         month.weeks.forEach((week, index) => {
@@ -308,15 +316,18 @@ export function generateVisionPDF(data: VisionPDFData): void {
             yPosition += 5;
           });
         });
-        yPosition += 4;
+        yPosition += 3;
       }
 
+      // Monthly check-in section - 10pt italic
       if (month.checkin) {
         const cleanCheckin = stripMarkdown(month.checkin);
 
+        doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
+        doc.setTextColor(TEXT_COLOR);
         doc.text('Monthly Check-in:', margin + 5, yPosition);
-        yPosition += 6;
+        yPosition += 5.5;
 
         doc.setFont('helvetica', 'italic');
         doc.setTextColor(LIGHT_TEXT_COLOR);
@@ -333,8 +344,6 @@ export function generateVisionPDF(data: VisionPDFData): void {
         doc.setTextColor(TEXT_COLOR);
         yPosition += 2;
       }
-
-      yPosition += 6;
     });
   };
 
