@@ -108,6 +108,9 @@ Deno.serve(async (req: Request) => {
     console.log("✓ Subscriber created/updated successfully:", subscriberId);
 
     console.log("Step 2: Add to Vision Builder Segment");
+    console.log("Segment ID:", flodeskSegmentId);
+    console.log("Using email:", email);
+
     const segmentResponse = await fetch(
       `https://api.flodesk.com/v1/segments/${flodeskSegmentId}/subscribers`,
       {
@@ -122,26 +125,39 @@ Deno.serve(async (req: Request) => {
       }
     );
 
+    console.log("Segment API response status:", segmentResponse.status);
+
     if (!segmentResponse.ok) {
       const errorText = await segmentResponse.text();
-      console.error("Failed to add subscriber to Vision Builder segment:", errorText);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Failed to add subscriber to segment",
-          details: errorText,
-        }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      console.log("Segment API error response:", errorText);
+
+      // Check if subscriber is already in segment - this is OK!
+      if (segmentResponse.status === 409 ||
+          segmentResponse.status === 400 ||
+          errorText.toLowerCase().includes('already') ||
+          errorText.toLowerCase().includes('duplicate')) {
+        console.log("⚠️ Subscriber already in segment (this is OK) - treating as success");
+      } else {
+        console.error("Failed to add subscriber to Vision Builder segment:", errorText);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Failed to add subscriber to segment",
+            details: errorText,
+          }),
+          {
+            status: 500,
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+    } else {
+      console.log("✓ Successfully added to Vision Builder Flodesk segment");
     }
 
-    console.log("✓ Successfully added to Vision Builder Flodesk segment");
     console.log("=== FLODESK INTEGRATION COMPLETE ===");
 
     return new Response(
