@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { sendTemplatedEmail } from "../_shared/emailHelpers.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -432,6 +433,64 @@ Rules:
     }
 
     console.log("✓ Vision saved to database successfully");
+
+    // Send completion email to user
+    console.log("Sending completion email to user...");
+    const visionLink = `https://inneredge.co/vision-builder/results/${submissionId}`;
+    const communityLink = "https://inneredge.co/community";
+
+    const userEmailSent = await sendTemplatedEmail(
+      supabase,
+      'vision_builder_completion',
+      submissionData.email,
+      {
+        name: submissionData.name,
+        area_of_life: getAreaTitle(submissionData.area_of_life),
+        vision_link: visionLink,
+        community_link: communityLink,
+      }
+    );
+
+    if (userEmailSent) {
+      console.log("✓ Completion email sent to user");
+    } else {
+      console.warn("⚠ Failed to send completion email to user (non-critical)");
+    }
+
+    // Send notification to admin
+    console.log("Sending notification to admin...");
+    const adminEmail = "info@inneredge.co";
+    const adminLink = "https://inneredge.co/admin/vision-analytics";
+    const completedAt = new Date().toLocaleString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    const adminEmailSent = await sendTemplatedEmail(
+      supabase,
+      'vision_builder_admin_notification',
+      adminEmail,
+      {
+        name: submissionData.name,
+        email: submissionData.email,
+        area_of_life: getAreaTitle(submissionData.area_of_life),
+        completed_at: completedAt,
+        admin_link: adminLink,
+        current_reality: submissionData.current_reality || 'Not provided',
+        why_important: submissionData.why_important || 'Not provided',
+      }
+    );
+
+    if (adminEmailSent) {
+      console.log("✓ Admin notification sent");
+    } else {
+      console.warn("⚠ Failed to send admin notification (non-critical)");
+    }
+
     console.log("=== VISION GENERATION COMPLETED SUCCESSFULLY ===");
     console.log("  Submission ID:", submissionId);
 
