@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import jsPDF from 'jspdf';
 
 interface VisionPDFData {
   name: string;
@@ -9,9 +9,9 @@ interface VisionPDFData {
   visionDate: string;
 }
 
-const BRAND_COLOR_RGB = rgb(0.059, 0.463, 0.431); // #2d7471
-const TEXT_COLOR_RGB = rgb(0.11, 0.098, 0.09); // #1c1917
-const LIGHT_TEXT_COLOR_RGB = rgb(0.341, 0.325, 0.306); // #57534e
+const BRAND_COLOR = '#2d7471';
+const TEXT_COLOR = '#1c1917';
+const LIGHT_TEXT_COLOR = '#57534e';
 
 interface MonthData {
   number: number;
@@ -76,340 +76,281 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-function wrapText(text: string, font: any, fontSize: number, maxWidth: number): string[] {
-  const words = text.split(' ');
-  const lines: string[] = [];
-  let currentLine = '';
-
-  for (const word of words) {
-    const testLine = currentLine + (currentLine ? ' ' : '') + word;
-    const testWidth = font.widthOfTextAtSize(testLine, fontSize);
-
-    if (testWidth > maxWidth && currentLine !== '') {
-      lines.push(currentLine);
-      currentLine = word;
-    } else {
-      currentLine = testLine;
-    }
-  }
-
-  if (currentLine) {
-    lines.push(currentLine);
-  }
-
-  return lines;
-}
-
-export async function generateVisionPDF(data: VisionPDFData): Promise<void> {
-  // Fetch pre-designed cover template
-  const coverUrl = 'https://inner-edge.b-cdn.net/Vision-Cover.pdf';
-  const coverResponse = await fetch(coverUrl);
-  const coverBytes = await coverResponse.arrayBuffer();
-
-  // Load cover PDF
-  const pdfDoc = await PDFDocument.load(coverBytes);
-
-  // Get cover page (first page)
-  const coverPage = pdfDoc.getPage(0);
-  const { width, height } = coverPage.getSize();
-
-  // Embed fonts
-  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-  // Add dynamic text to cover
-  // Name's Vision (centered)
-  const nameText = `${data.name}'s Vision`;
-  const nameSize = 32;
-  const nameWidth = fontBold.widthOfTextAtSize(nameText, nameSize);
-
-  coverPage.drawText(nameText, {
-    x: (width - nameWidth) / 2,
-    y: height - 380,
-    size: nameSize,
-    font: fontBold,
-    color: rgb(1, 1, 1)
+export function generateVisionPDF(data: VisionPDFData): void {
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'letter',
   });
 
-  // Area of Life subtitle
-  const areaText = `${data.areaOfLife} - 1 Year Vision`;
-  const areaSize = 18;
-  const areaWidth = fontRegular.widthOfTextAtSize(areaText, areaSize);
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 19.05; // 0.75 inch margins
+  const contentWidth = pageWidth - (margin * 2);
+  let currentPage = 1;
 
-  coverPage.drawText(areaText, {
-    x: (width - areaWidth) / 2,
-    y: height - 420,
-    size: areaSize,
-    font: fontRegular,
-    color: rgb(1, 1, 1)
-  });
+  const addPageNumber = () => {
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(LIGHT_TEXT_COLOR);
+    doc.text(
+      `Page ${currentPage}`,
+      pageWidth / 2,
+      pageHeight - 15,
+      { align: 'center' }
+    );
+    currentPage++;
+  };
 
-  // Created date
-  const createdText = `Created: ${data.createdDate}`;
-  const createdSize = 12;
-  const createdWidth = fontRegular.widthOfTextAtSize(createdText, createdSize);
+  const addNewPage = () => {
+    doc.addPage();
+    addPageNumber();
+  };
 
-  coverPage.drawText(createdText, {
-    x: (width - createdWidth) / 2,
-    y: 220,
-    size: createdSize,
-    font: fontRegular,
-    color: rgb(1, 1, 1)
-  });
+  const wrapText = (text: string, maxWidth: number): string[] => {
+    return doc.splitTextToSize(text, maxWidth);
+  };
 
-  // Vision date
-  const visionDateText = `Vision Date: ${data.visionDate}`;
-  const visionDateSize = 12;
-  const visionDateWidth = fontRegular.widthOfTextAtSize(visionDateText, visionDateSize);
+  const addCoverPage = () => {
+    doc.setFillColor(BRAND_COLOR);
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-  coverPage.drawText(visionDateText, {
-    x: (width - visionDateWidth) / 2,
-    y: 200,
-    size: visionDateSize,
-    font: fontRegular,
-    color: rgb(1, 1, 1)
-  });
+    doc.setTextColor(255, 255, 255);
 
-  // Add Vision Narrative page
-  const narrativePage = pdfDoc.addPage();
-  const pageSize = narrativePage.getSize();
-  const margin = 50;
-  const maxWidth = pageSize.width - (margin * 2);
+    let yPosition = 40;
 
-  let currentPage = narrativePage;
-  let yPosition = pageSize.height - margin;
+    try {
+      const logoPath = '/inner-edge-logo.png';
+      const img = new Image();
+      img.src = logoPath;
 
-  // Add "Your Vision Narrative" header
-  currentPage.drawText('Your Vision Narrative', {
-    x: margin,
-    y: yPosition,
-    size: 18,
-    font: fontBold,
-    color: BRAND_COLOR_RGB
-  });
+      // Higher resolution logo - 120px equivalent (about 42mm)
+      const logoWidth = 42;
+      const logoHeight = 42;
+      const logoX = (pageWidth - logoWidth) / 2;
 
-  yPosition -= 10;
-
-  // Add horizontal line
-  currentPage.drawLine({
-    start: { x: margin, y: yPosition },
-    end: { x: pageSize.width - margin, y: yPosition },
-    thickness: 2,
-    color: BRAND_COLOR_RGB
-  });
-
-  yPosition -= 20;
-
-  // Add vision narrative text with word wrapping
-  const cleanNarrative = stripMarkdown(data.visionNarrative);
-  const paragraphs = cleanNarrative.split('\n').filter((p) => p.trim());
-  const fontSize = 11;
-  const lineHeight = fontSize * 1.5;
-
-  for (const paragraph of paragraphs) {
-    const processedParagraph = paragraph.trim();
-    if (!processedParagraph) continue;
-
-    const lines = wrapText(processedParagraph, fontRegular, fontSize, maxWidth);
-
-    for (const line of lines) {
-      if (yPosition < margin + 20) {
-        currentPage = pdfDoc.addPage();
-        yPosition = pageSize.height - margin;
-      }
-
-      currentPage.drawText(line, {
-        x: margin,
-        y: yPosition,
-        size: fontSize,
-        font: fontRegular,
-        color: TEXT_COLOR_RGB
-      });
-
-      yPosition -= lineHeight;
+      doc.addImage(img, 'PNG', logoX, yPosition, logoWidth, logoHeight, undefined, 'FAST');
+      yPosition += logoHeight + 7; // 20px spacing equivalent
+    } catch (error) {
+      console.warn('Could not load logo, continuing without it');
     }
 
-    yPosition -= 8; // Paragraph spacing
-  }
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('inneredge.co', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 20; // Proper spacing before title
 
-  // Add Action Plan pages
-  currentPage = pdfDoc.addPage();
-  yPosition = pageSize.height - margin;
-
-  currentPage.drawText('Your 12-Month Action Plan', {
-    x: margin,
-    y: yPosition,
-    size: 18,
-    font: fontBold,
-    color: BRAND_COLOR_RGB
-  });
-
-  yPosition -= 10;
-
-  currentPage.drawLine({
-    start: { x: margin, y: yPosition },
-    end: { x: pageSize.width - margin, y: yPosition },
-    thickness: 2,
-    color: BRAND_COLOR_RGB
-  });
-
-  yPosition -= 20;
-
-  // Parse and add action plan content
-  const months = parseActionPlan(data.actionPlan);
-
-  for (const month of months) {
-    // Check if we need a new page for this month
-    if (yPosition < margin + 100) {
-      currentPage = pdfDoc.addPage();
-      yPosition = pageSize.height - margin;
-    }
-
-    const cleanTitle = stripMarkdown(month.title);
-    const cleanDate = stripMarkdown(month.date);
-
-    // Month header
-    const monthHeader = `Month ${month.number}: ${cleanTitle}`;
-    currentPage.drawText(monthHeader, {
-      x: margin,
-      y: yPosition,
-      size: 14,
-      font: fontBold,
-      color: BRAND_COLOR_RGB
+    doc.setFontSize(32);
+    doc.setFont('helvetica', 'bold');
+    const titleLines = wrapText(`${data.name}'s Vision`, contentWidth);
+    titleLines.forEach((line) => {
+      doc.text(line, pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 12;
     });
 
-    yPosition -= 18;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'normal');
+    yPosition += 10;
+    const subtitleLines = wrapText(
+      `${data.areaOfLife} - 1 Year Vision`,
+      contentWidth
+    );
+    subtitleLines.forEach((line) => {
+      doc.text(line, pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 8;
+    });
 
-    // Date subtitle
-    if (cleanDate) {
-      currentPage.drawText(cleanDate, {
-        x: margin,
-        y: yPosition,
-        size: 11,
-        font: fontRegular,
-        color: LIGHT_TEXT_COLOR_RGB
-      });
+    doc.setFontSize(12);
+    yPosition = (pageHeight * 2) / 3 + 10;
+    doc.text(`Created: ${data.createdDate}`, pageWidth / 2, yPosition, {
+      align: 'center',
+    });
+    yPosition += 8;
+    doc.text(`Vision Date: ${data.visionDate}`, pageWidth / 2, yPosition, {
+      align: 'center',
+    });
 
-      yPosition -= 16;
-    }
+    addNewPage();
+  };
 
-    // SMART Goal
-    if (month.goal) {
-      const cleanGoal = stripMarkdown(month.goal);
+  const addVisionNarrative = () => {
+    let yPosition = margin;
 
-      currentPage.drawText('SMART Goal:', {
-        x: margin + 5,
-        y: yPosition,
-        size: 11,
-        font: fontBold,
-        color: TEXT_COLOR_RGB
-      });
+    doc.setTextColor(BRAND_COLOR);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your Vision Narrative', margin, yPosition);
+    yPosition += 12;
 
-      yPosition -= 14;
+    doc.setDrawColor(BRAND_COLOR);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
 
-      const goalLines = wrapText(cleanGoal, fontRegular, 10, maxWidth - 10);
+    doc.setTextColor(TEXT_COLOR);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
 
-      for (const goalLine of goalLines) {
-        if (yPosition < margin + 20) {
-          currentPage = pdfDoc.addPage();
-          yPosition = pageSize.height - margin;
+    const cleanNarrative = stripMarkdown(data.visionNarrative);
+    const paragraphs = cleanNarrative.split('\n').filter((p) => p.trim());
+
+    paragraphs.forEach((paragraph) => {
+      const processedParagraph = paragraph.trim();
+      if (!processedParagraph) return;
+
+      const lines = wrapText(processedParagraph, contentWidth);
+      const lineHeight = 5.5; // 1.4 line spacing for 11pt
+
+      lines.forEach((line) => {
+        if (yPosition > pageHeight - margin - 20) {
+          addNewPage();
+          yPosition = margin;
         }
 
-        currentPage.drawText(goalLine, {
-          x: margin + 5,
-          y: yPosition,
-          size: 10,
-          font: fontRegular,
-          color: TEXT_COLOR_RGB
-        });
+        doc.text(line, margin, yPosition);
+        yPosition += lineHeight;
+      });
 
-        yPosition -= 13;
+      yPosition += 3; // 8pt space between paragraphs
+    });
+
+    if (yPosition > pageHeight - margin - 60) {
+      addNewPage();
+    }
+  };
+
+  const addActionPlan = () => {
+    let yPosition = margin;
+
+    // Always start action plan on a new page for better organization
+    addNewPage();
+    yPosition = margin;
+
+    doc.setTextColor(BRAND_COLOR);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your 12-Month Action Plan', margin, yPosition);
+    yPosition += 12;
+
+    doc.setDrawColor(BRAND_COLOR);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 10;
+
+    const months = parseActionPlan(data.actionPlan);
+
+    months.forEach((month, monthIndex) => {
+      // Check if we need a new page for this month
+      if (yPosition > pageHeight - margin - 80) {
+        addNewPage();
+        yPosition = margin;
       }
 
-      yPosition -= 5;
-    }
+      // Add spacing between months (16pt space)
+      if (monthIndex > 0) {
+        yPosition += 6;
+      }
 
-    // Weekly breakdown
-    if (month.weeks.length > 0) {
-      currentPage.drawText('Weekly Breakdown:', {
-        x: margin + 5,
-        y: yPosition,
-        size: 10,
-        font: fontBold,
-        color: TEXT_COLOR_RGB
-      });
+      const cleanTitle = stripMarkdown(month.title);
+      const cleanDate = stripMarkdown(month.date);
 
-      yPosition -= 14;
+      // Month header - 16pt bold
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(BRAND_COLOR);
+      doc.text(`Month ${month.number}: ${cleanTitle}`, margin, yPosition);
+      yPosition += 8;
 
-      month.weeks.forEach((week, index) => {
-        if (yPosition < margin + 20) {
-          currentPage = pdfDoc.addPage();
-          yPosition = pageSize.height - margin;
-        }
+      // Date subtitle - 12pt
+      if (cleanDate) {
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(LIGHT_TEXT_COLOR);
+        doc.text(cleanDate, margin, yPosition);
+        yPosition += 7;
+      }
 
-        const cleanWeek = stripMarkdown(week);
-        const weekText = `  • Week ${index + 1}: ${cleanWeek}`;
-        const weekLines = wrapText(weekText, fontRegular, 10, maxWidth - 10);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(TEXT_COLOR);
 
-        for (const weekLine of weekLines) {
-          currentPage.drawText(weekLine, {
-            x: margin + 5,
-            y: yPosition,
-            size: 10,
-            font: fontRegular,
-            color: TEXT_COLOR_RGB
+      // SMART Goal section - 11pt
+      if (month.goal) {
+        const cleanGoal = stripMarkdown(month.goal);
+
+        doc.setFont('helvetica', 'bold');
+        doc.text('SMART Goal:', margin + 5, yPosition);
+        yPosition += 6;
+
+        doc.setFont('helvetica', 'normal');
+        const goalLines = wrapText(cleanGoal, contentWidth - 10);
+        goalLines.forEach((goalLine) => {
+          if (yPosition > pageHeight - margin - 15) {
+            addNewPage();
+            yPosition = margin;
+          }
+          doc.text(goalLine, margin + 5, yPosition);
+          yPosition += 5.5;
+        });
+        yPosition += 3;
+      }
+
+      // Weekly breakdown section - 10pt
+      if (month.weeks.length > 0) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Weekly Breakdown:', margin + 5, yPosition);
+        yPosition += 5.5;
+        doc.setFont('helvetica', 'normal');
+
+        month.weeks.forEach((week, index) => {
+          if (yPosition > pageHeight - margin - 15) {
+            addNewPage();
+            yPosition = margin;
+          }
+
+          const cleanWeek = stripMarkdown(week);
+          const weekLines = wrapText(`  • Week ${index + 1}: ${cleanWeek}`, contentWidth - 10);
+          weekLines.forEach((weekLine) => {
+            doc.text(weekLine, margin + 5, yPosition);
+            yPosition += 5;
           });
-
-          yPosition -= 12;
-        }
-      });
-
-      yPosition -= 5;
-    }
-
-    // Monthly check-in
-    if (month.checkin) {
-      const cleanCheckin = stripMarkdown(month.checkin);
-
-      currentPage.drawText('Monthly Check-in:', {
-        x: margin + 5,
-        y: yPosition,
-        size: 10,
-        font: fontBold,
-        color: TEXT_COLOR_RGB
-      });
-
-      yPosition -= 14;
-
-      const checkinLines = wrapText(cleanCheckin, fontRegular, 10, maxWidth - 10);
-
-      for (const checkinLine of checkinLines) {
-        if (yPosition < margin + 20) {
-          currentPage = pdfDoc.addPage();
-          yPosition = pageSize.height - margin;
-        }
-
-        currentPage.drawText(checkinLine, {
-          x: margin + 5,
-          y: yPosition,
-          size: 10,
-          font: fontRegular,
-          color: LIGHT_TEXT_COLOR_RGB
         });
-
-        yPosition -= 12;
+        yPosition += 3;
       }
 
-      yPosition -= 10;
-    }
+      // Monthly check-in section - 10pt italic
+      if (month.checkin) {
+        const cleanCheckin = stripMarkdown(month.checkin);
 
-    yPosition -= 10; // Space between months
-  }
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(TEXT_COLOR);
+        doc.text('Monthly Check-in:', margin + 5, yPosition);
+        yPosition += 5.5;
 
-  // Save the PDF
-  const pdfBytes = await pdfDoc.save();
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(LIGHT_TEXT_COLOR);
+        const checkinLines = wrapText(cleanCheckin, contentWidth - 10);
+        checkinLines.forEach((checkinLine) => {
+          if (yPosition > pageHeight - margin - 15) {
+            addNewPage();
+            yPosition = margin;
+          }
+          doc.text(checkinLine, margin + 5, yPosition);
+          yPosition += 5;
+        });
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(TEXT_COLOR);
+        yPosition += 2;
+      }
+    });
+  };
 
-  // Create download
+  addCoverPage();
+  addVisionNarrative();
+  addActionPlan();
+
   const nameParts = data.name.split(' ');
   const firstName = nameParts[0] || 'Vision';
   const lastName = nameParts.slice(1).join('_') || 'Document';
@@ -417,11 +358,5 @@ export async function generateVisionPDF(data: VisionPDFData): Promise<void> {
   const dateStr = new Date().toISOString().split('T')[0];
   const filename = `${firstName}_${lastName}_Vision_${areaSlug}_${dateStr}.pdf`;
 
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+  doc.save(filename);
 }
