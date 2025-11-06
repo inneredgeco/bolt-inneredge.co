@@ -36,8 +36,17 @@ export function VisionBuilderStep3({ onComplete, onBack, initialData, isLoading 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    console.log('=== STEP 3 CONTINUE CLICKED ===');
+    console.log('Current Reality length:', currentReality.trim().length);
+    console.log('Why Important length:', whyImportant.trim().length);
+    console.log('Min chars required:', MIN_CHARS);
+    console.log('Validation passed:', currentReality.trim().length >= MIN_CHARS && whyImportant.trim().length >= MIN_CHARS);
+
     if (currentReality.trim().length >= MIN_CHARS && whyImportant.trim().length >= MIN_CHARS) {
+      console.log('Calling onComplete handler...');
       onComplete(currentReality.trim(), whyImportant.trim());
+    } else {
+      console.error('Validation failed - not enough characters');
     }
   };
 

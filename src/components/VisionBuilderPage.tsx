@@ -162,15 +162,25 @@ export function VisionBuilderPage() {
   };
 
   const handleStep3Complete = async (currentReality: string, whyImportant: string) => {
+    console.log('=== STEP 3 COMPLETE HANDLER CALLED ===');
+    console.log('Current Reality:', currentReality.substring(0, 100) + '...');
+    console.log('Current Reality length:', currentReality.length);
+    console.log('Why Important:', whyImportant.substring(0, 100) + '...');
+    console.log('Why Important length:', whyImportant.length);
+    console.log('Submission ID:', submissionData.id);
+
     if (!submissionData.id) {
+      console.error('Missing submission ID');
       setError('Missing submission ID. Please start over.');
       return;
     }
 
+    console.log('Setting isLoading to true...');
     setIsLoading(true);
     setError(null);
 
     try {
+      console.log('Saving Step 3 data to database...');
       const { error: updateError } = await supabase
         .from('vision_submissions')
         .update({
@@ -183,10 +193,15 @@ export function VisionBuilderPage() {
         .eq('id', submissionData.id);
 
       if (updateError) {
+        console.error('=== DATABASE UPDATE ERROR ===');
         console.error('Error updating submission:', updateError);
         setError('Failed to save your progress. Please try again.');
+        setIsLoading(false);
         return;
       }
+
+      console.log('✓ Database updated successfully');
+      console.log('Updating local state...');
 
       setSubmissionData({
         ...submissionData,
@@ -195,12 +210,22 @@ export function VisionBuilderPage() {
         current_step: 4,
       });
 
+      console.log('✓ Local state updated');
+      console.log('Advancing to Step 4...');
       setCurrentStep(4);
+
+      console.log('Scrolling to top...');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      console.log('=== STEP 3 COMPLETE - NOW ON STEP 4 ===');
     } catch (err) {
-      console.error('Error saving step 3:', err);
+      console.error('=== UNEXPECTED ERROR IN STEP 3 ===');
+      console.error('Error type:', err instanceof Error ? err.constructor.name : typeof err);
+      console.error('Error message:', err instanceof Error ? err.message : String(err));
+      console.error('Error stack:', err instanceof Error ? err.stack : 'No stack trace');
       setError('An unexpected error occurred. Please try again.');
     } finally {
+      console.log('Setting isLoading to false...');
       setIsLoading(false);
     }
   };
