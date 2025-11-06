@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { supabase } from '../lib/supabase';
-import { Download, Plus, Share2, Check } from 'lucide-react';
+import { Download, Plus } from 'lucide-react';
 import { generateVisionPDF } from '../utils/generateVisionPDF';
 
 interface VisionData {
@@ -26,7 +26,6 @@ export function VisionResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'narrative' | 'plan'>('narrative');
-  const [copySuccess, setCopySuccess] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
@@ -191,25 +190,6 @@ export function VisionResultsPage() {
       console.error('Error generating PDF:', error);
       setPdfError('PDF generation failed. Please try again or use the print option.');
       setIsGeneratingPDF(false);
-    }
-  };
-
-  const handleCopyLink = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    });
-  };
-
-  const handleShare = (platform: 'twitter' | 'facebook') => {
-    const url = window.location.href;
-    const text = `I just created my 1-year vision with @inneredge!`;
-
-    if (platform === 'twitter') {
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-    } else if (platform === 'facebook') {
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
     }
   };
 
@@ -411,45 +391,6 @@ export function VisionResultsPage() {
               ))}
             </div>
           )}
-
-          <div className="bg-white rounded-xl shadow-md p-8 text-center print:hidden">
-            <h2 className="text-2xl font-bold text-stone-900 mb-4">Share Your Commitment</h2>
-            <p className="text-stone-600 mb-6">
-              Let others know you're creating positive change in your life
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <button
-                onClick={() => handleShare('twitter')}
-                className="flex items-center gap-2 px-6 py-3 bg-[#1DA1F2] text-white rounded-lg font-semibold hover:bg-[#1a8cd8] transition-colors"
-              >
-                <Share2 size={20} />
-                Share on Twitter
-              </button>
-              <button
-                onClick={() => handleShare('facebook')}
-                className="flex items-center gap-2 px-6 py-3 bg-[#4267B2] text-white rounded-lg font-semibold hover:bg-[#365899] transition-colors"
-              >
-                <Share2 size={20} />
-                Share on Facebook
-              </button>
-              <button
-                onClick={handleCopyLink}
-                className="flex items-center gap-2 px-6 py-3 bg-stone-200 text-stone-900 rounded-lg font-semibold hover:bg-stone-300 transition-colors"
-              >
-                {copySuccess ? (
-                  <>
-                    <Check size={20} />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Share2 size={20} />
-                    Copy Link
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
