@@ -84,6 +84,21 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
 
       const submissionId = data.id;
 
+      console.log('Updating current_step to 2 in database...');
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          current_step: 2,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionId);
+
+      if (updateError) {
+        console.error('Error updating current_step:', updateError);
+      } else {
+        console.log('current_step updated to 2 successfully');
+      }
+
       try {
         console.log('Attempting to send confirmation email...');
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/vision-builder-submission`;

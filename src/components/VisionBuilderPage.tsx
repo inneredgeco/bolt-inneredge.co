@@ -43,6 +43,9 @@ export function VisionBuilderPage() {
   }, [submissionId]);
 
   const loadSubmission = async (id: string) => {
+    console.log('=== LOADING SUBMISSION ===');
+    console.log('Submission ID:', id);
+
     setIsLoading(true);
     setError(null);
 
@@ -60,9 +63,13 @@ export function VisionBuilderPage() {
       }
 
       if (!data) {
+        console.error('No submission data found');
         setError('Vision submission not found. Please check your link and try again.');
         return;
       }
+
+      console.log('Submission loaded successfully');
+      console.log('Current step from database:', data.current_step);
 
       setSubmissionData({
         id: data.id,
@@ -77,7 +84,9 @@ export function VisionBuilderPage() {
         current_step: data.current_step,
       });
 
+      console.log('Setting currentStep to:', data.current_step);
       setCurrentStep(data.current_step);
+      console.log('=== SUBMISSION LOADED - SHOULD SHOW STEP', data.current_step, '===');
     } catch (err) {
       console.error('Error loading submission:', err);
       setError('An unexpected error occurred. Please try again.');
@@ -87,6 +96,11 @@ export function VisionBuilderPage() {
   };
 
   const handleStep1Complete = async (name: string, email: string, submissionId: string) => {
+    console.log('=== STEP 1 COMPLETE CALLBACK ===');
+    console.log('Name:', name);
+    console.log('Email:', email);
+    console.log('Submission ID:', submissionId);
+
     setSubmissionData({
       ...submissionData,
       id: submissionId,
@@ -94,8 +108,11 @@ export function VisionBuilderPage() {
       email,
       current_step: 2,
     });
+
+    console.log('Setting currentStep to 2');
     setCurrentStep(2);
 
+    console.log('Navigating to resume URL');
     navigate(`/vision-builder/resume/${submissionId}`, { replace: true });
   };
 
@@ -398,6 +415,11 @@ export function VisionBuilderPage() {
     );
   }
 
+  console.log('=== RENDERING VISION BUILDER ===');
+  console.log('currentStep:', currentStep);
+  console.log('submissionData.id:', submissionData.id);
+  console.log('submissionData.current_step:', submissionData.current_step);
+
   return (
     <>
       <SEOHead
@@ -409,19 +431,25 @@ export function VisionBuilderPage() {
 
       <div className="min-h-screen">
         {currentStep === 1 && (
-          <VisionBuilderStep1
-            onComplete={handleStep1Complete}
-            initialData={submissionData}
-          />
+          <>
+            {console.log('Rendering Step 1')}
+            <VisionBuilderStep1
+              onComplete={handleStep1Complete}
+              initialData={submissionData}
+            />
+          </>
         )}
 
         {currentStep === 2 && (
-          <VisionBuilderStep2
-            onComplete={handleStep2Complete}
-            onBack={handleBack}
-            initialData={submissionData}
-            isLoading={isLoading}
-          />
+          <>
+            {console.log('Rendering Step 2')}
+            <VisionBuilderStep2
+              onComplete={handleStep2Complete}
+              onBack={handleBack}
+              initialData={submissionData}
+              isLoading={isLoading}
+            />
+          </>
         )}
 
         {currentStep === 3 && (
