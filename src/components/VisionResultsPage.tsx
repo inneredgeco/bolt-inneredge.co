@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { supabase } from '../lib/supabase';
-import { ChevronDown, ChevronUp, Download, Mail, Plus, Share2, Check } from 'lucide-react';
+import { Download, Plus, Share2, Check } from 'lucide-react';
 import { generateVisionPDF } from '../utils/generateVisionPDF';
 
 interface VisionData {
@@ -26,13 +26,9 @@ export function VisionResultsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'narrative' | 'plan'>('narrative');
-  const [expandedMonths, setExpandedMonths] = useState<Set<number>>(new Set([1]));
   const [copySuccess, setCopySuccess] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [emailSuccess, setEmailSuccess] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
 
   const AREA_TITLES: Record<string, string> = {
     'health-fitness': 'Health & Fitness',
@@ -115,16 +111,6 @@ export function VisionResultsPage() {
     }
   };
 
-  const toggleMonth = (monthNumber: number) => {
-    const newExpanded = new Set(expandedMonths);
-    if (newExpanded.has(monthNumber)) {
-      newExpanded.delete(monthNumber);
-    } else {
-      newExpanded.add(monthNumber);
-    }
-    setExpandedMonths(newExpanded);
-  };
-
   const parseActionPlan = (actionPlanText: string) => {
     const months: Array<{
       number: number;
@@ -205,51 +191,6 @@ export function VisionResultsPage() {
       console.error('Error generating PDF:', error);
       setPdfError('PDF generation failed. Please try again or use the print option.');
       setIsGeneratingPDF(false);
-    }
-  };
-
-  const handleEmailCopy = async () => {
-    if (!visionData || !submissionId) return;
-
-    setIsSendingEmail(true);
-    setEmailSuccess(false);
-    setEmailError(null);
-
-    try {
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/email-vision`;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          submissionId,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Email API error:', errorData);
-        throw new Error(errorData.error || 'Failed to send email');
-      }
-
-      const data = await response.json();
-      console.log('Email sent successfully:', data);
-
-      setEmailSuccess(true);
-      setTimeout(() => {
-        setEmailSuccess(false);
-      }, 5000);
-    } catch (error) {
-      console.error('Error sending email:', error);
-      setEmailError('Failed to send email. Please try downloading the PDF instead.');
-      setTimeout(() => {
-        setEmailError(null);
-      }, 5000);
-    } finally {
-      setIsSendingEmail(false);
     }
   };
 
@@ -353,22 +294,6 @@ export function VisionResultsPage() {
             </div>
           )}
 
-          {emailSuccess && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Check className="text-green-600" size={24} />
-                <span className="text-green-800 font-semibold">Email sent to {visionData.email}!</span>
-              </div>
-              <p className="text-green-700 text-sm">Check your inbox (and spam folder)</p>
-            </div>
-          )}
-
-          {emailError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
-              {emailError}
-            </div>
-          )}
-
           <div className="flex flex-wrap gap-4 justify-center mb-8 print:hidden">
             <button
               onClick={handleDownloadPDF}
@@ -387,26 +312,9 @@ export function VisionResultsPage() {
                 </>
               )}
             </button>
-            <button
-              onClick={handleEmailCopy}
-              disabled={isSendingEmail}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSendingEmail ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-                  Sending Email...
-                </>
-              ) : (
-                <>
-                  <Mail size={20} />
-                  Email Me a Copy
-                </>
-              )}
-            </button>
             <Link
               to="/vision-builder"
-              className="flex items-center gap-2 px-6 py-3 text-stone-700 hover:text-brand-600 font-semibold transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors"
             >
               <Plus size={20} />
               Create New Vision
@@ -441,123 +349,68 @@ export function VisionResultsPage() {
           {activeTab === 'narrative' && (
             <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-8">
               <div className="prose prose-lg max-w-none">
-                <div className="whitespace-pre-wrap text-stone-800 leading-relaxed text-lg">
-                  {visionData.vision_narrative}
-                </div>
+                <div
+                  className="whitespace-pre-wrap text-stone-800 leading-relaxed text-lg"
+                  dangerouslySetInnerHTML={{
+                    __html: visionData.vision_narrative.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                  }}
+                />
               </div>
             </div>
           )}
 
           {activeTab === 'plan' && (
-            <div className="space-y-4 mb-8">
+            <div className="space-y-6 mb-8">
               {months.map((month) => (
                 <div
                   key={month.number}
-                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                  className="bg-white rounded-xl shadow-md p-6"
                 >
-                  <button
-                    onClick={() => toggleMonth(month.number)}
-                    className="w-full px-6 py-4 flex items-center justify-between hover:bg-stone-50 transition-colors"
-                  >
-                    <div className="text-left">
-                      <h3 className="text-xl font-bold text-stone-900">
-                        Month {month.number}: {month.title}
-                      </h3>
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold text-stone-900">
+                      Month {month.number}: {month.title}
+                    </h3>
+                  </div>
+
+                  {month.goal && (
+                    <div className="mb-4 p-4 bg-brand-50 rounded-lg border-l-4 border-brand-600">
+                      <h4 className="text-sm font-semibold text-brand-800 uppercase mb-2">
+                        SMART Goal
+                      </h4>
+                      <p className="text-stone-800">{month.goal}</p>
                     </div>
-                    {expandedMonths.has(month.number) ? (
-                      <ChevronUp className="text-brand-600 flex-shrink-0" size={24} />
-                    ) : (
-                      <ChevronDown className="text-stone-400 flex-shrink-0" size={24} />
-                    )}
-                  </button>
+                  )}
 
-                  {expandedMonths.has(month.number) && (
-                    <div className="px-6 pb-6 border-t border-stone-100">
-                      {month.goal && (
-                        <div className="mt-4 p-4 bg-brand-50 rounded-lg border-l-4 border-brand-600">
-                          <h4 className="text-sm font-semibold text-brand-800 uppercase mb-2">
-                            SMART Goal
-                          </h4>
-                          <p className="text-stone-800">{month.goal}</p>
-                        </div>
-                      )}
+                  {month.weeks.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-stone-700 uppercase mb-3">
+                        Weekly Breakdown
+                      </h4>
+                      <ul className="space-y-2">
+                        {month.weeks.map((week, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 w-6 h-6 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center text-sm font-semibold">
+                              {index + 1}
+                            </span>
+                            <span className="text-stone-700 pt-0.5">{week}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                      {month.weeks.length > 0 && (
-                        <div className="mt-4">
-                          <h4 className="text-sm font-semibold text-stone-700 uppercase mb-3">
-                            Weekly Breakdown
-                          </h4>
-                          <ul className="space-y-2">
-                            {month.weeks.map((week, index) => (
-                              <li key={index} className="flex items-start gap-3">
-                                <span className="flex-shrink-0 w-6 h-6 bg-brand-100 text-brand-700 rounded-full flex items-center justify-center text-sm font-semibold">
-                                  {index + 1}
-                                </span>
-                                <span className="text-stone-700 pt-0.5">{week}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {month.checkin && (
-                        <div className="mt-4 p-4 bg-stone-50 rounded-lg">
-                          <h4 className="text-sm font-semibold text-stone-700 uppercase mb-2">
-                            Monthly Check-in
-                          </h4>
-                          <p className="text-stone-600 italic">{month.checkin}</p>
-                        </div>
-                      )}
+                  {month.checkin && (
+                    <div className="p-4 bg-stone-50 rounded-lg">
+                      <h4 className="text-sm font-semibold text-stone-700 uppercase mb-2">
+                        Monthly Check-in
+                      </h4>
+                      <p className="text-stone-600 italic">{month.checkin}</p>
                     </div>
                   )}
                 </div>
               ))}
             </div>
           )}
-
-          <div className="flex flex-wrap gap-4 justify-center mb-12 print:hidden">
-            <button
-              onClick={handleDownloadPDF}
-              disabled={isGeneratingPDF}
-              className="flex items-center gap-2 px-6 py-3 bg-brand-600 text-white rounded-lg font-semibold hover:bg-brand-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isGeneratingPDF ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Generating PDF...
-                </>
-              ) : (
-                <>
-                  <Download size={20} />
-                  Download as PDF
-                </>
-              )}
-            </button>
-            <button
-              onClick={handleEmailCopy}
-              disabled={isSendingEmail}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-brand-600 border-2 border-brand-600 rounded-lg font-semibold hover:bg-brand-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSendingEmail ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
-                  Sending Email...
-                </>
-              ) : (
-                <>
-                  <Mail size={20} />
-                  Email Me a Copy
-                </>
-              )}
-            </button>
-            <Link
-              to="/vision-builder"
-              className="flex items-center gap-2 px-6 py-3 text-stone-700 hover:text-brand-600 font-semibold transition-colors"
-            >
-              <Plus size={20} />
-              Create New Vision
-            </Link>
-          </div>
 
           <div className="bg-white rounded-xl shadow-md p-8 text-center print:hidden">
             <h2 className="text-2xl font-bold text-stone-900 mb-4">Share Your Commitment</h2>

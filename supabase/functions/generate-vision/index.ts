@@ -43,7 +43,6 @@ function getAreaTitle(areaId: string): string {
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     month: 'long',
-    day: 'numeric',
     year: 'numeric'
   });
 }
@@ -87,10 +86,10 @@ ${havingOutcomesList}
 Generate TWO documents:
 
 DOCUMENT 1 - VISION NARRATIVE:
-Write a compelling 400-600 word story in first person present tense set on ${futureFormatted}.
+Write a compelling 400-600 word story in first person present tense set in ${futureFormatted}.
 
 Structure:
-- Opening: Set the scene with date, time, and initial feeling
+- Opening: Set the scene with the month/year (${futureFormatted}) and initial feeling
 - Being: Weave their being words into who they've become
 - Doing: Integrate their actions as natural daily practices
 - Having: Include their outcomes as experienced reality
