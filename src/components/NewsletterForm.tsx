@@ -88,32 +88,6 @@ export default function NewsletterForm() {
         console.log('current_step updated to 2 successfully');
       }
 
-      console.log('Calling vision-builder-submission edge function...');
-      try {
-        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/vision-builder-submission`;
-
-        const automationResponse = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({
-            name: name.trim(),
-            email: email.trim(),
-            submissionId: submissionId,
-          }),
-        });
-
-        if (!automationResponse.ok) {
-          console.error('Automation edge function failed:', await automationResponse.text());
-        } else {
-          console.log('Automation edge function called successfully');
-        }
-      } catch (automationError) {
-        console.error('Error calling automation edge function:', automationError);
-      }
-
       console.log('=== SIGN-UP COMPLETE - Navigating to vision builder ===');
       navigate(`/vision-builder/resume/${submissionId}`);
     } catch (err) {
