@@ -238,9 +238,17 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    console.log('=== STEP 5 CONTINUE CLICKED ===');
 
     const validCustomActions = customActions.filter(a => a.trim().length > 0).map(a => a.trim());
     const allActions = [...selectedActions, ...validCustomActions];
+
+    console.log('Selected actions from list:', selectedActions.length);
+    console.log('Custom actions:', validCustomActions.length);
+    console.log('Total actions:', allActions.length);
+    console.log('Can continue:', canContinue);
+
+    console.log('Calling onComplete handler...');
     onComplete(allActions);
   };
 

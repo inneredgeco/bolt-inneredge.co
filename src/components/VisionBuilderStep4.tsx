@@ -103,12 +103,24 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    console.log('=== STEP 4 CONTINUE CLICKED ===');
 
     const validCustomWords = customWords.filter(w => w.trim().length > 0).map(w => w.trim());
     const allWords = [...selectedWords, ...validCustomWords];
 
-    if (allWords.length >= MIN_WORDS && allWords.length <= MAX_WORDS) {
+    console.log('Selected words from list:', selectedWords);
+    console.log('Custom words:', validCustomWords);
+    console.log('All words combined:', allWords);
+    console.log('Total words count:', allWords.length);
+    console.log('Expected total:', TOTAL_WORDS);
+    console.log('Can continue:', canContinue);
+
+    if (allWords.length === TOTAL_WORDS) {
+      console.log('Validation passed - calling onComplete...');
       onComplete(allWords);
+    } else {
+      console.error('Validation failed - word count mismatch');
+      console.error('Expected:', TOTAL_WORDS, 'Got:', allWords.length);
     }
   };
 

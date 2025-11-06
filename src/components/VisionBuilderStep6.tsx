@@ -202,9 +202,17 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    console.log('=== STEP 6 CONTINUE CLICKED ===');
 
     const validCustomOutcomes = customOutcomes.filter(o => o.trim().length > 0).map(o => o.trim());
     const allOutcomes = [...selectedOutcomes, ...validCustomOutcomes];
+
+    console.log('Selected outcomes from list:', selectedOutcomes.length);
+    console.log('Custom outcomes:', validCustomOutcomes.length);
+    console.log('Total outcomes:', allOutcomes.length);
+    console.log('Can continue:', canContinue);
+
+    console.log('Calling onComplete handler...');
     onComplete(allOutcomes);
   };
 
