@@ -63,53 +63,9 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const nameParts = name.trim().split(' ');
-    const firstName = nameParts[0];
-    const lastName = nameParts.slice(1).join(' ') || '';
-
-    console.log("Step 1: Create/Update Subscriber in Flodesk");
-    const subscriberResponse = await fetch(
-      "https://api.flodesk.com/v1/subscribers",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Basic " + btoa(flodeskApiKey + ":"),
-        },
-        body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-          email: email,
-        }),
-      }
-    );
-
-    if (!subscriberResponse.ok) {
-      const errorText = await subscriberResponse.text();
-      console.error("Failed to create/update Flodesk subscriber:", errorText);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Failed to add subscriber to Flodesk",
-          details: errorText,
-        }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const subscriber = await subscriberResponse.json();
-    const subscriberId = subscriber.id;
-    console.log("✓ Subscriber created/updated successfully:", subscriberId);
-
-    console.log("Step 2: Add to Vision Builder Segment");
+    console.log("Adding to Vision Builder Segment (single API call)");
     console.log("Segment ID:", flodeskSegmentId);
-    console.log("Using email:", email);
+    console.log("Email:", email);
 
     const segmentResponse = await fetch(
       `https://api.flodesk.com/v1/segments/${flodeskSegmentId}/subscribers`,
@@ -131,40 +87,41 @@ Deno.serve(async (req: Request) => {
       const errorText = await segmentResponse.text();
       console.log("Segment API error response:", errorText);
 
-      // Check if subscriber is already in segment - this is OK!
-      if (segmentResponse.status === 409 ||
-          segmentResponse.status === 400 ||
-          errorText.toLowerCase().includes('already') ||
-          errorText.toLowerCase().includes('duplicate')) {
-        console.log("⚠️ Subscriber already in segment (this is OK) - treating as success");
-      } else {
-        console.error("Failed to add subscriber to Vision Builder segment:", errorText);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: "Failed to add subscriber to segment",
-            details: errorText,
-          }),
-          {
-            status: 500,
-            headers: {
-              ...corsHeaders,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.log("Parsed error:", errorJson);
+      } catch (e) {
+        console.log("Could not parse error as JSON");
       }
-    } else {
-      console.log("✓ Successfully added to Vision Builder Flodesk segment");
+
+      console.error("Failed to add subscriber to Vision Builder segment");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Failed to add subscriber to segment",
+          details: errorText,
+          status: segmentResponse.status,
+        }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
 
+    const segmentResult = await segmentResponse.json();
+    console.log("✓ Successfully added to Vision Builder Flodesk segment");
+    console.log("Response data:", segmentResult);
     console.log("=== FLODESK INTEGRATION COMPLETE ===");
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "Successfully added to Flodesk Vision Builder segment",
-        subscriber_id: subscriberId,
+        data: segmentResult,
       }),
       {
         status: 200,
