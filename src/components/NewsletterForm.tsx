@@ -1,52 +1,124 @@
 import { useState } from 'react';
-import { Mail, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, User, ArrowRight } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function NewsletterForm() {
-  const [firstName, setFirstName] = useState('');
+  const navigate = useNavigate();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
+
+  const validateForm = (): boolean => {
+    const newErrors: { name?: string; email?: string } = {};
+
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log('=== VISION BUILDER SIGN-UP STARTED ===');
+    console.log('Name:', name);
+    console.log('Email:', email);
+
+    if (!validateForm()) {
+      console.log('Form validation failed');
+      return;
+    }
+
     setIsSubmitting(true);
-    setSubmitMessage(null);
 
     try {
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/newsletter-signup`;
+      console.log('Creating vision submission in database...');
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          firstName: firstName,
-          email: email,
+      const { data, error: insertError } = await supabase
+        .from('vision_submissions')
+        .insert({
+          name: name.trim(),
+          email: email.trim(),
+          current_step: 1,
+          status: 'started',
+          step_1_completed_at: new Date().toISOString(),
         })
-      });
+        .select()
+        .single();
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setSubmitMessage({
-          type: 'success',
-          text: '🎉 Success! Check your email (and spam folder) to confirm and get your free guide.'
-        });
-        setEmail('');
-        setFirstName('');
-      } else {
-        throw new Error(data.error || 'Subscription failed');
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        alert('Failed to start your vision. Please try again.');
+        setIsSubmitting(false);
+        return;
       }
-    } catch (error) {
-      setSubmitMessage({
-        type: 'error',
-        text: 'Something went wrong. Please try again.'
-      });
+
+      if (!data) {
+        console.error('No data returned from database');
+        alert('Failed to create submission. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      console.log('Database save successful! Submission ID:', data.id);
+      const submissionId = data.id;
+
+      console.log('Updating current_step to 2...');
+      const { error: updateError } = await supabase
+        .from('vision_submissions')
+        .update({
+          current_step: 2,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', submissionId);
+
+      if (updateError) {
+        console.error('Error updating current_step:', updateError);
+      } else {
+        console.log('current_step updated to 2 successfully');
+      }
+
+      console.log('Calling vision-builder-submission edge function...');
+      try {
+        const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/vision-builder-submission`;
+
+        const automationResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+            submissionId: submissionId,
+          }),
+        });
+
+        if (!automationResponse.ok) {
+          console.error('Automation edge function failed:', await automationResponse.text());
+        } else {
+          console.log('Automation edge function called successfully');
+        }
+      } catch (automationError) {
+        console.error('Error calling automation edge function:', automationError);
+      }
+
+      console.log('=== SIGN-UP COMPLETE - Navigating to vision builder ===');
+      navigate(`/vision-builder/resume/${submissionId}`);
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -65,10 +137,10 @@ export default function NewsletterForm() {
                 FREE RESOURCE
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 leading-tight">
-                Vision Formula
+                Create Your 1-Year Vision
               </h2>
               <p className="text-base text-gray-700 max-w-xl mx-auto">
-                Download your free guide and learn what is required to create a vision for your life.
+                A guided process to design the life you want in the next 12 months
               </p>
             </div>
 
@@ -80,12 +152,17 @@ export default function NewsletterForm() {
                   </div>
                   <input
                     type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First Name"
-                    required
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                    disabled={isSubmitting}
+                    className={`w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
+                      errors.name ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
 
                 <div className="relative">
@@ -96,36 +173,39 @@ export default function NewsletterForm() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email Address"
-                    required
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400"
+                    placeholder="your@email.com"
+                    disabled={isSubmitting}
+                    className={`w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
+                      errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white font-bold py-2.5 px-6 rounded-lg hover:from-brand-700 hover:to-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98]"
+                className="group w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white font-bold py-2.5 px-6 rounded-lg hover:from-brand-700 hover:to-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                {isSubmitting ? 'Getting your guide...' : 'Get Free Guide'}
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Starting Your Vision...
+                  </>
+                ) : (
+                  <>
+                    Begin Your Vision
+                    <ArrowRight className="group-hover:translate-x-1 transition-transform" size={16} />
+                  </>
+                )}
               </button>
 
               <p className="text-center text-sm text-gray-500 mt-3">
-                Unsubscribe anytime. We respect your privacy.
+                Your vision is private and secure. We'll never share your information.
               </p>
-
-              {submitMessage && (
-                <div
-                  className={`mt-6 p-4 rounded-lg text-center font-medium transition-all duration-300 ${
-                    submitMessage.type === 'success'
-                      ? 'bg-brand-50 text-brand-800 border border-brand-200'
-                      : 'bg-red-50 text-red-800 border border-red-200'
-                  }`}
-                >
-                  {submitMessage.text}
-                </div>
-              )}
             </form>
           </div>
         </div>
