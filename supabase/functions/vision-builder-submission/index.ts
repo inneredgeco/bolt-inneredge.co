@@ -25,6 +25,7 @@ Deno.serve(async (req: Request) => {
 
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const flodeskApiKey = Deno.env.get("FLODESK_API_KEY");
+    const flodeskSegmentId = Deno.env.get("FLODESK_VISION_BUILDER_SEGMENT_ID") || "690b95e1446cc061a40e38e9";
     const baseUrl = "https://www.inneredge.co";
 
     if (!resendApiKey) {
@@ -43,11 +44,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const resumeUrl = `${baseUrl}/vision-builder/resume/${formData.submissionId}`;
-
     if (flodeskApiKey) {
       try {
-        const flodeskResponse = await fetch(
+        console.log("Adding to Flodesk - Step 1: Create/Update Subscriber");
+
+        const subscriberResponse = await fetch(
           "https://api.flodesk.com/v1/subscribers",
           {
             method: "POST",
@@ -56,18 +57,43 @@ Deno.serve(async (req: Request) => {
               "Authorization": "Basic " + btoa(flodeskApiKey + ":"),
             },
             body: JSON.stringify({
-              first_name: formData.name,
+              first_name: formData.name.split(' ')[0],
+              last_name: formData.name.split(' ').slice(1).join(' ') || '',
               email: formData.email,
-              segment_ids: ["690b95e1446cc061a40e38e9"],
               double_optin: true,
             }),
           }
         );
 
-        if (!flodeskResponse.ok) {
-          console.error("Failed to add to Flodesk segment:", await flodeskResponse.text());
+        if (!subscriberResponse.ok) {
+          const errorText = await subscriberResponse.text();
+          console.error("Failed to create/update Flodesk subscriber:", errorText);
         } else {
-          console.log("Successfully added to Vision Builder Flodesk segment");
+          const subscriber = await subscriberResponse.json();
+          const subscriberId = subscriber.id;
+          console.log("Subscriber created/updated successfully:", subscriberId);
+
+          console.log("Adding to Flodesk - Step 2: Add to Vision Builder Segment");
+          const segmentResponse = await fetch(
+            `https://api.flodesk.com/v1/segments/${flodeskSegmentId}/subscribers`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + btoa(flodeskApiKey + ":"),
+              },
+              body: JSON.stringify({
+                subscriber_id: subscriberId,
+              }),
+            }
+          );
+
+          if (!segmentResponse.ok) {
+            const errorText = await segmentResponse.text();
+            console.error("Failed to add subscriber to Vision Builder segment:", errorText);
+          } else {
+            console.log("Successfully added to Vision Builder Flodesk segment");
+          }
         }
       } catch (flodeskError) {
         console.error("Error adding to Flodesk:", flodeskError);
@@ -89,22 +115,18 @@ Deno.serve(async (req: Request) => {
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #2d7471;">Your Vision Journey Begins</h2>
-              
+
               <p>Hi ${formData.name},</p>
 
               <p>We're excited to help you create your 1-year vision! This is your chance to design the life you want in the next 12 months.</p>
 
-              <p><strong>You can continue your vision anytime at:</strong></p>
-              
+              <p>Your vision builder is ready and waiting for you. Complete it at your own pace - your progress is automatically saved as you go.</p>
+
               <p style="margin: 20px 0;">
-                <a href="${resumeUrl}" style="background-color: #2d7471; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">Continue Your Vision</a>
+                <a href="${baseUrl}/vision-builder" style="background-color: #2d7471; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">Start Building Your Vision</a>
               </p>
 
-              <p style="color: #666; font-size: 14px;">Or copy this link: ${resumeUrl}</p>
-
-              <p><strong>Save this email so you can return to complete your vision whenever you're ready.</strong></p>
-
-              <p>Your progress is automatically saved as you complete each step, so you can take your time and come back whenever inspiration strikes.</p>
+              <p>Take your time with each step. There's no rush - come back whenever inspiration strikes and pick up right where you left off.</p>
 
               <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
 
