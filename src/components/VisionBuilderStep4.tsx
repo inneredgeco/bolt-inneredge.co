@@ -9,9 +9,9 @@ interface VisionBuilderStep4Props {
   isLoading: boolean;
 }
 
-const MIN_WORDS = 8;
-const MAX_WORDS = 10;
+const MAX_LIST_WORDS = 8;
 const REQUIRED_CUSTOM_WORDS = 2;
+const TOTAL_WORDS = MAX_LIST_WORDS + REQUIRED_CUSTOM_WORDS;
 
 const wordsByArea: Record<string, string[]> = {
   'health-fitness': [
@@ -89,7 +89,7 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
     if (selectedWords.includes(word)) {
       setSelectedWords(selectedWords.filter(w => w !== word));
     } else {
-      if (selectedWords.length < MAX_WORDS) {
+      if (selectedWords.length < MAX_LIST_WORDS) {
         setSelectedWords([...selectedWords, word]);
       }
     }
@@ -115,7 +115,8 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
   const validCustomWordsCount = customWords.filter(w => w.trim().length > 0).length;
   const totalSelected = selectedWords.length + validCustomWordsCount;
   const hasRequiredCustomWords = validCustomWordsCount >= REQUIRED_CUSTOM_WORDS;
-  const canContinue = totalSelected >= MIN_WORDS && totalSelected <= MAX_WORDS && hasRequiredCustomWords;
+  const listSelectionComplete = selectedWords.length === MAX_LIST_WORDS;
+  const canContinue = selectedWords.length === MAX_LIST_WORDS && hasRequiredCustomWords;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -149,27 +150,35 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
             How do you want to BE in your {getAreaTitle(initialData.area_of_life)}?
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            Select 6-8 from the list below, and add 2 of your own
+            Select up to 8 from below, then add 2 of your own
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-stone-900">Select Your Words</h3>
-              <div className={`text-lg font-bold ${
-                totalSelected < MIN_WORDS ? 'text-orange-600' :
-                totalSelected > MAX_WORDS ? 'text-red-600' :
-                'text-brand-600'
-              }`}>
-                {totalSelected}/{MAX_WORDS} words selected
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-bold text-stone-900">Select Your Words</h3>
+                <div className={`text-lg font-bold ${
+                  listSelectionComplete ? 'text-green-600' : 'text-brand-600'
+                }`}>
+                  {selectedWords.length}/{MAX_LIST_WORDS} words selected from list
+                </div>
               </div>
+              {listSelectionComplete && (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <span className="text-green-600 font-bold text-lg">✓</span>
+                  <p className="text-sm text-green-800 font-medium">
+                    List selections complete! Now add 2 of your own below.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-3 mb-6">
               {availableWords.map((word) => {
                 const isSelected = selectedWords.includes(word);
-                const isDisabled = !isSelected && selectedWords.length >= MAX_WORDS;
+                const isDisabled = !isSelected && selectedWords.length >= MAX_LIST_WORDS;
 
                 return (
                   <button
@@ -181,7 +190,7 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
                       isSelected
                         ? 'bg-brand-600 text-white shadow-md scale-105'
                         : isDisabled
-                        ? 'bg-stone-100 text-stone-400 cursor-not-allowed'
+                        ? 'bg-stone-100 text-stone-400 cursor-not-allowed opacity-50'
                         : 'bg-white border-2 border-stone-200 text-stone-700 hover:border-brand-400 hover:shadow-sm'
                     }`}
                   >
@@ -195,10 +204,17 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
             </div>
 
             <div className="border-t-2 border-stone-100 pt-6 mt-6">
-              <h4 className="text-lg font-bold text-stone-900 mb-2">
-                Add 2 custom words <span className="text-red-600">*</span>
-              </h4>
-              <p className="text-sm text-stone-600 mb-4">These are required and count toward your total</p>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-lg font-bold text-stone-900">
+                  Add 2 custom words <span className="text-red-600">*</span>
+                </h4>
+                <div className={`text-sm font-bold ${
+                  hasRequiredCustomWords ? 'text-green-600' : 'text-stone-500'
+                }`}>
+                  {validCustomWordsCount}/{REQUIRED_CUSTOM_WORDS} custom words required
+                </div>
+              </div>
+              <p className="text-sm text-stone-600 mb-4">These are required and count toward your total of {TOTAL_WORDS}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {customWords.map((word, index) => (
                   <input
@@ -216,20 +232,20 @@ export function VisionBuilderStep4({ onComplete, onBack, initialData, isLoading 
               </div>
             </div>
 
-            {(totalSelected < MIN_WORDS || !hasRequiredCustomWords) && (
+            {!canContinue && (
               <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded">
                 <p className="text-sm text-orange-800">
-                  {!hasRequiredCustomWords
-                    ? `You must add ${REQUIRED_CUSTOM_WORDS} custom words to continue`
-                    : `Please select at least ${MIN_WORDS - totalSelected} more word${MIN_WORDS - totalSelected !== 1 ? 's' : ''} to continue`}
+                  {selectedWords.length < MAX_LIST_WORDS
+                    ? `Select ${MAX_LIST_WORDS - selectedWords.length} more word${MAX_LIST_WORDS - selectedWords.length !== 1 ? 's' : ''} from the list above`
+                    : `Add ${REQUIRED_CUSTOM_WORDS - validCustomWordsCount} custom word${REQUIRED_CUSTOM_WORDS - validCustomWordsCount !== 1 ? 's' : ''} below to continue`}
                 </p>
               </div>
             )}
 
-            {totalSelected > MAX_WORDS && (
-              <div className="mt-6 p-4 bg-red-50 border-l-4 border-red-400 rounded">
-                <p className="text-sm text-red-800">
-                  You've selected {totalSelected - MAX_WORDS} too many word{totalSelected - MAX_WORDS !== 1 ? 's' : ''}. Please remove some to continue.
+            {canContinue && (
+              <div className="mt-6 p-4 bg-green-50 border-l-4 border-green-400 rounded">
+                <p className="text-sm text-green-800 font-medium">
+                  ✓ Total: {TOTAL_WORDS} words ready! Click Continue below.
                 </p>
               </div>
             )}

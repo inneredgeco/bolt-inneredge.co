@@ -9,9 +9,9 @@ interface VisionBuilderStep5Props {
   isLoading: boolean;
 }
 
-const MIN_ACTIONS = 8;
-const MAX_ACTIONS = 10;
-const REQUIRED_CUSTOM_ACTIONS = 2;
+const MAX_LIST_ACTIONS = 8;
+const MIN_CUSTOM_ACTIONS = 2;
+const MAX_CUSTOM_ACTIONS = 5;
 
 const actionsByArea: Record<string, string[]> = {
   'health-fitness': [
@@ -198,7 +198,7 @@ const actionsByArea: Record<string, string[]> = {
 
 export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep5Props) {
   const [selectedActions, setSelectedActions] = useState<string[]>(initialData.doing_actions || []);
-  const [customActions, setCustomActions] = useState<string[]>(['', '']);
+  const [customActions, setCustomActions] = useState<string[]>(['', '', '', '', '']);
 
   const getAreaTitle = (areaId: string | undefined): string => {
     if (!areaId) return 'your selected area';
@@ -224,7 +224,7 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
     if (selectedActions.includes(action)) {
       setSelectedActions(selectedActions.filter(a => a !== action));
     } else {
-      if (selectedActions.length < MAX_ACTIONS) {
+      if (selectedActions.length < MAX_LIST_ACTIONS) {
         setSelectedActions([...selectedActions, action]);
       }
     }
@@ -241,16 +241,14 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
 
     const validCustomActions = customActions.filter(a => a.trim().length > 0).map(a => a.trim());
     const allActions = [...selectedActions, ...validCustomActions];
-
-    if (allActions.length >= MIN_ACTIONS && allActions.length <= MAX_ACTIONS) {
-      onComplete(allActions);
-    }
+    onComplete(allActions);
   };
 
   const validCustomActionsCount = customActions.filter(a => a.trim().length > 0).length;
   const totalSelected = selectedActions.length + validCustomActionsCount;
-  const hasRequiredCustomActions = validCustomActionsCount >= REQUIRED_CUSTOM_ACTIONS;
-  const canContinue = totalSelected >= MIN_ACTIONS && totalSelected <= MAX_ACTIONS && hasRequiredCustomActions;
+  const hasMinCustomActions = validCustomActionsCount >= MIN_CUSTOM_ACTIONS;
+  const listSelectionComplete = selectedActions.length === MAX_LIST_ACTIONS;
+  const canContinue = selectedActions.length === MAX_LIST_ACTIONS && hasMinCustomActions;
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
@@ -284,27 +282,35 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
             What will you be DOING in your ideal {getAreaTitle(initialData.area_of_life)}?
           </h2>
           <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-            Select 6-8 actions from the list, and add 2 of your own
+            Select up to 8 from below, then add 2-5 of your own
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-stone-900">Select Your Actions</h3>
-              <div className={`text-lg font-bold ${
-                totalSelected < MIN_ACTIONS ? 'text-orange-600' :
-                totalSelected > MAX_ACTIONS ? 'text-red-600' :
-                'text-brand-600'
-              }`}>
-                {totalSelected}/{MAX_ACTIONS} actions selected
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-xl font-bold text-stone-900">Select Your Actions</h3>
+                <div className={`text-lg font-bold ${
+                  listSelectionComplete ? 'text-green-600' : 'text-brand-600'
+                }`}>
+                  {selectedActions.length}/{MAX_LIST_ACTIONS} actions selected from list
+                </div>
               </div>
+              {listSelectionComplete && (
+                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <span className="text-green-600 font-bold text-lg">✓</span>
+                  <p className="text-sm text-green-800 font-medium">
+                    List selections complete! Add 2-5 of your own below.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="space-y-3 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
               {availableActions.map((action) => {
                 const isSelected = selectedActions.includes(action);
-                const isDisabled = !isSelected && selectedActions.length >= MAX_ACTIONS;
+                const isDisabled = !isSelected && selectedActions.length >= MAX_LIST_ACTIONS;
 
                 return (
                   <label
@@ -313,7 +319,7 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
                       isSelected
                         ? 'bg-brand-50 border-2 border-brand-600 shadow-sm'
                         : isDisabled
-                        ? 'bg-stone-50 border-2 border-stone-200 opacity-50 cursor-not-allowed'
+                        ? 'bg-stone-50 border-2 border-stone-200 opacity-40 cursor-not-allowed'
                         : 'bg-white border-2 border-stone-200 hover:border-brand-300 hover:shadow-sm'
                     }`}
                   >
@@ -333,41 +339,48 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
             </div>
 
             <div className="border-t-2 border-stone-100 pt-6 mt-6">
-              <h4 className="text-lg font-bold text-stone-900 mb-2">
-                Add 2 custom actions <span className="text-red-600">*</span>
-              </h4>
-              <p className="text-sm text-stone-600 mb-4">Write in present tense (I am...) - These are required</p>
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-lg font-bold text-stone-900">
+                  Add your own actions (minimum 2, up to 5) <span className="text-red-600">*</span>
+                </h4>
+                <div className={`text-sm font-bold ${
+                  hasMinCustomActions ? 'text-green-600' : 'text-stone-500'
+                }`}>
+                  {validCustomActionsCount}/{MAX_CUSTOM_ACTIONS} custom actions (minimum {MIN_CUSTOM_ACTIONS} required)
+                </div>
+              </div>
+              <p className="text-sm text-stone-600 mb-4">Write in present tense (I am...)</p>
               <div className="space-y-3">
                 {customActions.map((action, index) => (
                   <textarea
                     key={index}
                     value={action}
                     onChange={(e) => handleCustomActionChange(index, e.target.value)}
-                    placeholder={`I am... (custom action ${index + 1} - required)`}
+                    placeholder={index < MIN_CUSTOM_ACTIONS ? `I am... (custom action ${index + 1} - required)` : `I am... (custom action ${index + 1} - optional)`}
                     rows={2}
                     maxLength={150}
                     className="w-full px-4 py-3 border-2 border-stone-200 rounded-xl focus:outline-none focus:border-brand-600 transition-all resize-none"
                     disabled={isLoading}
-                    required
+                    required={index < MIN_CUSTOM_ACTIONS}
                   />
                 ))}
               </div>
             </div>
 
-            {(totalSelected < MIN_ACTIONS || !hasRequiredCustomActions) && (
+            {!canContinue && (
               <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-400 rounded">
                 <p className="text-sm text-orange-800">
-                  {!hasRequiredCustomActions
-                    ? `You must add ${REQUIRED_CUSTOM_ACTIONS} custom actions to continue`
-                    : `Please select at least ${MIN_ACTIONS - totalSelected} more action${MIN_ACTIONS - totalSelected !== 1 ? 's' : ''} to continue`}
+                  {selectedActions.length < MAX_LIST_ACTIONS
+                    ? `Select ${MAX_LIST_ACTIONS - selectedActions.length} more action${MAX_LIST_ACTIONS - selectedActions.length !== 1 ? 's' : ''} from the list above`
+                    : `Add at least ${MIN_CUSTOM_ACTIONS - validCustomActionsCount} custom action${MIN_CUSTOM_ACTIONS - validCustomActionsCount !== 1 ? 's' : ''} below to continue`}
                 </p>
               </div>
             )}
 
-            {totalSelected > MAX_ACTIONS && (
-              <div className="mt-6 p-4 bg-red-50 border-l-4 border-red-400 rounded">
-                <p className="text-sm text-red-800">
-                  You've selected {totalSelected - MAX_ACTIONS} too many action{totalSelected - MAX_ACTIONS !== 1 ? 's' : ''}. Please remove some to continue.
+            {canContinue && (
+              <div className="mt-6 p-4 bg-green-50 border-l-4 border-green-400 rounded">
+                <p className="text-sm text-green-800 font-medium">
+                  ✓ Total: {totalSelected} actions ready! Click Continue below.
                 </p>
               </div>
             )}
