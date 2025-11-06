@@ -297,7 +297,7 @@ Rules:
     console.log('✓ Prompt created (length:', userPrompt.length, 'chars)');
 
     console.log("Calling Claude API...");
-    console.log("  Model: claude-3-5-sonnet-20241022");
+    console.log("  Model: claude-sonnet-4-5-20250929");
     console.log("  Max tokens: 4000");
 
     const claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
@@ -308,7 +308,7 @@ Rules:
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-sonnet-4-5-20250929",
         max_tokens: 4000,
         temperature: 0.7,
         system: systemPrompt,
