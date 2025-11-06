@@ -205,6 +205,9 @@ export default function NewsletterForm() {
               <p className="text-center text-sm text-gray-500 mt-3">
                 Your vision is private and secure. We'll never share your information.
               </p>
+              <p className="text-center text-sm text-gray-500 mt-1">
+                Takes about 10 minutes to complete
+              </p>
             </form>
           </div>
         </div>
