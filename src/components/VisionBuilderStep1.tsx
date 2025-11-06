@@ -99,6 +99,31 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
         console.log('current_step updated to 2 successfully');
       }
 
+      console.log('Adding to Flodesk Vision Builder segment...');
+      try {
+        const flodeskApiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/add-to-flodesk-vision-segment`;
+
+        const flodeskResponse = await fetch(flodeskApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+          }),
+        });
+
+        if (!flodeskResponse.ok) {
+          console.error('Flodesk integration failed:', await flodeskResponse.text());
+        } else {
+          console.log('Successfully added to Flodesk Vision Builder segment');
+        }
+      } catch (flodeskError) {
+        console.error('Error calling Flodesk integration:', flodeskError);
+      }
+
       console.log('=== STEP 1 COMPLETE - Moving to Step 2 ===');
       onComplete(name.trim(), email.trim(), submissionId);
     } catch (err) {
