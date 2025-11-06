@@ -86,6 +86,7 @@ export function VisionBuilderPage() {
 
       console.log('Setting currentStep to:', data.current_step);
       setCurrentStep(data.current_step);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       console.log('=== SUBMISSION LOADED - SHOULD SHOW STEP', data.current_step, '===');
     } catch (err) {
       console.error('Error loading submission:', err);
@@ -111,6 +112,7 @@ export function VisionBuilderPage() {
 
     console.log('Setting currentStep to 2');
     setCurrentStep(2);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     console.log('Navigating to resume URL');
     navigate(`/vision-builder/resume/${submissionId}`, { replace: true });
@@ -150,6 +152,7 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error saving step 2:', err);
       setError('An unexpected error occurred. Please try again.');
@@ -193,6 +196,7 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(4);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error saving step 3:', err);
       setError('An unexpected error occurred. Please try again.');
@@ -234,6 +238,7 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(5);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error saving step 4:', err);
       setError('An unexpected error occurred. Please try again.');
@@ -275,6 +280,7 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(6);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Error saving step 5:', err);
       setError('An unexpected error occurred. Please try again.');
@@ -318,6 +324,7 @@ export function VisionBuilderPage() {
       });
 
       setCurrentStep(7);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       try {
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-vision`;
@@ -361,6 +368,7 @@ export function VisionBuilderPage() {
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
