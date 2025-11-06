@@ -197,6 +197,9 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
               <p className="mt-2 text-xs text-stone-500">
                 We'll use this to send you your completed vision
               </p>
+              <p className="mt-1 text-xs text-stone-500">
+                Takes about 10 minutes to complete
+              </p>
             </div>
 
             <button
