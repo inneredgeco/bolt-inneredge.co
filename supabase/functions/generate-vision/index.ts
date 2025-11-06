@@ -158,9 +158,15 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    console.log('=== VISION GENERATION STARTED ===');
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
+
     const { submissionId }: GenerateVisionRequest = await req.json();
+    console.log('Submission ID received:', submissionId);
 
     if (!submissionId) {
+      console.error('ERROR: Missing submission ID');
       return new Response(
         JSON.stringify({
           success: false,
@@ -176,11 +182,17 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log('Checking environment variables...');
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
 
+    console.log('Supabase URL:', supabaseUrl ? 'Present' : 'MISSING');
+    console.log('Supabase Service Key:', supabaseServiceKey ? 'Present' : 'MISSING');
+    console.log('Anthropic API Key:', anthropicApiKey ? 'Present' : 'MISSING');
+
     if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('ERROR: Database configuration missing');
       return new Response(
         JSON.stringify({
           success: false,
@@ -197,10 +209,11 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!anthropicApiKey) {
+      console.error('ERROR: Anthropic API key not configured');
       return new Response(
         JSON.stringify({
           success: false,
-          error: "AI service not configured",
+          error: "AI service not configured - Anthropic API key is missing",
         }),
         {
           status: 500,
@@ -212,8 +225,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log('Creating Supabase client...');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    console.log('Fetching submission from database...');
     const { data: submission, error: fetchError } = await supabase
       .from("vision_submissions")
       .select("*")
@@ -221,11 +236,14 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (fetchError || !submission) {
-      console.error("Error fetching submission:", fetchError);
+      console.error("ERROR: Failed to fetch submission");
+      console.error("Fetch error:", fetchError);
+      console.error("Submission data:", submission);
       return new Response(
         JSON.stringify({
           success: false,
           error: "Submission not found",
+          details: fetchError?.message || "No submission data returned",
         }),
         {
           status: 404,
@@ -236,6 +254,8 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
+
+    console.log('✓ Submission fetched successfully');
 
     const submissionData: VisionSubmissionData = {
       id: submission.id,
@@ -249,11 +269,15 @@ Deno.serve(async (req: Request) => {
       having_outcomes: submission.having_outcomes || [],
     };
 
-    console.log("Fetched submission data for:", submissionData.name);
-    console.log("Area of life:", submissionData.area_of_life);
-    console.log("Being words count:", submissionData.being_words.length);
-    console.log("Doing actions count:", submissionData.doing_actions.length);
-    console.log("Having outcomes count:", submissionData.having_outcomes.length);
+    console.log("✓ Submission data parsed successfully");
+    console.log("  Name:", submissionData.name);
+    console.log("  Email:", submissionData.email);
+    console.log("  Area of life:", submissionData.area_of_life);
+    console.log("  Being words count:", submissionData.being_words.length);
+    console.log("  Doing actions count:", submissionData.doing_actions.length);
+    console.log("  Having outcomes count:", submissionData.having_outcomes.length);
+
+    console.log('Creating Claude prompt...');
 
     const systemPrompt = `You are a vision creation expert helping someone design their ideal future. Create an inspiring, emotionally engaging vision narrative and practical action plan based on their inputs.
 
@@ -270,8 +294,11 @@ Rules:
 10. Make them feel excited to start`;
 
     const userPrompt = createVisionPrompt(submissionData);
+    console.log('✓ Prompt created (length:', userPrompt.length, 'chars)');
 
     console.log("Calling Claude API...");
+    console.log("  Model: claude-3-5-sonnet-20241022");
+    console.log("  Max tokens: 4000");
 
     const claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -296,11 +323,26 @@ Rules:
 
     if (!claudeResponse.ok) {
       const errorText = await claudeResponse.text();
-      console.error("Claude API error:", errorText);
+      console.error("ERROR: Claude API request failed");
+      console.error("  Status:", claudeResponse.status, claudeResponse.statusText);
+      console.error("  Response:", errorText);
+
+      let errorMessage = "Failed to generate vision content";
+
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.error?.message) {
+          errorMessage = errorData.error.message;
+        }
+      } catch (e) {
+        console.error("  Could not parse error response");
+      }
+
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Failed to generate vision content",
+          error: errorMessage,
+          details: `API Status: ${claudeResponse.status}`,
         }),
         {
           status: 500,
@@ -312,15 +354,18 @@ Rules:
       );
     }
 
+    console.log("✓ Claude API call successful");
     const claudeData = await claudeResponse.json();
-    console.log("Claude API response received");
+    console.log("✓ Response parsed");
 
     if (!claudeData.content || !claudeData.content[0] || !claudeData.content[0].text) {
-      console.error("Invalid Claude response structure:", claudeData);
+      console.error("ERROR: Invalid Claude response structure");
+      console.error("  Response data:", JSON.stringify(claudeData));
       return new Response(
         JSON.stringify({
           success: false,
           error: "Invalid response from AI service",
+          details: "Response structure was unexpected",
         }),
         {
           status: 500,
@@ -333,20 +378,24 @@ Rules:
     }
 
     const generatedText = claudeData.content[0].text;
-    console.log("Generated text length:", generatedText.length);
+    console.log("✓ Generated text extracted (length:", generatedText.length, "chars)");
 
     let narrative = '';
     let actionPlan = '';
 
+    console.log('Parsing Claude response...');
     try {
       const parsed = parseClaudeResponse(generatedText);
       narrative = parsed.narrative;
       actionPlan = parsed.actionPlan;
-      console.log("Successfully parsed narrative and action plan");
+      console.log("✓ Successfully parsed narrative and action plan");
+      console.log("  Narrative length:", narrative.length, "chars");
+      console.log("  Action plan length:", actionPlan.length, "chars");
     } catch (parseError) {
-      console.error("Error parsing Claude response:", parseError);
+      console.error("ERROR: Failed to parse Claude response:", parseError);
       narrative = generatedText;
       actionPlan = "Unable to parse action plan. Please contact support.";
+      console.log("  Using fallback: entire response as narrative");
     }
 
     console.log("Saving to database...");
@@ -363,11 +412,14 @@ Rules:
       .eq("id", submissionId);
 
     if (updateError) {
-      console.error("Error saving to database:", updateError);
+      console.error("ERROR: Failed to save to database");
+      console.error("  Update error:", updateError);
+      console.error("  Submission ID:", submissionId);
       return new Response(
         JSON.stringify({
           success: false,
           error: "Failed to save generated vision",
+          details: updateError.message || "Database update failed",
         }),
         {
           status: 500,
@@ -379,7 +431,9 @@ Rules:
       );
     }
 
-    console.log("Vision generation completed successfully for submission:", submissionId);
+    console.log("✓ Vision saved to database successfully");
+    console.log("=== VISION GENERATION COMPLETED SUCCESSFULLY ===");
+    console.log("  Submission ID:", submissionId);
 
     return new Response(
       JSON.stringify({
@@ -398,12 +452,17 @@ Rules:
       }
     );
   } catch (error) {
-    console.error("Error generating vision:", error);
+    console.error("=== UNEXPECTED ERROR OCCURRED ===");
+    console.error("Error type:", error.constructor.name);
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
 
     return new Response(
       JSON.stringify({
         success: false,
         error: error.message || "An unexpected error occurred",
+        errorType: error.constructor.name,
+        details: "Check edge function logs for more information",
       }),
       {
         status: 500,

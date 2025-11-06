@@ -327,7 +327,10 @@ export function VisionBuilderPage() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       try {
+        console.log('=== CALLING GENERATE-VISION EDGE FUNCTION ===');
         const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-vision`;
+        console.log('API URL:', apiUrl);
+        console.log('Submission ID:', submissionData.id);
 
         const visionResponse = await fetch(apiUrl, {
           method: 'POST',
@@ -340,22 +343,55 @@ export function VisionBuilderPage() {
           }),
         });
 
+        console.log('Response status:', visionResponse.status, visionResponse.statusText);
+
         if (!visionResponse.ok) {
-          const errorData = await visionResponse.json();
-          console.error('Vision generation error:', errorData);
-          setError('Failed to generate your vision. Please try again.');
+          let errorMessage = 'Failed to generate your vision. Please try again.';
+          let errorDetails = '';
+
+          try {
+            const errorData = await visionResponse.json();
+            console.error('=== VISION GENERATION ERROR ===');
+            console.error('Error data:', errorData);
+
+            if (errorData.error) {
+              errorMessage = errorData.error;
+            }
+            if (errorData.details) {
+              errorDetails = errorData.details;
+              console.error('Error details:', errorDetails);
+            }
+            if (errorData.errorType) {
+              console.error('Error type:', errorData.errorType);
+            }
+          } catch (parseError) {
+            console.error('Could not parse error response:', parseError);
+            const errorText = await visionResponse.text();
+            console.error('Raw error response:', errorText);
+          }
+
+          const fullErrorMessage = errorDetails
+            ? `${errorMessage} (${errorDetails})`
+            : errorMessage;
+
+          setError(fullErrorMessage);
           setIsLoading(false);
           return;
         }
 
         const visionData = await visionResponse.json();
-        console.log('Vision generated successfully:', visionData);
+        console.log('=== VISION GENERATED SUCCESSFULLY ===');
+        console.log('Vision data:', visionData);
 
         navigate(`/vision-builder/results/${submissionData.id}`);
 
       } catch (visionError) {
-        console.error('Error calling vision generation:', visionError);
-        setError('Failed to generate your vision. Please try again.');
+        console.error('=== UNEXPECTED ERROR IN VISION GENERATION ===');
+        console.error('Error type:', visionError.constructor.name);
+        console.error('Error message:', visionError.message);
+        console.error('Error stack:', visionError.stack);
+
+        setError(`Failed to generate your vision: ${visionError.message}`);
         setIsLoading(false);
       }
     } catch (err) {
