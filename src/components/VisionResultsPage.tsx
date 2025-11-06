@@ -172,7 +172,6 @@ export function VisionResultsPage() {
     try {
       const createdDate = new Date(visionData.created_at).toLocaleDateString('en-US', {
         month: 'long',
-        day: 'numeric',
         year: 'numeric',
       });
 
@@ -183,7 +182,7 @@ export function VisionResultsPage() {
         year: 'numeric',
       });
 
-      generateVisionPDF({
+      await generateVisionPDF({
         name: visionData.name,
         areaOfLife: getAreaTitle(visionData.area_of_life),
         visionNarrative: visionData.vision_narrative,
@@ -192,9 +191,7 @@ export function VisionResultsPage() {
         visionDate,
       });
 
-      setTimeout(() => {
-        setIsGeneratingPDF(false);
-      }, 1000);
+      setIsGeneratingPDF(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
       setPdfError('PDF generation failed. Please try again or use the print option.');
