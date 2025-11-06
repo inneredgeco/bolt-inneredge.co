@@ -229,12 +229,6 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
             Your vision is private and secure. We'll never share your information.
           </p>
         </div>
-
-        <div className="text-center mt-8">
-          <p className="text-brand-100 text-sm">
-            Takes about 10 minutes to complete
-          </p>
-        </div>
       </div>
     </div>
   );
