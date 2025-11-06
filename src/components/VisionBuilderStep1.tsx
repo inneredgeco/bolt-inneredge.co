@@ -197,9 +197,6 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
               <p className="mt-2 text-xs text-stone-500">
                 We'll use this to send you your completed vision
               </p>
-              <p className="mt-1 text-xs text-stone-500">
-                Takes about 10 minutes to complete
-              </p>
             </div>
 
             <button
@@ -227,6 +224,12 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
 
           <p className="text-center text-xs text-stone-500 mt-6">
             Your vision is private and secure. We'll never share your information.
+          </p>
+        </div>
+
+        <div className="text-center mt-8">
+          <p className="text-brand-100 text-sm">
+            Takes about 10 minutes to complete
           </p>
         </div>
       </div>
