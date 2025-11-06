@@ -63,9 +63,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("Step 1: Create/Update Subscriber in Flodesk");
+    console.log("Creating subscriber and adding to segment in single call");
     console.log("Name:", name);
     console.log("Email:", email);
+    console.log("Segment ID:", flodeskSegmentId);
 
     const subscriberResponse = await fetch(
       "https://api.flodesk.com/v1/subscribers",
@@ -80,6 +81,7 @@ Deno.serve(async (req: Request) => {
           last_name: name.split(' ').slice(1).join(' ') || '',
           email: email,
           double_optin: true,
+          segment_ids: [flodeskSegmentId],
         }),
       }
     );
@@ -101,7 +103,7 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Failed to create subscriber",
+          error: "Failed to create subscriber and add to segment",
           details: errorText,
           status: subscriberResponse.status,
         }),
@@ -116,68 +118,15 @@ Deno.serve(async (req: Request) => {
     }
 
     const subscriber = await subscriberResponse.json();
-    console.log("✓ Subscriber created/updated successfully");
+    console.log("✓ Subscriber created/updated and added to segment successfully");
     console.log("Subscriber data:", subscriber);
-
-    console.log("Step 2: Add Subscriber to Vision Builder Segment");
-    console.log("Segment ID:", flodeskSegmentId);
-    console.log("Using correct API endpoint: /subscribers/{email}/segments");
-
-    const segmentResponse = await fetch(
-      `https://api.flodesk.com/v1/subscribers/${encodeURIComponent(email)}/segments`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Basic " + btoa(flodeskApiKey + ":"),
-        },
-        body: JSON.stringify({
-          segment_ids: [flodeskSegmentId],
-        }),
-      }
-    );
-
-    console.log("Segment API response status:", segmentResponse.status);
-
-    if (!segmentResponse.ok) {
-      const errorText = await segmentResponse.text();
-      console.log("Segment API error response:", errorText);
-
-      try {
-        const errorJson = JSON.parse(errorText);
-        console.log("Parsed error:", errorJson);
-      } catch (e) {
-        console.log("Could not parse error as JSON");
-      }
-
-      console.error("Failed to add subscriber to Vision Builder segment");
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Failed to add subscriber to segment",
-          details: errorText,
-          status: segmentResponse.status,
-        }),
-        {
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const segmentResult = await segmentResponse.json();
-    console.log("✓ Successfully added to Vision Builder Flodesk segment");
-    console.log("Response data:", segmentResult);
     console.log("=== FLODESK INTEGRATION COMPLETE ===");
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "Successfully added to Flodesk Vision Builder segment",
-        data: segmentResult,
+        data: subscriber,
       }),
       {
         status: 200,
