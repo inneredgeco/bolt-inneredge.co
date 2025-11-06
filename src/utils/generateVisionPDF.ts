@@ -16,6 +16,7 @@ const LIGHT_TEXT_COLOR = '#57534e';
 interface MonthData {
   number: number;
   title: string;
+  date: string;
   goal: string;
   weeks: string[];
   checkin: string;
@@ -23,21 +24,28 @@ interface MonthData {
 
 function parseActionPlan(actionPlanText: string): MonthData[] {
   const months: MonthData[] = [];
-  const monthSections = actionPlanText.split(/MONTH \d+:/i);
+  const monthMatches = actionPlanText.matchAll(/MONTH (\d+):(.*?)(?=MONTH \d+:|$)/gis);
 
-  monthSections.forEach((section, index) => {
-    if (index === 0 || !section.trim()) return;
+  for (const match of monthMatches) {
+    const monthNumber = parseInt(match[1], 10);
+    const section = match[2];
 
     const lines = section.split('\n').filter(line => line.trim());
-    const titleLine = lines[0]?.trim() || '';
 
+    let title = '';
+    let date = '';
     let goal = '';
     const weeks: string[] = [];
     let checkin = '';
 
-    lines.forEach(line => {
+    lines.forEach((line, idx) => {
       const trimmedLine = line.trim();
-      if (trimmedLine.startsWith('SMART Goal:')) {
+
+      if (idx === 0 && !trimmedLine.startsWith('SMART Goal:') && !trimmedLine.match(/Week \d+:/i)) {
+        title = trimmedLine;
+      } else if (idx === 1 && !trimmedLine.startsWith('SMART Goal:') && !trimmedLine.match(/Week \d+:/i) && !trimmedLine.startsWith('Monthly Check-in:')) {
+        date = trimmedLine;
+      } else if (trimmedLine.startsWith('SMART Goal:')) {
         goal = trimmedLine.replace('SMART Goal:', '').trim();
       } else if (trimmedLine.match(/Week \d+:/i)) {
         weeks.push(trimmedLine.replace(/Week \d+:/i, '').trim());
@@ -47,15 +55,16 @@ function parseActionPlan(actionPlanText: string): MonthData[] {
     });
 
     months.push({
-      number: index,
-      title: titleLine,
+      number: monthNumber,
+      title: title,
+      date: date,
       goal,
       weeks,
       checkin,
     });
-  });
+  }
 
-  return months;
+  return months.sort((a, b) => a.number - b.number);
 }
 
 function stripMarkdown(text: string): string {
@@ -65,17 +74,6 @@ function stripMarkdown(text: string): string {
     .replace(/---+/g, '')
     .replace(/\*/g, '')
     .trim();
-}
-
-function getMonthDate(monthNumber: number): string {
-  const now = new Date();
-  const targetDate = new Date(now);
-  targetDate.setMonth(now.getMonth() + monthNumber);
-
-  return targetDate.toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
-  });
 }
 
 export function generateVisionPDF(data: VisionPDFData): void {
@@ -251,7 +249,7 @@ export function generateVisionPDF(data: VisionPDFData): void {
       yPosition += 5;
 
       const cleanTitle = stripMarkdown(month.title);
-      const monthDate = getMonthDate(month.number - 1);
+      const cleanDate = stripMarkdown(month.date);
 
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
@@ -259,11 +257,13 @@ export function generateVisionPDF(data: VisionPDFData): void {
       doc.text(`Month ${month.number}: ${cleanTitle}`, margin, yPosition);
       yPosition += 7;
 
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(LIGHT_TEXT_COLOR);
-      doc.text(monthDate, margin, yPosition);
-      yPosition += 8;
+      if (cleanDate) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(LIGHT_TEXT_COLOR);
+        doc.text(cleanDate, margin, yPosition);
+        yPosition += 8;
+      }
 
       doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');

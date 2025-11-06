@@ -114,26 +114,34 @@ export function VisionResultsPage() {
     const months: Array<{
       number: number;
       title: string;
+      date: string;
       goal: string;
       weeks: string[];
       checkin: string;
     }> = [];
 
-    const monthSections = actionPlanText.split(/MONTH \d+:/i);
+    const monthMatches = actionPlanText.matchAll(/MONTH (\d+):(.*?)(?=MONTH \d+:|$)/gis);
 
-    monthSections.forEach((section, index) => {
-      if (index === 0 || !section.trim()) return;
+    for (const match of monthMatches) {
+      const monthNumber = parseInt(match[1], 10);
+      const section = match[2];
 
       const lines = section.split('\n').filter(line => line.trim());
-      const titleLine = lines[0]?.trim() || '';
 
+      let title = '';
+      let date = '';
       let goal = '';
       const weeks: string[] = [];
       let checkin = '';
 
-      lines.forEach(line => {
+      lines.forEach((line, idx) => {
         const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('SMART Goal:')) {
+
+        if (idx === 0 && !trimmedLine.startsWith('SMART Goal:') && !trimmedLine.match(/Week \d+:/i)) {
+          title = trimmedLine;
+        } else if (idx === 1 && !trimmedLine.startsWith('SMART Goal:') && !trimmedLine.match(/Week \d+:/i) && !trimmedLine.startsWith('Monthly Check-in:')) {
+          date = trimmedLine;
+        } else if (trimmedLine.startsWith('SMART Goal:')) {
           goal = trimmedLine.replace('SMART Goal:', '').trim();
         } else if (trimmedLine.match(/Week \d+:/i)) {
           weeks.push(trimmedLine.replace(/Week \d+:/i, '').trim());
@@ -143,15 +151,16 @@ export function VisionResultsPage() {
       });
 
       months.push({
-        number: index,
-        title: titleLine,
+        number: monthNumber,
+        title: title,
+        date: date,
         goal,
         weeks,
         checkin,
       });
-    });
+    }
 
-    return months.reverse();
+    return months.sort((a, b) => a.number - b.number);
   };
 
   const handleDownloadPDF = async () => {
@@ -347,9 +356,12 @@ export function VisionResultsPage() {
                   className="bg-white rounded-xl shadow-md p-6"
                 >
                   <div className="mb-4">
-                    <h3 className="text-xl font-bold text-stone-900">
+                    <h3 className="text-xl font-bold text-brand-600">
                       Month {month.number}: {month.title}
                     </h3>
+                    {month.date && (
+                      <p className="text-stone-600 text-sm mt-1">{month.date}</p>
+                    )}
                   </div>
 
                   {month.goal && (

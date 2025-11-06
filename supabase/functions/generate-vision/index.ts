@@ -101,22 +101,44 @@ Structure:
 Make it vivid, specific, and emotionally powerful. Use sensory details.
 
 DOCUMENT 2 - 12-MONTH ACTION PLAN:
-Create a reverse-engineered plan working backwards from their having outcomes to present day.
+Create a chronological 12-month plan starting from TODAY (${todayFormatted}) and moving forward to the vision date (${futureFormatted}).
 
-For each month (12 down to 1), provide:
+CRITICAL: Month 1 is the STARTING POINT (current month), Month 12 is the END GOAL (vision achievement).
+Work FORWARD from where they are now to where they want to be.
 
-MONTH [X]: [Inspiring Month Title]
-SMART Goal: [Specific, Measurable, Achievable, Relevant, Time-bound goal for this month]
+For each month (1 through 12 in chronological order), provide:
+
+MONTH 1: [First Steps Title]
+${todayFormatted}
+
+SMART Goal: [First actionable goal to begin transformation]
 
 Weekly Breakdown:
-- Week 1: [Specific action]
+- Week 1: [Specific first action]
 - Week 2: [Specific action]
 - Week 3: [Specific action]
 - Week 4: [Specific action]
 
 Monthly Check-in: [One reflective question to assess progress]
 
-Make Month 12 the achievement of their vision, Month 1 the first small steps.
+---
+
+[Continue through all 12 months in order]
+
+MONTH 12: [Achievement & Celebration Title]
+${futureFormatted}
+
+SMART Goal: [Final outcome achieved - their having outcomes realized]
+
+Weekly Breakdown:
+- Week 1: [Celebration and consolidation]
+- Week 2: [Reflection and gratitude]
+- Week 3: [Planning next chapter]
+- Week 4: [Living the vision]
+
+Monthly Check-in: [Reflection on full journey]
+
+IMPORTANT: Format each month with clear separation. Use "---" between months. Include the month/year date under each month header.
 
 Format both documents clearly separated with "=== DOCUMENT 1: VISION NARRATIVE ===" and "=== DOCUMENT 2: 12-MONTH ACTION PLAN ===" headers.`;
 
@@ -290,11 +312,12 @@ Rules:
 4. Make it feel real and achievable
 5. Incorporate all their being words, doing actions, and having outcomes naturally
 6. Connect to their stated 'why' emotionally
-7. Make the action plan logical and progressive
-8. Break down goals into clear, actionable weekly steps
-9. Use SMART goal framework for each month
-10. Keep tone positive, encouraging, and empowering
-11. Make them feel excited to start`;
+7. CRITICAL: Create action plan in CHRONOLOGICAL order - Month 1 is START (today), Month 12 is END (vision date)
+8. Make the action plan logical and progressive, building momentum month by month
+9. Break down goals into clear, actionable weekly steps
+10. Use SMART goal framework for each month
+11. Keep tone positive, encouraging, and empowering
+12. Make them feel excited to start`;
 
     const userPrompt = createVisionPrompt(submissionData);
     console.log('✓ Prompt created (length:', userPrompt.length, 'chars)');
