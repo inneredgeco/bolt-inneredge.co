@@ -5,7 +5,6 @@ import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { supabase } from '../lib/supabase';
 import { Download, Plus } from 'lucide-react';
-import { generateVisionPDF } from '../utils/generateVisionPDF';
 
 interface VisionData {
   id: string;
@@ -172,7 +171,6 @@ export function VisionResultsPage() {
     try {
       const createdDate = new Date(visionData.created_at).toLocaleDateString('en-US', {
         month: 'long',
-        day: 'numeric',
         year: 'numeric',
       });
 
@@ -183,18 +181,40 @@ export function VisionResultsPage() {
         year: 'numeric',
       });
 
-      generateVisionPDF({
-        name: visionData.name,
-        areaOfLife: getAreaTitle(visionData.area_of_life),
-        visionNarrative: visionData.vision_narrative,
-        actionPlan: visionData.action_plan,
-        createdDate,
-        visionDate,
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-vision-pdf`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: visionData.name,
+          areaOfLife: getAreaTitle(visionData.area_of_life),
+          visionNarrative: visionData.vision_narrative,
+          actionPlan: visionData.action_plan,
+          createdDate,
+          visionDate,
+        }),
       });
 
-      setTimeout(() => {
-        setIsGeneratingPDF(false);
-      }, 1000);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to generate PDF');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${visionData.name.replace(/[^a-zA-Z0-9]/g, '_')}_Vision.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setIsGeneratingPDF(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
       setPdfError('PDF generation failed. Please try again or use the print option.');
