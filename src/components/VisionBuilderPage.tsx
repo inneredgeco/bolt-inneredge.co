@@ -9,6 +9,7 @@ import { VisionBuilderStep3 } from './VisionBuilderStep3';
 import { VisionBuilderStep4 } from './VisionBuilderStep4';
 import { VisionBuilderStep5 } from './VisionBuilderStep5';
 import { VisionBuilderStep6 } from './VisionBuilderStep6';
+import { VisionGenerationProgress } from './VisionGenerationProgress';
 import { supabase } from '../lib/supabase';
 
 export interface VisionSubmissionData {
@@ -35,6 +36,7 @@ export function VisionBuilderPage() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isGenerationComplete, setIsGenerationComplete] = useState(false);
 
   useEffect(() => {
     if (submissionId) {
@@ -408,7 +410,7 @@ export function VisionBuilderPage() {
         console.log('=== VISION GENERATED SUCCESSFULLY ===');
         console.log('Vision data:', visionData);
 
-        navigate(`/vision-builder/results/${submissionData.id}`);
+        setIsGenerationComplete(true);
 
       } catch (visionError) {
         console.error('=== UNEXPECTED ERROR IN VISION GENERATION ===');
@@ -558,21 +560,10 @@ export function VisionBuilderPage() {
         )}
 
         {currentStep >= 7 && (
-          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-500 via-brand-600 to-brand-800">
-            <div className="text-center px-4">
-              <div className="relative w-24 h-24 mx-auto mb-8">
-                <div className="absolute inset-0 border-4 border-white/30 rounded-full animate-pulse"></div>
-                <div className="absolute inset-0 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-              </div>
-              <h2 className="text-4xl font-bold text-white mb-4">Creating your vision...</h2>
-              <p className="text-xl text-brand-100 max-w-md mx-auto mb-2">
-                We're crafting your personalized 1-year vision based on your responses
-              </p>
-              <p className="text-lg text-brand-200 max-w-md mx-auto">
-                This may take 30-60 seconds
-              </p>
-            </div>
-          </div>
+          <VisionGenerationProgress
+            isComplete={isGenerationComplete}
+            onNavigate={() => navigate(`/vision-builder/results/${submissionData.id}`)}
+          />
         )}
       </div>
 
