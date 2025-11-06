@@ -88,6 +88,8 @@ Generate TWO documents:
 DOCUMENT 1 - VISION NARRATIVE:
 Write a compelling 400-600 word story in first person present tense set in ${futureFormatted}.
 
+IMPORTANT: When writing dates, ONLY use month and year format (e.g., "${futureFormatted}"). NEVER include specific days, times, or timestamps.
+
 Structure:
 - Opening: Set the scene with the month/year (${futureFormatted}) and initial feeling
 - Being: Weave their being words into who they've become
@@ -283,15 +285,16 @@ Deno.serve(async (req: Request) => {
 
 Rules:
 1. Write in first person present tense as if it's one year from now (use actual date)
-2. Be specific and vivid with sensory details
-3. Make it feel real and achievable
-4. Incorporate all their being words, doing actions, and having outcomes naturally
-5. Connect to their stated 'why' emotionally
-6. Make the action plan logical and progressive
-7. Break down goals into clear, actionable weekly steps
-8. Use SMART goal framework for each month
-9. Keep tone positive, encouraging, and empowering
-10. Make them feel excited to start`;
+2. CRITICAL: Format all dates as "Month Year" ONLY (e.g., "November 2026"). NEVER include day numbers, times, or timestamps
+3. Be specific and vivid with sensory details
+4. Make it feel real and achievable
+5. Incorporate all their being words, doing actions, and having outcomes naturally
+6. Connect to their stated 'why' emotionally
+7. Make the action plan logical and progressive
+8. Break down goals into clear, actionable weekly steps
+9. Use SMART goal framework for each month
+10. Keep tone positive, encouraging, and empowering
+11. Make them feel excited to start`;
 
     const userPrompt = createVisionPrompt(submissionData);
     console.log('✓ Prompt created (length:', userPrompt.length, 'chars)');
