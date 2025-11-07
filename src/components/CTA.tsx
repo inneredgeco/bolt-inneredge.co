@@ -28,7 +28,7 @@ export function CTA() {
   };
 
   return (
-    <section id="cta" className="py-24 bg-gradient-to-br from-brand-500 to-brand-800">
+    <section id="cta" className="py-24" style={{ background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
