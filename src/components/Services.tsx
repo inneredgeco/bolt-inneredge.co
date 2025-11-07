@@ -35,18 +35,18 @@ const services = [
 
 export function Services() {
   return (
-    <section id="services" className="py-16 md:py-24 bg-stone-50">
+    <section id="services" className="py-16 md:py-20" style={{ background: '#fafaf9' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <div className="mb-6">
-            <span className="text-sm font-heading font-semibold tracking-wide uppercase text-brand px-4 py-2 bg-brand-50 rounded-full">
+            <span className="text-sm font-heading font-semibold tracking-wide uppercase px-4 py-2 rounded-full" style={{ color: '#2d7471', background: '#a8e0da' }}>
               What You'll Achieve
             </span>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-heading font-bold text-dark mb-6 leading-tight">
+          <h2 className="text-4xl sm:text-5xl font-heading font-bold mb-6 leading-tight" style={{ color: '#1a1a1a' }}>
             Transform Every Area of Your Life
           </h2>
-          <p className="text-xl font-body text-dark-medium">
+          <p className="text-xl font-body" style={{ color: '#4a4a4a' }}>
             A holistic approach to transformation—confident, purpose-driven, and unstoppable.
           </p>
         </div>
@@ -57,15 +57,15 @@ export function Services() {
             return (
               <div
                 key={index}
-                className="card-hover bg-white p-8 rounded-xl border border-stone-200"
+                className="card-hover bg-white p-8 rounded-lg border border-stone-200"
               >
-                <div className="w-12 h-12 bg-brand rounded-lg flex items-center justify-center mb-6">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-6" style={{ background: '#2d7471' }}>
                   <Icon className="text-white" size={24} />
                 </div>
-                <h3 className="text-xl font-heading font-bold text-dark mb-3">
+                <h3 className="text-xl font-heading font-bold mb-3" style={{ color: '#1a1a1a' }}>
                   {service.title}
                 </h3>
-                <p className="font-body text-dark-medium leading-relaxed">
+                <p className="font-body leading-relaxed" style={{ color: '#4a4a4a' }}>
                   {service.description}
                 </p>
               </div>

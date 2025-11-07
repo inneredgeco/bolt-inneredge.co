@@ -7,7 +7,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-dark text-dark-light py-16">
+    <footer className="py-16" style={{ background: '#1a1a1a', color: '#fafaf9' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-12 mb-8">
           {/* Brand */}
@@ -19,7 +19,7 @@ export function Footer() {
                 className="h-8 w-auto"
               />
             </a>
-            <p className="font-body text-dark-light leading-relaxed">
+            <p className="font-body leading-relaxed" style={{ color: '#fafaf9' }}>
               Empowering men to break through limitations and build lives of purpose, confidence, and impact.
             </p>
           </div>
@@ -29,16 +29,16 @@ export function Footer() {
             <h4 className="font-heading text-white font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" onClick={() => handleNavigation('/about')} className="font-body hover:text-accent transition-colors">About</Link>
+                <Link to="/about" onClick={() => handleNavigation('/about')} className="font-body transition-colors" style={{ color: '#8ad6ce' }}>About</Link>
               </li>
               <li>
-                <Link to="/blog" onClick={() => handleNavigation('/blog')} className="font-body hover:text-accent transition-colors">Blog</Link>
+                <Link to="/blog" onClick={() => handleNavigation('/blog')} className="font-body transition-colors" style={{ color: '#8ad6ce' }}>Blog</Link>
               </li>
               <li>
-                <Link to="/podcast" onClick={() => handleNavigation('/podcast')} className="font-body hover:text-accent transition-colors">Podcast</Link>
+                <Link to="/podcast" onClick={() => handleNavigation('/podcast')} className="font-body transition-colors" style={{ color: '#8ad6ce' }}>Podcast</Link>
               </li>
               <li>
-                <Link to="/contact" onClick={() => handleNavigation('/contact')} className="font-body hover:text-accent transition-colors">Contact</Link>
+                <Link to="/contact" onClick={() => handleNavigation('/contact')} className="font-body transition-colors" style={{ color: '#8ad6ce' }}>Contact</Link>
               </li>
             </ul>
           </div>
@@ -49,12 +49,13 @@ export function Footer() {
             <div className="space-y-3">
               <a
                 href="tel:+13102662677"
-                className="flex items-center gap-2 font-body hover:text-accent transition-colors"
+                className="flex items-center gap-2 font-body transition-colors"
+                style={{ color: '#fafaf9' }}
               >
                 <Phone size={16} />
                 <span className="text-sm">310-266-2677</span>
               </a>
-              <p className="flex items-start gap-2 text-sm font-body">
+              <p className="flex items-start gap-2 text-sm font-body" style={{ color: '#fafaf9' }}>
                 <Mail size={16} className="mt-0.5" />
                 <span>San Diego, CA<br />Virtual Sessions Available</span>
               </p>
@@ -69,7 +70,8 @@ export function Footer() {
                 href="https://www.instagram.com/soleimanbolour"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-accent hover:text-dark transition-all duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{ '--hover-bg': '#8ad6ce' }}
               >
                 <Instagram size={20} />
               </a>
@@ -77,7 +79,8 @@ export function Footer() {
                 href="https://www.facebook.com/soleimanbolour"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-accent hover:text-dark transition-all duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{ '--hover-bg': '#8ad6ce' }}
               >
                 <Facebook size={20} />
               </a>
@@ -85,7 +88,8 @@ export function Footer() {
                 href="https://www.youtube.com/@SoleimanBolour"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-accent hover:text-dark transition-all duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{ '--hover-bg': '#8ad6ce' }}
               >
                 <Youtube size={20} />
               </a>
@@ -93,7 +97,8 @@ export function Footer() {
                 href="https://www.linkedin.com/in/soleimanbolour/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-accent hover:text-dark transition-all duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{ '--hover-bg': '#8ad6ce' }}
               >
                 <Linkedin size={20} />
               </a>
@@ -101,7 +106,8 @@ export function Footer() {
                 href="https://www.tiktok.com/@soleimanb"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-accent hover:text-dark transition-all duration-200"
+                className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-200"
+                style={{ '--hover-bg': '#8ad6ce' }}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -121,7 +127,7 @@ export function Footer() {
             © 2025 InnerEdge. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
-            <a href="/privacy-policy" className="font-body hover:text-accent transition-colors">Privacy Policy</a>
+            <a href="/privacy-policy" className="font-body transition-colors" style={{ color: '#8ad6ce' }}>Privacy Policy</a>
           </div>
         </div>
       </div>

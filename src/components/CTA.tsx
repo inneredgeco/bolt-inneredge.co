@@ -28,11 +28,11 @@ export function CTA() {
   };
 
   return (
-    <section id="cta" className="py-20 md:py-32 bg-brand">
+    <section id="cta" className="py-16 md:py-20" style={{ background: '#2d7471' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <div className="mb-6">
-            <span className="text-sm font-heading font-semibold tracking-wide uppercase text-accent px-4 py-2 bg-white/10 rounded-full">
+            <span className="text-sm font-heading font-semibold tracking-wide uppercase px-4 py-2 bg-white/10 rounded-full" style={{ color: '#8ad6ce' }}>
               Take the First Step
             </span>
           </div>
@@ -51,7 +51,7 @@ export function CTA() {
             return (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-                  <Icon className="text-brand" size={32} />
+                  <Icon style={{ color: '#2d7471' }} size={32} />
                 </div>
                 <div className="text-2xl font-heading font-bold text-white mb-2">{step.title}</div>
                 <p className="font-body text-white/90">{step.description}</p>
@@ -64,7 +64,8 @@ export function CTA() {
         <div className="text-center">
           <button
             onClick={handleBookingClick}
-            className="group bg-white text-brand px-12 py-5 rounded-full font-heading font-bold text-xl transition-all duration-200 hover:scale-105 inline-flex items-center gap-3 shadow-2xl hover:shadow-3xl"
+            className="group bg-white px-12 py-5 rounded-full font-heading font-bold text-xl transition-all duration-200 hover:scale-105 inline-flex items-center gap-3 shadow-2xl hover:shadow-3xl"
+            style={{ color: '#2d7471' }}
           >
             Book Your Free Discovery Call
             <ArrowRight className="group-hover:translate-x-1 transition-transform" size={24} />
