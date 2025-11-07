@@ -238,19 +238,21 @@ export function AboutPage() {
       </div>
 
       {/* Ongoing Journey Section */}
-      <div className="py-20 bg-gray-900 text-white">
+      <div className="py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-8">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-8 text-gray-900">
             The Ongoing Journey — Still a Student
           </h2>
-          <div className="space-y-6 text-lg text-gray-300 leading-relaxed mb-12">
+          <div className="space-y-6 text-lg text-gray-600 leading-relaxed mb-12">
             <p>
               After more than two decades in men's work, I've learned one thing: there's no finish line.
             </p>
             <p>
               Every man I meet reminds me that we're all still learning — learning to listen, to forgive, to open, and to stay connected.
             </p>
-            <p className="text-xl font-medium text-teal-400">
+            <p className="text-xl font-medium text-brand-700">
               I don't believe in gurus. I believe in growth.
             </p>
             <p>
@@ -266,7 +268,7 @@ export function AboutPage() {
             </button>
             <button
               onClick={handleBookingClick}
-              className="inline-flex items-center justify-center gap-3 border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-gray-900 transition-all"
+              className="inline-flex items-center justify-center gap-3 border-2 border-brand-600 text-brand-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-600 hover:text-white transition-all"
             >
               Book a Discovery Call
             </button>
@@ -315,12 +317,14 @@ export function AboutPage() {
       </div>
 
       {/* Final Invitation Section */}
-      <div className="py-24 bg-gray-900">
+      <div className="py-24" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-8">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-8">
             Final Invitation
           </h2>
-          <div className="space-y-6 text-lg text-gray-300 leading-relaxed mb-12">
+          <div className="space-y-6 text-lg text-gray-600 leading-relaxed mb-12">
             <p className="text-xl">
               The Inner Edge isn't just a community — it's a movement of men returning home to themselves.
             </p>
@@ -330,7 +334,7 @@ export function AboutPage() {
             <p>
               You just need a willingness to show up — honest, open, and ready to grow.
             </p>
-            <p className="text-xl font-medium text-teal-400">
+            <p className="text-xl font-medium text-brand-700">
               Let's walk together.
             </p>
           </div>
@@ -343,13 +347,13 @@ export function AboutPage() {
             </button>
             <button
               onClick={handleBookingClick}
-              className="inline-flex items-center justify-center gap-3 border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-gray-900 transition-all"
+              className="inline-flex items-center justify-center gap-3 border-2 border-brand-600 text-brand-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-600 hover:text-white transition-all"
             >
               Work with Me
             </button>
             <a
               href="/podcast"
-              className="inline-flex items-center justify-center gap-3 border-2 border-gray-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-800 transition-all"
+              className="inline-flex items-center justify-center gap-3 border-2 border-brand-600 text-brand-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-600 hover:text-white transition-all"
             >
               Listen to the Podcast
             </a>
