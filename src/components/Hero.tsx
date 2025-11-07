@@ -13,17 +13,19 @@ export function Hero() {
 
       <div className="relative overflow-hidden" style={{
         minHeight: '90vh',
-        background: 'linear-gradient(135deg, #f5f1ed 0%, #e8e4df 30%, #d4e8e6 70%, #c5ddd9 100%)'
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
       }}>
-        {/* Abstract Gradient Shape */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-40">
-          <div className="absolute inset-0 rounded-full" style={{
-            background: 'radial-gradient(circle at 30% 40%, rgba(138, 214, 206, 0.6) 0%, rgba(107, 201, 191, 0.4) 30%, rgba(78, 184, 173, 0.2) 60%, transparent 100%)',
-            filter: 'blur(60px)'
+        {/* Soft Abstract Gradient Shapes */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
           }}></div>
-          <div className="absolute inset-0 rounded-full translate-x-20 translate-y-32" style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(78, 184, 173, 0.5) 0%, rgba(60, 154, 145, 0.3) 40%, transparent 70%)',
-            filter: 'blur(80px)'
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
           }}></div>
         </div>
 
