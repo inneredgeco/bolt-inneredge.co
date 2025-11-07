@@ -232,18 +232,33 @@ export function PodcastPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Users className="w-16 h-16 mx-auto mb-6 text-white" />
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+      <section className="relative overflow-hidden py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[500px] h-[500px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(80px)',
+            transform: 'translate(-20%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[600px] h-[600px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(100px)',
+            transform: 'translate(20%, 20%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Users className="w-16 h-16 mx-auto mb-6 text-brand-600" />
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">
             Want to be a guest?
           </h2>
-          <p className="text-xl text-brand-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-brand-700 mb-8 max-w-2xl mx-auto">
             Share your wisdom and connect with men ready to transform. We're looking for coaches, facilitators, and thought leaders with unique perspectives on personal growth.
           </p>
           <Link
             to="/podcast-guest"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-stone-900 rounded-lg hover:bg-stone-100 font-semibold transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 text-white rounded-full hover:bg-brand-700 font-bold transition-all hover:scale-105 shadow-lg"
           >
             Learn More
             <ArrowRight className="w-5 h-5" />
