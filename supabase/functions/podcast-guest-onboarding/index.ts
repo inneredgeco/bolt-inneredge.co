@@ -212,15 +212,7 @@ Deno.serve(async (req: Request) => {
     const photoUrl = `${publicUrl}/headshots/${filename}`;
     console.log("Photo uploaded successfully:", photoUrl);
 
-    console.log("=== Step 2: Generating Slug ===");
-    const slug = `${firstName}-${lastName}`
-      .toLowerCase()
-      .replace(/[^a-z0-9\\s-]/g, '')
-      .replace(/\\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-
-    console.log("=== Step 3: Saving to Database ===");
+    console.log("=== Step 2: Setting up Database Connection ===");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -243,6 +235,41 @@ Deno.serve(async (req: Request) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log("=== Step 3: Generating Unique Slug ===");
+
+    // Generate base slug from name
+    const baseSlug = `${firstName}-${lastName}`
+      .toLowerCase()
+      .replace(/[^a-z0-9\\s-]/g, '')
+      .replace(/\\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+
+    let slug = baseSlug;
+    let counter = 1;
+
+    // Check if slug exists and generate unique one if needed
+    while (true) {
+      const { data: existingSlug } = await supabase
+        .from('podcast_guests')
+        .select('slug')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (!existingSlug) {
+        // Slug is unique, use it
+        console.log('Unique slug generated:', slug);
+        break;
+      }
+
+      // Slug exists, try with number
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+      console.log('Slug exists, trying:', slug);
+    }
+
+    console.log("=== Step 4: Saving to Database ===");
 
     const fullName = `${firstName} ${lastName}`;
     const guestData = {
@@ -339,7 +366,7 @@ Deno.serve(async (req: Request) => {
 
     console.log("Guest saved to database successfully");
 
-    console.log("=== Step 4: Sending to Pabbly Webhook ===");
+    console.log("=== Step 5: Sending to Pabbly Webhook ===");
 
     const errors: string[] = [];
     let webhookSuccess = false;
@@ -389,7 +416,7 @@ Deno.serve(async (req: Request) => {
       console.warn("PABBLY_WEBHOOK_URL_GUEST_ONBOARDING not set");
     }
 
-    console.log("=== Step 5: Sending Confirmation Emails ===");
+    console.log("=== Step 6: Sending Confirmation Emails ===");
 
     if (resendApiKey) {
       try {
