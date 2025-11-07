@@ -135,7 +135,7 @@ export function BlogPage() {
                   )}
                 </div>
                 <div className="p-6">
-                  <h2 className="text-2xl font-bold text-stone-900 mb-3 group-hover:text-accent transition-colors">
+                  <h2 className="text-2xl font-bold text-stone-900 mb-3 group-hover:text-brand-600 transition-colors">
                     {post.title}
                   </h2>
                   <p className="text-stone-600 leading-relaxed line-clamp-3">
