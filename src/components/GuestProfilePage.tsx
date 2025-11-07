@@ -135,7 +135,7 @@ export function GuestProfilePage() {
                 alt={guest.full_name}
                 className="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-white shadow-xl object-cover"
               />
-              <h1 className="text-4xl sm:text-5xl font-black mb-2" style={{ color: '#122e2d' }}>
+              <h1 className="text-4xl sm:text-5xl font-black mb-2" style={{ color: '#2d7471' }}>
                 {guest.full_name}
               </h1>
               <p className="text-xl text-brand-700 font-semibold mb-6">
@@ -193,7 +193,7 @@ export function GuestProfilePage() {
 
             <div className="px-8 py-10">
               <section className="mb-10">
-                <h2 className="text-3xl font-bold mb-4" style={{ color: '#1b4644' }}>
+                <h2 className="text-3xl font-bold mb-4" style={{ color: '#2d7471' }}>
                   About {guest.first_name}
                 </h2>
                 <p className="text-lg text-gray-700 leading-relaxed">
