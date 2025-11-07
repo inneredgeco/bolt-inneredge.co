@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Typography */
+body {
+  font-family: 'Source Serif Pro', serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button, .btn, a.button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+label {
+  font-family: 'Montserrat', sans-serif;
+}
+
+input, select, textarea {
+  font-family: 'Source Serif Pro', serif;
+}
+
+nav, .nav-link {
+  font-family: 'Montserrat', sans-serif;
+}
+
 /* Flodesk Form Custom Styling */
 #fd-form-68f7a8c0338a9cff5f4e5400 {
   background: transparent !important;
@@ -22,6 +47,7 @@
   padding: 1rem 1.5rem !important;
   font-size: 1.125rem !important;
   border: none !important;
+  font-family: 'Source Serif Pro', serif !important;
 }
 
 #fd-form-68f7a8c0338a9cff5f4e5400 input[type="text"]:focus,
@@ -39,6 +65,7 @@
   font-weight: 700 !important;
   border: none !important;
   transition: all 0.3s !important;
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 #fd-form-68f7a8c0338a9cff5f4e5400 button[type="submit"]:hover {
