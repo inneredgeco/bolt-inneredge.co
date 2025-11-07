@@ -31,10 +31,10 @@ export function CTA() {
     <section id="cta" className="py-24" style={{ background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl sm:text-5xl font-bold text-brand-800 mb-6">
             Your Next Chapter Starts Now
           </h2>
-          <p className="text-xl text-brand-100 max-w-3xl mx-auto">
+          <p className="text-xl text-brand-700 max-w-3xl mx-auto">
             Stop waiting for the perfect moment. Stop making excuses. The time is now.
           </p>
         </div>
@@ -48,8 +48,8 @@ export function CTA() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
                   <Icon className="text-brand-600" size={32} />
                 </div>
-                <div className="text-2xl font-bold text-white mb-2">{step.title}</div>
-                <p className="text-brand-100">{step.description}</p>
+                <div className="text-2xl font-bold text-brand-800 mb-2">{step.title}</div>
+                <p className="text-brand-700">{step.description}</p>
               </div>
             );
           })}
@@ -64,7 +64,7 @@ export function CTA() {
             Book Your Free Discovery Call
             <ArrowRight className="group-hover:translate-x-1 transition-transform" size={24} />
           </button>
-          <p className="text-brand-100 mt-6 text-sm">
+          <p className="text-brand-700 mt-6 text-sm">
             No pressure. No sales pitch. Just an honest conversation about where you are and where you want to be.
           </p>
         </div>
