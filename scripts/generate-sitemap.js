@@ -42,25 +42,15 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function generateSitemap() {
   try {
-    const { data: posts, error: postsError } = await supabase
+    const { data: posts, error } = await supabase
       .from('posts')
       .select('slug, created_at')
       .eq('published', true)
       .order('created_at', { ascending: false });
 
-    if (postsError) {
-      console.error('Error fetching posts:', postsError);
+    if (error) {
+      console.error('Error fetching posts:', error);
       process.exit(0);
-    }
-
-    const { data: guests, error: guestsError } = await supabase
-      .from('podcast_guests')
-      .select('slug, created_at')
-      .eq('status', 'Published')
-      .order('created_at', { ascending: false });
-
-    if (guestsError) {
-      console.error('Error fetching podcast guests:', guestsError);
     }
 
     const staticPages = [
@@ -68,11 +58,8 @@ async function generateSitemap() {
       { url: 'about', priority: '0.8', changefreq: 'monthly' },
       { url: 'blog', priority: '0.9', changefreq: 'weekly' },
       { url: 'podcast', priority: '0.9', changefreq: 'weekly' },
-      { url: 'podcast-guest', priority: '0.7', changefreq: 'monthly' },
-      { url: 'guests', priority: '0.7', changefreq: 'weekly' },
       { url: 'contact', priority: '0.8', changefreq: 'monthly' },
       { url: 'booking', priority: '0.9', changefreq: 'monthly' },
-      { url: 'vision-builder', priority: '0.9', changefreq: 'monthly' },
       { url: 'emotional-release-techniques', priority: '0.6', changefreq: 'monthly' },
       { url: 'rise-course-resources', priority: '0.6', changefreq: 'monthly' },
       { url: 'link', priority: '0.5', changefreq: 'monthly' },
@@ -106,24 +93,12 @@ async function generateSitemap() {
       });
     }
 
-    if (guests && guests.length > 0) {
-      guests.forEach((guest) => {
-        const guestDate = new Date(guest.created_at).toISOString().split('T')[0];
-        sitemap += '  <url>\n';
-        sitemap += `    <loc>${baseUrl}/guests/${guest.slug}</loc>\n`;
-        sitemap += `    <lastmod>${guestDate}</lastmod>\n`;
-        sitemap += `    <changefreq>monthly</changefreq>\n`;
-        sitemap += `    <priority>0.7</priority>\n`;
-        sitemap += '  </url>\n';
-      });
-    }
-
     sitemap += '</urlset>';
 
     const sitemapPath = join(__dirname, '../public/sitemap.xml');
     writeFileSync(sitemapPath, sitemap, 'utf-8');
 
-    console.log(`✓ Sitemap generated successfully with ${posts?.length || 0} blog posts and ${guests?.length || 0} guest profiles`);
+    console.log(`✓ Sitemap generated successfully with ${posts?.length || 0} blog posts`);
   } catch (error) {
     console.error('Error generating sitemap:', error);
     process.exit(0);

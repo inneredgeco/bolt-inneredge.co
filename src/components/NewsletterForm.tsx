@@ -124,18 +124,21 @@ export default function NewsletterForm() {
   };
 
   return (
-    <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: '#2d7471' }}>
+    <section className="py-12 bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.05),transparent_50%)]"></div>
+
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-brand-100">
           <div className="p-5 sm:p-6 lg:p-8">
             <div className="text-center mb-5">
-              <div className="inline-block mb-2 px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#a8e0da', color: '#2d7471' }}>
+              <div className="inline-block mb-2 px-3 py-1 bg-brand-100 text-brand-800 rounded-full text-xs font-semibold">
                 FREE RESOURCE
               </div>
-              <h2 className="text-2xl sm:text-3xl font-heading font-bold mb-2 leading-tight" style={{ color: '#1a1a1a' }}>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 leading-tight">
                 Create Your 1-Year Vision
               </h2>
-              <p className="text-base font-body max-w-xl mx-auto" style={{ color: '#4a4a4a' }}>
+              <p className="text-base text-gray-700 max-w-xl mx-auto">
                 A guided process to design the life you want in the next 12 months
               </p>
             </div>
@@ -152,7 +155,7 @@ export default function NewsletterForm() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
                     disabled={isSubmitting}
-                    className={`w-full pl-10 pr-4 py-2.5 border rounded-md focus:ring-2 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
+                    className={`w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
                       errors.name ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -171,7 +174,7 @@ export default function NewsletterForm() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     disabled={isSubmitting}
-                    className={`w-full pl-10 pr-4 py-2.5 border rounded-md focus:ring-2 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
+                    className={`w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 hover:border-gray-400 ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -184,8 +187,7 @@ export default function NewsletterForm() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group w-full text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:ring-4 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
-                style={{ background: '#8ad6ce', color: '#1a1a1a' }}
+                className="group w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white font-bold py-2.5 px-6 rounded-lg hover:from-brand-700 hover:to-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>

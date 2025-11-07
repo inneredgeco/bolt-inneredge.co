@@ -17,13 +17,13 @@ const testimonials = [
 
 export function Transformation() {
   return (
-    <section id="transformation" className="py-16 md:py-20 bg-white">
+    <section id="transformation" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-heading font-bold mb-4" style={{ color: '#1a1a1a' }}>
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
             Real Men. Real Results.
           </h2>
-          <p className="text-xl font-body max-w-3xl mx-auto" style={{ color: '#4a4a4a' }}>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             These aren't overnight transformations. They're the result of commitment, courage, and doing the work.
           </p>
         </div>
@@ -32,16 +32,16 @@ export function Transformation() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white p-8 rounded-lg card-hover border" style={{ borderColor: '#e5e7eb' }}
+              className="bg-gradient-to-br from-teal-50 to-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-teal-100"
             >
-              <Quote style={{ color: '#8ad6ce' }} className="mb-4" size={32} />
+              <Quote className="text-teal-600 mb-4" size={32} />
 
-              <p className="font-body text-lg mb-6 leading-relaxed italic" style={{ color: '#4a4a4a' }}>
+              <p className="text-gray-700 text-lg mb-6 leading-relaxed italic">
                 "{testimonial.quote}"
               </p>
 
-              <div className="border-t pt-6" style={{ borderColor: '#e5e7eb' }}>
-                <div className="font-heading font-bold" style={{ color: '#1a1a1a' }}>{testimonial.name}</div>
+              <div className="border-t border-teal-200 pt-6">
+                <div className="font-bold text-gray-900">{testimonial.name}</div>
               </div>
             </div>
           ))}

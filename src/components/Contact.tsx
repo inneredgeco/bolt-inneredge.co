@@ -17,69 +17,69 @@ export function Contact() {
       />
       <Header />
       {/* Hero Section */}
-      <div className="py-24 md:py-32" style={{ background: 'linear-gradient(135deg, #f0f7f6 0%, #d9eeec 25%, #c4e3e0 50%, #b8d4d2 75%, #8ad6ce 100%)' }}>
+      <div className="bg-gradient-to-br from-brand-500 to-brand-800 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl font-heading font-bold mb-4" style={{ color: '#1a1a1a' }}>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
             Get in Touch
           </h1>
-          <p className="text-xl font-body max-w-3xl" style={{ color: '#4a4a4a' }}>
+          <p className="text-xl text-brand-100 max-w-3xl">
             Ready to start your transformation? Have questions? We're here to help.
           </p>
         </div>
       </div>
 
       {/* Contact Content */}
-      <div className="py-16 md:py-20 bg-white">
+      <div className="py-16 bg-stone-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="bg-white p-8 md:p-10 rounded-lg shadow-lg border" style={{ borderColor: '#e5e7eb' }}>
+            <div className="bg-white p-8 md:p-10 rounded-2xl shadow-lg">
               <ContactForm />
             </div>
 
             {/* Contact Info */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-heading font-bold mb-6" style={{ color: '#1a1a1a' }}>
+                <h2 className="text-3xl font-bold text-slate-900 mb-6">
                   Contact Information
                 </h2>
-                <p className="font-body mb-8 leading-relaxed" style={{ color: '#4a4a4a' }}>
+                <p className="text-slate-600 mb-8 leading-relaxed">
                   We're committed to helping you achieve your goals. Reach out to us and let's start your journey together.
                 </p>
               </div>
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#a8e0da' }}>
-                    <Phone style={{ color: '#2d7471' }} size={24} />
+                  <div className="w-12 h-12 bg-brand-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Phone className="text-brand-500" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-heading font-bold mb-1" style={{ color: '#1a1a1a' }}>Phone</h3>
-                    <a href="tel:+13102662677" className="font-body transition-colors" style={{ color: '#4a4a4a' }}>
+                    <h3 className="font-bold text-slate-900 mb-1">Phone</h3>
+                    <a href="tel:+13102662677" className="text-slate-600 hover:text-brand-500 transition-colors">
                       310-266-2677
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#a8e0da' }}>
-                    <Mail style={{ color: '#2d7471' }} size={24} />
+                  <div className="w-12 h-12 bg-brand-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Mail className="text-brand-500" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-heading font-bold mb-1" style={{ color: '#1a1a1a' }}>Email</h3>
-                    <a href="mailto:contact@inneredge.co" className="font-body transition-colors" style={{ color: '#4a4a4a' }}>
+                    <h3 className="font-bold text-slate-900 mb-1">Email</h3>
+                    <a href="mailto:contact@inneredge.co" className="text-slate-600 hover:text-brand-500 transition-colors">
                       contact@inneredge.co
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#a8e0da' }}>
-                    <MapPin style={{ color: '#2d7471' }} size={24} />
+                  <div className="w-12 h-12 bg-brand-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MapPin className="text-brand-500" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-heading font-bold mb-1" style={{ color: '#1a1a1a' }}>Location</h3>
-                    <p className="font-body" style={{ color: '#4a4a4a' }}>
+                    <h3 className="font-bold text-slate-900 mb-1">Location</h3>
+                    <p className="text-slate-600">
                       San Diego, CA
                     </p>
                   </div>

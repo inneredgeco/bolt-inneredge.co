@@ -35,37 +35,32 @@ const services = [
 
 export function Services() {
   return (
-    <section id="services" className="py-16 md:py-20" style={{ background: '#fafaf9' }}>
+    <section id="services" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <div className="mb-6">
-            <span className="text-sm font-heading font-semibold tracking-wide uppercase px-4 py-2 rounded-full" style={{ color: '#2d7471', background: '#a8e0da' }}>
-              What You'll Achieve
-            </span>
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-heading font-bold mb-6 leading-tight" style={{ color: '#1a1a1a' }}>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
             Transform Every Area of Your Life
           </h2>
-          <p className="text-xl font-body" style={{ color: '#4a4a4a' }}>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             A holistic approach to transformation—confident, purpose-driven, and unstoppable.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
               <div
                 key={index}
-                className="card-hover bg-white p-8 rounded-lg border border-stone-200"
+                className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
               >
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-6" style={{ background: '#2d7471' }}>
-                  <Icon className="text-white" size={24} />
+                <div className="w-14 h-14 bg-brand-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-500 transition-colors">
+                  <Icon className="text-brand-500 group-hover:text-white transition-colors" size={28} />
                 </div>
-                <h3 className="text-xl font-heading font-bold mb-3" style={{ color: '#1a1a1a' }}>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
                   {service.title}
                 </h3>
-                <p className="font-body leading-relaxed" style={{ color: '#4a4a4a' }}>
+                <p className="text-gray-600 leading-relaxed">
                   {service.description}
                 </p>
               </div>
