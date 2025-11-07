@@ -28,7 +28,6 @@ import { VisionBuilderPage } from './components/VisionBuilderPage';
 import { VisionAnalyticsPage } from './components/VisionAnalyticsPage';
 import { VisionResultsPage } from './components/VisionResultsPage';
 import { NotFound } from './components/NotFound';
-import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
 
 function ScrollToTop() {
@@ -46,21 +45,21 @@ function App() {
     <div className="min-h-screen bg-white">
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<><HomePage /><Footer /></>} />
-        <Route path="/privacy-policy" element={<><PrivacyPolicy /><Footer /></>} />
-        <Route path="/emotional-release-techniques" element={<><EmotionalReleaseTechniques /><Footer /></>} />
-        <Route path="/rise-course-resources" element={<><RiseCourseResources /><Footer /></>} />
-        <Route path="/booking" element={<><BookingPage /><Footer /></>} />
-        <Route path="/contact" element={<><Contact /><Footer /></>} />
-        <Route path="/about" element={<><AboutPage /><Footer /></>} />
-        <Route path="/blog" element={<><BlogPage /><Footer /></>} />
-        <Route path="/blog/:slug" element={<><BlogPostPage /><Footer /></>} />
-        <Route path="/podcast" element={<><PodcastPage /><Footer /></>} />
-        <Route path="/podcast-guest" element={<><PodcastGuestPage /><Footer /></>} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/emotional-release-techniques" element={<EmotionalReleaseTechniques />} />
+        <Route path="/rise-course-resources" element={<RiseCourseResources />} />
+        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/podcast" element={<PodcastPage />} />
+        <Route path="/podcast-guest" element={<PodcastGuestPage />} />
         <Route path="/podcast-guest-form" element={<PodcastGuestFormPage />} />
         <Route path="/podcast-guest-onboarding" element={<PodcastGuestOnboardingPage />} />
         <Route path="/guests" element={<GuestsDirectoryPage />} />
-        <Route path="/guests/:slug" element={<><GuestProfilePage /><Footer /></>} />
+        <Route path="/guests/:slug" element={<GuestProfilePage />} />
         <Route path="/vision-builder" element={<VisionBuilderPage />} />
         <Route path="/vision-builder/resume/:submissionId" element={<VisionBuilderPage />} />
         <Route path="/vision-builder/results/:submissionId" element={<VisionResultsPage />} />
