@@ -11,15 +11,15 @@ const principles = [
 
 export function About() {
   return (
-    <section id="about" className="py-24 bg-gray-900 text-white">
+    <section id="about" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Column */}
           <div>
-            <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
               This Isn't for Everyone
             </h2>
-            <div className="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <p>
                 Let's be honest: most men are sleepwalking through life. Going through the motions.
                 Playing it safe. Waiting for something to change.
@@ -39,28 +39,28 @@ export function About() {
           </div>
 
           {/* Right Column */}
-          <div className="bg-gray-800 p-10 rounded-2xl border border-gray-700">
-            <h3 className="text-2xl font-bold mb-6">What Makes This Different</h3>
+          <div className="bg-white p-10 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">What Makes This Different</h3>
             <div className="space-y-4">
               {principles.map((principle, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <CheckCircle2 className="text-accent flex-shrink-0 mt-1" size={24} />
-                  <span className="text-gray-300 text-lg leading-relaxed">{principle}</span>
+                  <span className="text-gray-600 text-lg leading-relaxed">{principle}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 pt-10 border-t border-gray-700">
-              <p className="text-gray-400 italic">
+            <div className="mt-10 pt-10 border-t border-gray-200">
+              <p className="text-gray-600 italic">
                 "The only way out is through. And I'll be there with you every step of the way."
               </p>
-              <p className="text-white font-semibold mt-3">— Soleiman Bolour</p>
+              <p className="text-gray-900 font-semibold mt-3">— Soleiman Bolour</p>
             </div>
           </div>
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-600 mb-6">
             Ready to learn more about our approach?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -72,7 +72,7 @@ export function About() {
             </a>
             <a
               href="/contact"
-              className="inline-block border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-gray-900 transition-all"
+              className="inline-block border-2 border-gray-900 text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-gray-900 hover:text-white transition-all"
             >
               Get in Touch
             </a>
