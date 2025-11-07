@@ -33,17 +33,36 @@ export function AboutPage() {
       <Header />
 
       {/* Hero Section - Living from the Inside Out */}
-      <div className="bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800 py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden py-20 lg:py-28" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        {/* Soft Abstract Gradient Shapes */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-                About Soleiman Bolour
+              <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+                Men's Coach & Founder
+              </p>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+                <span className="text-gray-900">About Soleiman Bolour</span>
               </h1>
-              <p className="text-2xl sm:text-3xl font-light text-brand-100 mb-8 leading-relaxed">
+              <p className="text-2xl sm:text-3xl font-light text-brand-700 mb-8 leading-relaxed">
                 Living from the Inside Out
               </p>
-              <div className="space-y-6 text-lg text-brand-50 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              <div className="space-y-6 text-lg text-gray-700 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 <p>
                   I'm not here as the expert on your life.
                 </p>
@@ -57,7 +76,7 @@ export function AboutPage() {
             </div>
             <div className="flex justify-center lg:justify-end">
               <div className="w-full max-w-md lg:max-w-lg">
-                <div className="aspect-square rounded-3xl bg-brand-800/30 shadow-2xl overflow-hidden border-2 border-brand-400/20">
+                <div className="aspect-square rounded-3xl shadow-2xl overflow-hidden border border-brand-200">
                   <img
                     src="https://inner-edge.b-cdn.net/ie-about-soleiman-main.jpg"
                     alt="Soleiman Bolour - Men's Coach and Founder of Inner Edge"
