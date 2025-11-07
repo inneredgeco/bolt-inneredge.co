@@ -443,9 +443,6 @@ export function PodcastGuestOnboardingPage() {
                       placeholder="youtube.com/@yourchannel"
                       className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                     />
-                    <p className="mt-2 text-sm text-stone-600">
-                      Optional - your personal YouTube channel
-                    </p>
                   </div>
 
                   <div className="mb-6">
