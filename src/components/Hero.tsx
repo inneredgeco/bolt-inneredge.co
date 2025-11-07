@@ -74,7 +74,7 @@ export function Hero() {
               </button>
               <button
                 onClick={() => scrollToSection('about')}
-                className="border-2 border-gray-800 text-gray-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-800 hover:text-white transition-all"
+                className="border-2 border-gray-800 text-gray-800 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-800 hover:text-white transition-all"
               >
                 Learn More
               </button>
