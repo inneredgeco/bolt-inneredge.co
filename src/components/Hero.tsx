@@ -12,7 +12,7 @@ export function Hero() {
       <Header />
 
       <div className="relative overflow-hidden" style={{
-        minHeight: '90vh',
+        minHeight: '63vh',
         background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
       }}>
         {/* Soft Abstract Gradient Shapes */}
@@ -30,7 +30,7 @@ export function Hero() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 flex items-center" style={{ minHeight: '90vh' }}>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 flex items-center" style={{ minHeight: '63vh' }}>
           <div className="max-w-3xl">
             <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
               Transform from Within
