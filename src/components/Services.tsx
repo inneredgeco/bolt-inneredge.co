@@ -35,32 +35,37 @@ const services = [
 
 export function Services() {
   return (
-    <section id="services" className="py-24 bg-gray-50">
+    <section id="services" className="py-16 md:py-24 bg-stone-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <div className="mb-6">
+            <span className="text-sm font-heading font-semibold tracking-wide uppercase text-brand px-4 py-2 bg-brand-50 rounded-full">
+              What You'll Achieve
+            </span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl font-heading font-bold text-dark mb-6 leading-tight">
             Transform Every Area of Your Life
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl font-body text-dark-medium">
             A holistic approach to transformation—confident, purpose-driven, and unstoppable.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
               <div
                 key={index}
-                className="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
+                className="card-hover bg-white p-8 rounded-xl border border-stone-200"
               >
-                <div className="w-14 h-14 bg-brand-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-500 transition-colors">
-                  <Icon className="text-brand-500 group-hover:text-white transition-colors" size={28} />
+                <div className="w-12 h-12 bg-brand rounded-lg flex items-center justify-center mb-6">
+                  <Icon className="text-white" size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-heading font-bold text-dark mb-3">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="font-body text-dark-medium leading-relaxed">
                   {service.description}
                 </p>
               </div>
