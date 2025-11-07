@@ -236,7 +236,6 @@ export function VisionResultsPage() {
             <p className="text-lg text-stone-600">Loading your vision...</p>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -266,7 +265,6 @@ export function VisionResultsPage() {
             </Link>
           </div>
         </div>
-        <Footer />
       </>
     );
   }

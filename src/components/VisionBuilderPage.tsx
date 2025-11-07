@@ -450,7 +450,6 @@ export function VisionBuilderPage() {
             <p className="text-lg text-stone-600">Loading your vision...</p>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
@@ -481,7 +480,6 @@ export function VisionBuilderPage() {
             </button>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
