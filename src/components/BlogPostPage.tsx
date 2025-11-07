@@ -286,8 +286,9 @@ export function BlogPostPage() {
         <BlogNewsletterSignup />
 
         <BlogNavigation previousPost={previousPost} nextPost={nextPost} />
-      <Footer />
       </article>
+
+      <Footer />
     </div>
   );
 }
