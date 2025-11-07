@@ -322,17 +322,40 @@ export function RiseCourseResources() {
         )}
       </nav>
 
-      {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        {/* Soft Abstract Gradient Shapes */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+            Course Materials
+          </p>
+          <BookOpen className="w-16 h-16 mx-auto mb-6 text-brand-600" />
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 leading-tight">
             RISE Course Resources
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-brand-700 max-w-2xl mx-auto">
             Access all your course materials, worksheets, and supplementary resources organized by module.
           </p>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Modules */}
         <div className="space-y-8">
@@ -353,19 +376,37 @@ export function RiseCourseResources() {
         </div>
 
         {/* Support Section */}
-        <div className="mt-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Need Help?
-          </h2>
-          <p className="text-teal-100 mb-6">
-            If you have any questions about the course materials or need assistance accessing resources.
-          </p>
-          <a
-            href="mailto:contact@inneredge.co"
-            className="inline-block bg-white text-teal-700 px-6 py-3 rounded-full font-semibold hover:bg-teal-50 transition-all"
-          >
-            Contact Support
-          </a>
+        <div className="mt-12 relative overflow-hidden rounded-2xl p-8 text-center" style={{
+          background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+        }}>
+          {/* Soft Abstract Gradient Shapes */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute left-0 top-0 w-[500px] h-[500px]" style={{
+              background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+              filter: 'blur(80px)',
+              transform: 'translate(-20%, -20%)'
+            }}></div>
+            <div className="absolute right-0 bottom-0 w-[600px] h-[600px]" style={{
+              background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+              filter: 'blur(100px)',
+              transform: 'translate(20%, 20%)'
+            }}></div>
+          </div>
+
+          <div className="relative">
+            <h2 className="text-2xl font-black text-gray-900 mb-3">
+              Need Help?
+            </h2>
+            <p className="text-brand-700 mb-6">
+              If you have any questions about the course materials or need assistance accessing resources.
+            </p>
+            <a
+              href="mailto:contact@inneredge.co"
+              className="inline-block bg-brand-600 text-white px-6 py-3 rounded-full font-bold hover:bg-brand-700 transition-all hover:scale-105 shadow-lg"
+            >
+              Contact Support
+            </a>
+          </div>
         </div>
       </div>
     </div>
