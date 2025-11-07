@@ -2,6 +2,7 @@ import { User, Brain, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from './Header';
 import { SEOHead } from './SEOHead';
+import { Footer } from './Footer';
 
 export function AboutPage() {
   const navigate = useNavigate();
@@ -355,6 +356,7 @@ export function AboutPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

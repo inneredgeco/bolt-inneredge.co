@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { Globe, Facebook, Instagram, Linkedin, Music2, Play } from 'lucide-react';
 
@@ -272,6 +273,7 @@ export function GuestProfilePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

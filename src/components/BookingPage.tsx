@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Calendar, Clock, Video, CheckCircle } from 'lucide-react';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 
 export function BookingPage() {
@@ -177,6 +178,7 @@ export function BookingPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { ContactForm } from './ContactForm';
 
@@ -108,6 +109,7 @@ export function Contact() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

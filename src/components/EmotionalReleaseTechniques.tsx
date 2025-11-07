@@ -2,6 +2,7 @@ import { Play, Clock, Eye } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { SEOHead } from './SEOHead';
 import { Header } from './Header';
+import { Footer } from './Footer';
 
 interface Video {
   id: string;
@@ -265,6 +266,7 @@ export function EmotionalReleaseTechniques() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

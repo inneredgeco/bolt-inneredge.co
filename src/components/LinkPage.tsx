@@ -480,6 +480,7 @@ export function LinkPage() {
           </a>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

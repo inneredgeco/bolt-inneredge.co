@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { BookOpen } from 'lucide-react';
 import { SEOHead } from './SEOHead';
+import { Footer } from './Footer';
 
 interface Post {
   id: string;
@@ -147,6 +148,7 @@ export function BlogPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

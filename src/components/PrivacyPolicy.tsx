@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 
 export function PrivacyPolicy() {
@@ -187,6 +188,7 @@ export function PrivacyPolicy() {
           </section>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

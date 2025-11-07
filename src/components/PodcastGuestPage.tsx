@@ -1,5 +1,6 @@
 import { Mic } from 'lucide-react';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 
 export function PodcastGuestPage() {
@@ -165,6 +166,7 @@ export function PodcastGuestPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

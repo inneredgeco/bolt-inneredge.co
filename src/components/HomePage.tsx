@@ -7,6 +7,7 @@ import NewsletterForm from './NewsletterForm';
 import { SEOHead } from './SEOHead';
 import { LocalHero } from './LocalHero';
 import LocalBusinessSchema from './LocalBusinessSchema';
+import { Footer } from './Footer';
 
 export function HomePage() {
   return (
@@ -29,6 +30,7 @@ export function HomePage() {
       <Transformation />
       <About />
       <CTA />
+      <Footer />
     </>
   );
 }

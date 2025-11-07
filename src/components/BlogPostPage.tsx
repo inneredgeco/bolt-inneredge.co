@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -285,6 +286,7 @@ export function BlogPostPage() {
         <BlogNewsletterSignup />
 
         <BlogNavigation previousPost={previousPost} nextPost={nextPost} />
+      <Footer />
       </article>
     </div>
   );

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { SEOHead } from './SEOHead';
 import { Header } from './Header';
+import { Footer } from './Footer';
 
 interface Resource {
   title: string;
@@ -326,6 +327,7 @@ export function RiseCourseResources() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
