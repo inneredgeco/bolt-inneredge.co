@@ -106,7 +106,7 @@ export function PodcastPage() {
                 Listen on Apple Podcasts
               </a>
               <a
-                href="https://www.youtube.com/@inneredgeco"
+                href="https://www.youtube.com/@SoleimanBolour"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-[#FF0000] text-white rounded-full font-semibold hover:bg-[#cc0000] transition-all hover:scale-105 shadow-lg"
