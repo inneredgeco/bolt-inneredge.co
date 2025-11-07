@@ -138,18 +138,37 @@ export function VisionBuilderStep1({ onComplete, initialData }: VisionBuilderSte
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-brand-500 via-brand-600 to-brand-800 min-h-screen flex items-center">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+    <div className="relative overflow-hidden min-h-screen flex items-center" style={{
+      background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+    }}>
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+          background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+          filter: 'blur(100px)',
+          transform: 'translate(-30%, -20%)'
+        }}></div>
+        <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+          background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+          filter: 'blur(120px)',
+          transform: 'translate(20%, 30%)'
+        }}></div>
+      </div>
+
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full mb-6">
-            <Sparkles className="text-white" size={40} />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-100 rounded-full mb-6">
+            <Sparkles className="text-brand-600" size={40} />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+            Vision Builder
+          </p>
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-6 leading-tight">
             Create Your 1-Year Vision
           </h1>
 
-          <p className="text-xl sm:text-2xl text-brand-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl sm:text-2xl text-brand-700 max-w-2xl mx-auto leading-relaxed">
             A guided process to design the life you want in the next 12 months
           </p>
         </div>

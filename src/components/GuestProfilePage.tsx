@@ -113,16 +113,32 @@ export function GuestProfilePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-br from-brand-500 to-brand-700 px-8 py-12 text-center">
+            <div className="relative overflow-hidden px-8 py-12 text-center" style={{
+              background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+            }}>
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute left-0 top-0 w-[500px] h-[500px]" style={{
+                  background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+                  filter: 'blur(80px)',
+                  transform: 'translate(-20%, -20%)'
+                }}></div>
+                <div className="absolute right-0 bottom-0 w-[600px] h-[600px]" style={{
+                  background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+                  filter: 'blur(100px)',
+                  transform: 'translate(20%, 20%)'
+                }}></div>
+              </div>
+
+              <div className="relative">
               <img
                 src={guest.photo_url}
                 alt={guest.full_name}
                 className="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-white shadow-xl object-cover"
               />
-              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
+              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-2">
                 {guest.full_name}
               </h1>
-              <p className="text-xl text-brand-100 font-semibold mb-6">
+              <p className="text-xl text-brand-700 font-semibold mb-6">
                 {guest.profession}
               </p>
 
@@ -171,6 +187,7 @@ export function GuestProfilePage() {
                     <Instagram size={24} />
                   </a>
                 )}
+              </div>
               </div>
             </div>
 

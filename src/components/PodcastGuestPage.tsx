@@ -15,13 +15,31 @@ export function PodcastGuestPage() {
       />
       <Header />
 
-      <div className="bg-gradient-to-br from-brand-500 via-brand-700 to-brand-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Mic className="w-16 h-16 mx-auto mb-6 text-brand-200" />
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+      <div className="relative overflow-hidden py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+            Podcast Guest Application
+          </p>
+          <Mic className="w-16 h-16 mx-auto mb-6 text-brand-600" />
+          <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 leading-tight">
             Be a Podcast Guest
           </h1>
-          <p className="text-xl text-brand-100 max-w-2xl mx-auto">
+          <p className="text-xl text-brand-700 max-w-2xl mx-auto">
             Share Your Wisdom, Connect with Men Ready to Transform
           </p>
         </div>
