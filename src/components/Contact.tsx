@@ -17,12 +17,31 @@ export function Contact() {
       />
       <Header />
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-brand-500 to-brand-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+      <div className="relative overflow-hidden py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        {/* Soft Abstract Gradient Shapes */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+            Connect With Us
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4">
             Get in Touch
           </h1>
-          <p className="text-xl text-brand-100 max-w-3xl">
+          <p className="text-xl text-brand-700 max-w-3xl">
             Ready to start your transformation? Have questions? We're here to help.
           </p>
         </div>
