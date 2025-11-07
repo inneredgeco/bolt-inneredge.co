@@ -17,6 +17,7 @@ interface GuestOnboardingData {
   facebook: string;
   instagram: string;
   linkedin: string;
+  youtube: string;
   profession: string;
   shortBio: string;
   longBio: string;
@@ -73,6 +74,30 @@ function formatLinkedInUrl(value: string): string {
   return `https://www.linkedin.com/in/${formatted}`;
 }
 
+function formatYouTubeUrl(value: string): string {
+  if (!value || !value.trim()) return '';
+
+  let formatted = value.trim();
+
+  if (formatted.startsWith('http://') || formatted.startsWith('https://')) {
+    return formatted;
+  }
+
+  if (formatted.startsWith('@')) {
+    return `https://www.youtube.com/${formatted}`;
+  }
+
+  if (formatted.includes('youtube.com/')) {
+    formatted = formatted.replace(new RegExp(`^(www\\.)?youtube\\.com\\/`), '');
+    if (formatted.startsWith('@')) {
+      return `https://www.youtube.com/${formatted}`;
+    }
+    return `https://www.youtube.com/@${formatted}`;
+  }
+
+  return `https://www.youtube.com/@${formatted}`;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -92,6 +117,7 @@ Deno.serve(async (req: Request) => {
     const facebook = formData.get('facebook') as string;
     const instagram = formData.get('instagram') as string;
     const linkedin = formData.get('linkedin') as string;
+    const youtube = formData.get('youtube') as string;
     const profession = formData.get('profession') as string;
     const shortBio = formData.get('shortBio') as string;
     const longBio = formData.get('longBio') as string;
@@ -209,6 +235,7 @@ Deno.serve(async (req: Request) => {
       facebook_url: formatSocialUrl(facebook, 'facebook'),
       instagram_url: formatSocialUrl(instagram, 'instagram'),
       linkedin_url: formatLinkedInUrl(linkedin),
+      guest_youtube_url: formatYouTubeUrl(youtube),
       profession: profession,
       short_bio: shortBio,
       long_bio: longBio || '',
@@ -221,7 +248,7 @@ Deno.serve(async (req: Request) => {
       episode_date: null,
       spotify_url: null,
       apple_podcast_url: null,
-      youtube_url: null,
+      podcast_youtube_url: null,
     };
 
     const { data: existingGuest, error: checkError } = await supabase
@@ -306,6 +333,7 @@ Deno.serve(async (req: Request) => {
           facebook: formatSocialUrl(facebook, 'facebook'),
           instagram: formatSocialUrl(instagram, 'instagram'),
           linkedin: formatLinkedInUrl(linkedin),
+          youtube: formatYouTubeUrl(youtube),
           profession: profession,
           status: "Draft",
           slug: slug,
@@ -398,7 +426,8 @@ Deno.serve(async (req: Request) => {
               Website: ${website ? `<a href="${normalizeUrl(website)}">${normalizeUrl(website)}</a>` : 'Not provided'}<br>
               Facebook: ${facebook ? `<a href="${formatSocialUrl(facebook, 'facebook')}">${formatSocialUrl(facebook, 'facebook')}</a>` : 'Not provided'}<br>
               Instagram: ${instagram ? `<a href="${formatSocialUrl(instagram, 'instagram')}">${formatSocialUrl(instagram, 'instagram')}</a>` : 'Not provided'}<br>
-              LinkedIn: ${linkedin ? `<a href="${formatLinkedInUrl(linkedin)}">${formatLinkedInUrl(linkedin)}</a>` : 'Not provided'}</p>
+              LinkedIn: ${linkedin ? `<a href="${formatLinkedInUrl(linkedin)}">${formatLinkedInUrl(linkedin)}</a>` : 'Not provided'}<br>
+              YouTube: ${youtube ? `<a href="${formatYouTubeUrl(youtube)}">${formatYouTubeUrl(youtube)}</a>` : 'Not provided'}</p>
             `,
           }),
         });

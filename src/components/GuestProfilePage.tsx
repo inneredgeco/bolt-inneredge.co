@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
-import { Globe, Facebook, Instagram, Linkedin, Music2, Play } from 'lucide-react';
+import { Globe, Facebook, Instagram, Linkedin, Youtube, Music2, Play } from 'lucide-react';
 
 interface Guest {
   id: string;
@@ -20,11 +20,12 @@ interface Guest {
   facebook_url: string | null;
   instagram_url: string | null;
   linkedin_url: string | null;
+  guest_youtube_url: string | null;
   episode_title: string | null;
   episode_date: string | null;
   spotify_url: string | null;
   apple_podcast_url: string | null;
-  youtube_url: string | null;
+  podcast_youtube_url: string | null;
   status: string;
 }
 
@@ -98,7 +99,7 @@ export function GuestProfilePage() {
     );
   }
 
-  const hasEpisode = guest.episode_title || guest.spotify_url || guest.apple_podcast_url || guest.youtube_url;
+  const hasEpisode = guest.episode_title || guest.spotify_url || guest.apple_podcast_url || guest.podcast_youtube_url;
 
   return (
     <>
@@ -164,6 +165,17 @@ export function GuestProfilePage() {
                     aria-label="LinkedIn"
                   >
                     <Linkedin size={24} />
+                  </a>
+                )}
+                {guest.guest_youtube_url && (
+                  <a
+                    href={guest.guest_youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="YouTube"
+                  >
+                    <Youtube size={24} />
                   </a>
                 )}
                 {guest.facebook_url && (
@@ -244,9 +256,9 @@ export function GuestProfilePage() {
                         Apple Podcasts
                       </a>
                     )}
-                    {guest.youtube_url && (
+                    {guest.podcast_youtube_url && (
                       <a
-                        href={guest.youtube_url}
+                        href={guest.podcast_youtube_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-[#FF0000] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#cc0000] transition-colors"

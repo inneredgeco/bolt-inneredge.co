@@ -16,6 +16,7 @@ interface Guest {
   facebook_url: string;
   instagram_url: string;
   linkedin_url: string;
+  guest_youtube_url: string;
   profession: string;
   short_bio: string;
   long_bio: string;
@@ -25,7 +26,7 @@ interface Guest {
   episode_date: string | null;
   spotify_url: string | null;
   apple_podcast_url: string | null;
-  youtube_url: string | null;
+  podcast_youtube_url: string | null;
   created_at: string;
 }
 
@@ -123,6 +124,7 @@ export function GuestProfilesAdminPage() {
           facebook_url: updatedGuest.facebook_url,
           instagram_url: updatedGuest.instagram_url,
           linkedin_url: updatedGuest.linkedin_url,
+          guest_youtube_url: updatedGuest.guest_youtube_url,
           profession: updatedGuest.profession,
           short_bio: updatedGuest.short_bio,
           long_bio: updatedGuest.long_bio,
@@ -132,7 +134,7 @@ export function GuestProfilesAdminPage() {
           episode_date: updatedGuest.episode_date || null,
           spotify_url: updatedGuest.spotify_url || null,
           apple_podcast_url: updatedGuest.apple_podcast_url || null,
-          youtube_url: updatedGuest.youtube_url || null,
+          podcast_youtube_url: updatedGuest.podcast_youtube_url || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', updatedGuest.id);
@@ -521,7 +523,7 @@ function EditGuestModal({ guest, onSave, onClose }: EditGuestModalProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-semibold text-stone-900 mb-2">
                 Facebook URL
@@ -559,6 +561,20 @@ function EditGuestModal({ guest, onSave, onClose }: EditGuestModalProps) {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-teal-600"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-stone-900 mb-2">
+                Guest YouTube Channel
+              </label>
+              <input
+                type="url"
+                name="guest_youtube_url"
+                value={formData.guest_youtube_url || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-teal-600"
+              />
+              <p className="mt-1 text-xs text-stone-600">Guest's personal YouTube channel</p>
             </div>
           </div>
 
@@ -672,15 +688,16 @@ function EditGuestModal({ guest, onSave, onClose }: EditGuestModalProps) {
 
               <div>
                 <label className="block text-sm font-semibold text-stone-900 mb-2">
-                  YouTube URL
+                  Podcast YouTube URL
                 </label>
                 <input
                   type="url"
-                  name="youtube_url"
-                  value={formData.youtube_url || ''}
+                  name="podcast_youtube_url"
+                  value={formData.podcast_youtube_url || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:border-teal-600"
                 />
+                <p className="mt-1 text-xs text-stone-600">Episode on your YouTube channel</p>
               </div>
             </div>
           </div>

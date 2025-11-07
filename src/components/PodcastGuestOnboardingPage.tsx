@@ -14,6 +14,7 @@ export function PodcastGuestOnboardingPage() {
     facebook: '',
     instagram: '',
     linkedin: '',
+    youtube: '',
     profession: '',
     shortBio: '',
     longBio: ''
@@ -177,6 +178,7 @@ export function PodcastGuestOnboardingPage() {
       submissionData.append('facebook', formData.facebook);
       submissionData.append('instagram', formData.instagram);
       submissionData.append('linkedin', formData.linkedin);
+      submissionData.append('youtube', formData.youtube);
       submissionData.append('profession', formData.profession);
       submissionData.append('shortBio', formData.shortBio);
       submissionData.append('longBio', formData.longBio);
@@ -209,6 +211,7 @@ export function PodcastGuestOnboardingPage() {
         facebook: '',
         instagram: '',
         linkedin: '',
+        youtube: '',
         profession: '',
         shortBio: '',
         longBio: ''
@@ -424,6 +427,25 @@ export function PodcastGuestOnboardingPage() {
                       placeholder="linkedin.com/in/yourprofile"
                       className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
                     />
+                  </div>
+
+                  <div className="mb-6">
+                    <label htmlFor="youtube" className="block text-stone-900 font-bold mb-2">
+                      YouTube Channel
+                    </label>
+                    <input
+                      type="text"
+                      id="youtube"
+                      name="youtube"
+                      value={formData.youtube}
+                      onChange={handleChange}
+                      onFocus={handleFocus}
+                      placeholder="youtube.com/@yourchannel"
+                      className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors"
+                    />
+                    <p className="mt-2 text-sm text-stone-600">
+                      Optional - your personal YouTube channel
+                    </p>
                   </div>
 
                   <div className="mb-6">
