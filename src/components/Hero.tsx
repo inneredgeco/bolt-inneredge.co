@@ -39,7 +39,7 @@ export function Hero() {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-8 leading-[1.1]">
               <span className="text-gray-900">The Man You're<br />Meant to Be</span>
               <br />
-              <span className="relative inline-block">
+              <span className="relative inline-block" style={{ fontFamily: "'Source Serif Pro', serif" }}>
                 <span className="text-brand-600">Is Already Within You.</span>
                 <svg
                   className="absolute -bottom-2 left-0 w-full"
