@@ -16,8 +16,7 @@ export function PodcastGuestOnboardingPage() {
     linkedin: '',
     youtube: '',
     profession: '',
-    shortBio: '',
-    longBio: ''
+    shortBio: ''
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -181,7 +180,6 @@ export function PodcastGuestOnboardingPage() {
       submissionData.append('youtube', formData.youtube);
       submissionData.append('profession', formData.profession);
       submissionData.append('shortBio', formData.shortBio);
-      submissionData.append('longBio', formData.longBio);
       submissionData.append('headshot', photoFile);
 
       const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/podcast-guest-onboarding`;
@@ -213,8 +211,7 @@ export function PodcastGuestOnboardingPage() {
         linkedin: '',
         youtube: '',
         profession: '',
-        shortBio: '',
-        longBio: ''
+        shortBio: ''
       });
       removePhoto();
 
@@ -229,7 +226,7 @@ export function PodcastGuestOnboardingPage() {
   };
 
   const shortBioCharCount = formData.shortBio.length;
-  const shortBioMaxChars = 200;
+  const shortBioMaxChars = 250;
 
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
@@ -513,9 +510,9 @@ export function PodcastGuestOnboardingPage() {
                     </p>
                   </div>
 
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <label htmlFor="shortBio" className="block text-stone-900 font-bold mb-2">
-                      Short Bio *
+                      Bio *
                     </label>
                     <textarea
                       id="shortBio"
@@ -525,37 +522,18 @@ export function PodcastGuestOnboardingPage() {
                       value={formData.shortBio}
                       onChange={handleChange}
                       onFocus={handleFocus}
-                      rows={2}
-                      placeholder="Brief description for your profile (1-2 sentences)"
+                      rows={3}
+                      placeholder="Brief description for your profile"
                       className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
                     />
                     <div className="flex justify-between mt-2">
                       <p className="text-sm text-stone-600">
-                        This appears as your tagline on the profile page
+                        This appears on your profile page
                       </p>
                       <p className={`text-sm ${shortBioCharCount > shortBioMaxChars ? 'text-red-600' : 'text-stone-500'}`}>
                         {shortBioCharCount}/{shortBioMaxChars}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="mb-8">
-                    <label htmlFor="longBio" className="block text-stone-900 font-bold mb-2">
-                      Long Bio
-                    </label>
-                    <textarea
-                      id="longBio"
-                      name="longBio"
-                      value={formData.longBio}
-                      onChange={handleChange}
-                      onFocus={handleFocus}
-                      rows={6}
-                      placeholder="Tell us more about your journey, expertise, and what you're passionate about (2-3 paragraphs)"
-                      className="w-full px-4 py-3 border border-stone-200 rounded-lg focus:outline-none focus:border-brand-600 transition-colors resize-none"
-                    />
-                    <p className="mt-2 text-sm text-stone-600">
-                      Optional - appears in the 'About' section of your profile
-                    </p>
                   </div>
 
                   {error && (

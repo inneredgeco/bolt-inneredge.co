@@ -20,7 +20,6 @@ interface GuestOnboardingData {
   youtube: string;
   profession: string;
   shortBio: string;
-  longBio: string;
 }
 
 function normalizeUrl(url: string): string {
@@ -89,10 +88,11 @@ function formatYouTubeUrl(value: string): string {
 
   if (formatted.includes('youtube.com/')) {
     formatted = formatted.replace(new RegExp(`^(www\\.)?youtube\\.com\\/`), '');
-    if (formatted.startsWith('@')) {
-      return `https://www.youtube.com/${formatted}`;
-    }
-    return `https://www.youtube.com/@${formatted}`;
+    return `https://www.youtube.com/${formatted}`;
+  }
+
+  if (formatted.includes('/c/') || formatted.includes('/channel/') || formatted.includes('/@')) {
+    return `https://www.youtube.com${formatted.startsWith('/') ? '' : '/'}${formatted}`;
   }
 
   return `https://www.youtube.com/@${formatted}`;
@@ -120,7 +120,6 @@ Deno.serve(async (req: Request) => {
     const youtube = formData.get('youtube') as string;
     const profession = formData.get('profession') as string;
     const shortBio = formData.get('shortBio') as string;
-    const longBio = formData.get('longBio') as string;
     const headshotFile = formData.get('headshot') as File;
 
     if (!firstName || !lastName || !email || !phone || !profession || !shortBio || !headshotFile) {
@@ -238,7 +237,7 @@ Deno.serve(async (req: Request) => {
       guest_youtube_url: formatYouTubeUrl(youtube),
       profession: profession,
       short_bio: shortBio,
-      long_bio: longBio || '',
+      long_bio: '',
       slug: slug,
       photo_url: photoUrl,
       status: 'Draft',
@@ -339,7 +338,6 @@ Deno.serve(async (req: Request) => {
           slug: slug,
           photo_url: photoUrl,
           short_bio: shortBio,
-          long_bio: longBio || '',
           submitted_at: new Date().toISOString(),
         };
 
@@ -419,8 +417,7 @@ Deno.serve(async (req: Request) => {
               <strong>EMAIL:</strong> ${email}<br>
               <strong>PHONE:</strong> ${phone}<br>
               <strong>PROFESSION:</strong> ${profession}</p>
-              <p><strong>SHORT BIO:</strong><br>${shortBio.replace(/\\n/g, '<br>')}</p>
-              ${longBio ? `<p><strong>LONG BIO:</strong><br>${longBio.replace(/\\n/g, '<br>')}</p>` : ''}
+              <p><strong>BIO:</strong><br>${shortBio.replace(/\\n/g, '<br>')}</p>
               <p><strong>PHOTO:</strong> <a href="${photoUrl}">${photoUrl}</a></p>
               <p><strong>SOCIAL LINKS:</strong><br>
               Website: ${website ? `<a href="${normalizeUrl(website)}">${normalizeUrl(website)}</a>` : 'Not provided'}<br>
