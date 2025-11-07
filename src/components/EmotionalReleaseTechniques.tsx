@@ -186,15 +186,39 @@ export function EmotionalReleaseTechniques() {
         )}
       </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden py-20" style={{
+        background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+      }}>
+        {/* Soft Abstract Gradient Shapes */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute left-0 top-0 w-[800px] h-[800px]" style={{
+            background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+            filter: 'blur(100px)',
+            transform: 'translate(-30%, -20%)'
+          }}></div>
+          <div className="absolute right-0 bottom-0 w-[1000px] h-[1000px]" style={{
+            background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+            filter: 'blur(120px)',
+            transform: 'translate(20%, 30%)'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-bold tracking-[0.2em] text-brand-600 mb-6 uppercase">
+            Learn & Practice
+          </p>
+          <Play className="w-16 h-16 mx-auto mb-6 text-brand-600" />
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-tight">
             Emotional Release Techniques
           </h1>
-          <p className="text-lg text-slate-600 max-w-3xl">
+          <p className="text-lg md:text-xl text-brand-700 max-w-3xl mx-auto">
             Master powerful techniques to release stored emotions, process trauma, and unlock your true potential. Each video provides practical tools you can use immediately.
           </p>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {selectedVideo && (
           <div className="mb-12 bg-white rounded-xl shadow-lg overflow-hidden">
