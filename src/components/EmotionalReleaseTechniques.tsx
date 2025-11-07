@@ -310,19 +310,39 @@ export function EmotionalReleaseTechniques() {
 
         <div className="mt-12" id="fd-form-68d43dbaf56b4cbc083efbc0"></div>
 
-        <div className="mt-16 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl p-8 sm:p-12 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Ready to Go Deeper?
-          </h2>
-          <p className="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
-            These techniques are just the beginning. Join our program for personalized guidance and support.
-          </p>
-          <a
-            href="/#cta"
-            className="inline-block bg-white text-teal-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-50 transition-all hover:scale-105"
-          >
-            Start Your Transformation
-          </a>
+        <div className="mt-16 relative overflow-hidden rounded-2xl p-8 sm:p-12 text-center" style={{
+          background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'
+        }}>
+          {/* Soft Abstract Gradient Shapes */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute left-0 top-0 w-[500px] h-[500px]" style={{
+              background: 'radial-gradient(circle at center, rgba(138, 214, 206, 0.15) 0%, transparent 60%)',
+              filter: 'blur(80px)',
+              transform: 'translate(-20%, -20%)'
+            }}></div>
+            <div className="absolute right-0 bottom-0 w-[600px] h-[600px]" style={{
+              background: 'radial-gradient(circle at center, rgba(107, 201, 191, 0.2) 0%, rgba(138, 214, 206, 0.1) 40%, transparent 70%)',
+              filter: 'blur(100px)',
+              transform: 'translate(20%, 20%)'
+            }}></div>
+          </div>
+
+          <div className="relative">
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4">
+              Ready to Go Deeper?
+            </h2>
+            <p className="text-xl text-brand-700 mb-8 max-w-2xl mx-auto">
+              These techniques are just the beginning. Join our program for personalized guidance and support.
+            </p>
+            <a
+              href="https://links.inneredge.co/menscommunity"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-brand-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-700 transition-all hover:scale-105 shadow-lg"
+            >
+              Join the Community
+            </a>
+          </div>
         </div>
       </div>
     </div>
