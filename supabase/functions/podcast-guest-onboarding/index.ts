@@ -107,6 +107,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    console.log('=== ONBOARDING FORM SUBMISSION STARTED ===');
     const formData = await req.formData();
 
     const firstName = formData.get('firstName') as string;
@@ -122,7 +123,27 @@ Deno.serve(async (req: Request) => {
     const shortBio = formData.get('shortBio') as string;
     const headshotFile = formData.get('headshot') as File;
 
+    console.log('Form data received:', {
+      firstName,
+      lastName,
+      email,
+      phone,
+      profession,
+      hasPhoto: !!headshotFile,
+      photoSize: headshotFile?.size,
+      photoType: headshotFile?.type
+    });
+
     if (!firstName || !lastName || !email || !phone || !profession || !shortBio || !headshotFile) {
+      console.error('Missing required fields:', {
+        firstName: !!firstName,
+        lastName: !!lastName,
+        email: !!email,
+        phone: !!phone,
+        profession: !!profession,
+        shortBio: !!shortBio,
+        headshotFile: !!headshotFile
+      });
       return new Response(
         JSON.stringify({
           success: false,
@@ -295,11 +316,16 @@ Deno.serve(async (req: Request) => {
       .insert(guestData);
 
     if (insertError) {
-      console.error("Error inserting guest into database:", insertError);
+      console.error('=== DATABASE INSERT ERROR ===');
+      console.error('Error details:', insertError);
+      console.error('Error message:', insertError.message);
+      console.error('Error code:', insertError.code);
+      console.error('Error hint:', insertError.hint);
+      console.error('Guest data attempted:', JSON.stringify(guestData, null, 2));
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Failed to save your profile. Please try again.",
+          error: `Failed to save your profile: ${insertError.message || 'Database error'}`,
         }),
         {
           status: 500,
@@ -466,12 +492,16 @@ Deno.serve(async (req: Request) => {
       }
     );
   } catch (error) {
-    console.error("Error processing form submission:", error);
+    console.error('=== FATAL ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', error);
 
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "An unexpected error occurred",
+        error: `Error: ${error.message || 'An unexpected error occurred'}`,
       }),
       {
         status: 500,
