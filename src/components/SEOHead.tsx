@@ -33,7 +33,8 @@ export function SEOHead({
 }: SEOHeadProps) {
   const title = propTitle || 'Inner Edge';
   const description = propDescription || 'Transform your life from the inside out with Inner Edge.';
-  const finalKeywords = keywords || 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
+  const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
+  const finalKeywords = keywords || defaultKeywords;
 
   const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
   const finalImage = propOgImage || defaultImage;
@@ -42,6 +43,10 @@ export function SEOHead({
     : finalImage
       ? `${window.location.origin}${finalImage}`
       : defaultImage;
+
+  const finalOgUrl = ogUrl;
+  const finalLocality = locality;
+  const finalRegion = region;
 
   const getImageType = (url: string): string => {
     if (!url) return 'image/jpeg';
@@ -83,7 +88,7 @@ export function SEOHead({
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <meta name="keywords" content={finalKeywords || defaultKeywords} />
+      <meta name="keywords" content={finalKeywords} />
 
       <meta name="geo.region" content={`US-${finalRegion}`} />
       <meta name="geo.placename" content={finalLocality} />
