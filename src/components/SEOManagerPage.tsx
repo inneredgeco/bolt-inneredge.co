@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, Plus, Edit2, Trash2, X, Image as ImageIcon, Upload } from 'lucide-react';
+import { Search, Plus, X, Upload } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { SEOHead } from './SEOHead';
 
@@ -277,26 +277,36 @@ export function SEOManagerPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this SEO configuration?')) return;
+  const getPageDisplayName = (pagePath: string): string => {
+    const pathMap: Record<string, string> = {
+      '/': 'Home',
+      '/about': 'About',
+      '/blog': 'Blog',
+      '/podcast': 'Podcast',
+      '/contact': 'Contact',
+      '/booking': 'Booking',
+      '/vision-builder': 'Vision Builder',
+      '/guests': 'Podcast Guests',
+      '/podcast-guest': 'Become a Guest',
+      '/podcast-guest-form': 'Guest Application',
+      '/podcast-guest-onboarding': 'Guest Onboarding',
+      '/privacy-policy': 'Privacy Policy',
+      '/emotional-release-techniques': 'Emotional Release',
+      '/rise-course-resources': 'RISE Resources',
+      '/link': 'Link in Bio'
+    };
 
-    try {
-      const { error } = await supabase
-        .from('seo_meta')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      await fetchSeoMeta();
-    } catch (err) {
-      console.error('Error deleting SEO meta:', err);
-      alert('Failed to delete SEO meta');
-    }
+    return pathMap[pagePath] ||
+      pagePath
+        .replace(/^\//, '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
   };
 
   const filteredMeta = seoMeta.filter(meta =>
     meta.page_path.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    meta.page_title?.toLowerCase().includes(searchTerm.toLowerCase())
+    meta.page_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getPageDisplayName(meta.page_path).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const titleCharCount = formData.page_title.length;
@@ -367,19 +377,10 @@ export function SEOManagerPage() {
                 <thead className="bg-stone-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
-                      Page Path
+                      Page
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
                       Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
-                      OG Image
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">
-                      Last Updated
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-stone-500 uppercase tracking-wider">
                       Actions
@@ -389,57 +390,22 @@ export function SEOManagerPage() {
                 <tbody className="bg-white divide-y divide-stone-200">
                   {filteredMeta.map((meta) => (
                     <tr key={meta.id} className="hover:bg-stone-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <code className="text-sm font-mono text-stone-900">{meta.page_path}</code>
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                            Configured
-                          </span>
-                        </div>
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-stone-900">{getPageDisplayName(meta.page_path)}</div>
+                        <div className="text-xs text-stone-500 mt-0.5">{meta.page_path}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-stone-900 max-w-xs truncate">
-                          {meta.page_title || <span className="text-stone-400">Not set</span>}
+                        <div className="text-sm text-stone-900">
+                          {meta.page_title || <span className="text-stone-400 italic">No title set</span>}
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-stone-600 max-w-xs truncate">
-                          {meta.meta_description || <span className="text-stone-400">Not set</span>}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        {meta.og_image_url ? (
-                          <img
-                            src={meta.og_image_url}
-                            alt="OG Preview"
-                            className="w-24 h-auto rounded border border-stone-200"
-                          />
-                        ) : (
-                          <div className="w-24 h-12 bg-stone-100 rounded border border-stone-200 flex items-center justify-center">
-                            <ImageIcon className="w-6 h-6 text-stone-400" />
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-stone-600">
-                        {new Date(meta.updated_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleOpenModal(meta)}
-                            className="text-teal-600 hover:text-teal-900 p-2 hover:bg-teal-50 rounded transition-colors"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(meta.id)}
-                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => handleOpenModal(meta)}
+                          className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+                        >
+                          Edit
+                        </button>
                       </td>
                     </tr>
                   ))}
