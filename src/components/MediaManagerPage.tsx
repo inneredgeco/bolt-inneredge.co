@@ -333,7 +333,9 @@ export function MediaManagerPage() {
 
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                   <button
+                    type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       copyToClipboard(image.url);
                     }}
@@ -346,14 +348,20 @@ export function MediaManagerPage() {
                     href={image.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open(image.url, '_blank');
+                    }}
                     className="flex items-center gap-2 px-3 py-1.5 bg-stone-700 text-white rounded text-sm font-medium hover:bg-stone-800 transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
                     View
                   </a>
                   <button
+                    type="button"
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       deleteImage(image);
                     }}
