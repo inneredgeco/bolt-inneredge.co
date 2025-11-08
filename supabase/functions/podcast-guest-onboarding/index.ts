@@ -169,6 +169,11 @@ Deno.serve(async (req: Request) => {
 
     if (!bucketName || !endpoint || !accessKeyId || !secretAccessKey || !publicUrl) {
       console.error("Missing R2 configuration");
+      console.error("R2_BUCKET_NAME:", bucketName || "MISSING");
+      console.error("R2_ENDPOINT:", endpoint || "MISSING");
+      console.error("R2_ACCESS_KEY_ID:", accessKeyId ? "SET" : "MISSING");
+      console.error("R2_SECRET_ACCESS_KEY:", secretAccessKey ? "SET" : "MISSING");
+      console.error("R2_PUBLIC_URL:", publicUrl || "MISSING");
       return new Response(
         JSON.stringify({
           success: false,
@@ -184,6 +189,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    console.log("R2 Configuration loaded:");
+    console.log("- Bucket Name:", bucketName);
+    console.log("- Public URL:", publicUrl);
+    console.log("- Endpoint:", endpoint);
+
     console.log("=== Step 1: Uploading Photo to R2 ===");
 
     const s3Client = new S3Client({
@@ -198,19 +208,34 @@ Deno.serve(async (req: Request) => {
     const timestamp = Date.now();
     const filename = `${firstName.toLowerCase()}-${lastName.toLowerCase()}-${timestamp}.jpg`;
 
+    // CRITICAL: Key must NOT include bucket name
+    // Correct: guests/headshots/file.jpg
+    // Wrong: inneredge-cdn/guests/headshots/file.jpg
+    const uploadPath = `guests/headshots/${filename}`;
+
+    console.log("=== Upload Configuration ===");
+    console.log("Bucket parameter:", bucketName);
+    console.log("Key parameter:", uploadPath);
+    console.log("Filename:", filename);
+    console.log("VERIFY: Key should NOT contain bucket name");
+
     const fileBuffer = await headshotFile.arrayBuffer();
 
     const command = new PutObjectCommand({
       Bucket: bucketName,
-      Key: `guests/headshots/${filename}`,
+      Key: uploadPath,
       Body: new Uint8Array(fileBuffer),
       ContentType: headshotFile.type,
     });
 
+    console.log("Sending upload command to R2...");
     await s3Client.send(command);
 
-    const photoUrl = `${publicUrl}/guests/headshots/${filename}`;
-    console.log("Photo uploaded successfully:", photoUrl);
+    const photoUrl = `${publicUrl}/${uploadPath}`;
+    console.log("=== Upload Success ===");
+    console.log("R2 storage path:", uploadPath);
+    console.log("Public URL:", photoUrl);
+    console.log("Expected: https://cdn.inneredge.co/guests/headshots/[filename]");
 
     console.log("=== Step 2: Setting up Database Connection ===");
 
