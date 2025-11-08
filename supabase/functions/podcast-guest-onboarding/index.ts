@@ -99,6 +99,14 @@ function formatYouTubeUrl(value: string): string {
 }
 
 Deno.serve(async (req: Request) => {
+  console.log("==========================================");
+  console.log("ENVIRONMENT VARIABLES CHECK:");
+  console.log("==========================================");
+  console.log("R2_BUCKET_NAME =", Deno.env.get("R2_BUCKET_NAME"));
+  console.log("R2_PUBLIC_URL =", Deno.env.get("R2_PUBLIC_URL"));
+  console.log("R2_ENDPOINT =", Deno.env.get("R2_ENDPOINT"));
+  console.log("==========================================");
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
