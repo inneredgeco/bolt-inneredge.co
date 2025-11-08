@@ -168,9 +168,9 @@ export function PodcastGuestFormPage() {
         pagePath="/podcast-guest-form"
         fallbackTitle="Podcast Guest Application - Inner Edge Podcast"
         fallbackDescription="Apply to be a guest on the Inner Edge Podcast. Share your expertise with men who are ready for transformation."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/podcast-guest-form"
-        ogUrl="https://www.inneredge.co/podcast-guest-form"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/podcast-guest-form"
+        ogUrl="https://inneredge.co/podcast-guest-form"
       />
       <Header />
 

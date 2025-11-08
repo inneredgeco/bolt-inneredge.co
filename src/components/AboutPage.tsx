@@ -27,9 +27,9 @@ export function AboutPage() {
         pagePath="/about"
         fallbackTitle="About Soleiman Bolour - Men's Coach & Founder of Inner Edge"
         fallbackDescription="Meet Soleiman Bolour, men's coach and founder of Inner Edge. Learn about his journey through Spiritual Psychology, Tantra, and embodiment work to help men live authentically."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/about"
-        ogUrl="https://www.inneredge.co/about"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/about"
+        ogUrl="https://inneredge.co/about"
       />
       <Header />
 

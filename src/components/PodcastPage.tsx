@@ -50,9 +50,9 @@ export function PodcastPage() {
         pagePath="/podcast"
         fallbackTitle="Podcast - Inner Edge"
         fallbackDescription="Deep conversations about men's transformation, personal development, and authentic living. Featuring coaches and thought leaders exploring what it means to live with purpose and presence."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/podcast"
-        ogUrl="https://www.inneredge.co/podcast"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/podcast"
+        ogUrl="https://inneredge.co/podcast"
       />
       <Header />
 

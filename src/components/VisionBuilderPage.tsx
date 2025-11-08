@@ -442,8 +442,8 @@ export function VisionBuilderPage() {
           pagePath="/vision-builder"
           fallbackTitle="Create Your 1-Year Vision | Inner Edge"
           fallbackDescription="A guided process to design the life you want in the next 12 months"
-          fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-          canonical="https://www.inneredge.co/vision-builder"
+          fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+          canonical="https://inneredge.co/vision-builder"
         />
         <Header />
         <div className="min-h-screen flex items-center justify-center">
@@ -463,8 +463,8 @@ export function VisionBuilderPage() {
           pagePath="/vision-builder"
           fallbackTitle="Create Your 1-Year Vision | Inner Edge"
           fallbackDescription="A guided process to design the life you want in the next 12 months"
-          fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-          canonical="https://www.inneredge.co/vision-builder"
+          fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+          canonical="https://inneredge.co/vision-builder"
         />
         <Header />
         <div className="min-h-screen flex items-center justify-center px-4">
@@ -499,8 +499,8 @@ export function VisionBuilderPage() {
         pagePath="/vision-builder"
         fallbackTitle="Create Your 1-Year Vision | Inner Edge"
         fallbackDescription="A guided process to design the life you want in the next 12 months"
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/vision-builder"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/vision-builder"
       />
       <Header />
 

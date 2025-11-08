@@ -68,7 +68,7 @@ export function BlogPage() {
         pagePath="/blog"
         fallbackTitle="The Path Forward - Inner Edge Blog"
         fallbackDescription="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
         canonical="https://inneredge.co/blog"
         keywords="mens coaching blog, personal development, mens growth, emotional intelligence, mindset coaching, mens community"
       />

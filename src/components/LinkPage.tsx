@@ -111,7 +111,7 @@ export function LinkPage() {
         pagePath="/link"
         fallbackTitle="Links | Inner Edge"
         fallbackDescription="All Inner Edge links in one place."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
       />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-32" style={{

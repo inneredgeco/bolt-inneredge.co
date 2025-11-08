@@ -14,8 +14,8 @@ export function PrivacyPolicy() {
         pagePath="/privacy-policy"
         fallbackTitle="Privacy Policy - Inner Edge"
         fallbackDescription="Inner Edge privacy policy. Learn how we collect, use, and protect your personal information when you use our mens coaching services and website."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/privacy-policy"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/privacy-policy"
       />
       <Header />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

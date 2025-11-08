@@ -12,8 +12,8 @@ export function Contact() {
         pagePath="/contact"
         fallbackTitle="Contact Inner Edge - Get in Touch"
         fallbackDescription="Ready to start your transformation? Contact Inner Edge today for mens coaching, personal development, and life-changing support. Based in San Diego, CA."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/contact"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/contact"
       />
       <Header />
       {/* Hero Section */}

@@ -10,8 +10,8 @@ export function PodcastGuestPage() {
         pagePath="/podcast-guest"
         fallbackTitle="Be a Guest on the Inner Edge Podcast - Share Your Wisdom"
         fallbackDescription="Join the Inner Edge Podcast as a guest. Share your coaching expertise and guide men through transformational embodiment practices. Apply to be featured."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/podcast-guest"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/podcast-guest"
       />
       <Header />
 

@@ -234,9 +234,9 @@ export function RiseCourseResources() {
         pagePath="/rise-course-resources"
         fallbackTitle="RISE Course Resources - Inner Edge"
         fallbackDescription="Access your RISE course materials including workbooks, audio meditations, life design canvas, goal roadmaps, and habit building trackers. Complete resources for personal transformation."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/rise-course-resources"
-        ogUrl="https://www.inneredge.co/rise-course-resources"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/rise-course-resources"
+        ogUrl="https://inneredge.co/rise-course-resources"
       />
       <Header />
 

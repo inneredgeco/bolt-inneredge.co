@@ -49,9 +49,9 @@ export function GuestsDirectoryPage() {
         pagePath="/guests"
         fallbackTitle="Podcast Guests - Inner Edge"
         fallbackDescription="Meet the inspiring guests who have appeared on the Inner Edge Podcast, sharing their expertise in men's personal development and transformation."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
-        canonical="https://www.inneredge.co/guests"
-        ogUrl="https://www.inneredge.co/guests"
+        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        canonical="https://inneredge.co/guests"
+        ogUrl="https://inneredge.co/guests"
       />
       <Header />
 
