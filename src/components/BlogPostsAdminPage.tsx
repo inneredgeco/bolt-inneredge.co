@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Trash2, CreditCard as Edit, Eye, EyeOff, BookOpen, Plus, LogOut, ExternalLink, ArrowLeft, Upload, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RichTextEditor } from './RichTextEditor';
 import { htmlToMarkdown, markdownToHtml } from '../utils/htmlToMarkdown';
@@ -42,6 +42,10 @@ export function BlogPostsAdminPage() {
 
   const [editorHtml, setEditorHtml] = useState('');
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchAllPosts();
@@ -137,6 +141,8 @@ export function BlogPostsAdminPage() {
       });
       setEditorHtml('');
       setShowForm(false);
+      setImageFile(null);
+      setImagePreview('');
 
       await fetchAllPosts();
     } catch (error) {
@@ -195,6 +201,8 @@ export function BlogPostsAdminPage() {
 
     console.log('3. Setting editor HTML to:', htmlContent);
     setEditorHtml(htmlContent);
+    setImageFile(null);
+    setImagePreview(post.image_url || '');
     setEditingId(post.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -214,7 +222,77 @@ export function BlogPostsAdminPage() {
     setEditorHtml('');
     setEditingId(null);
     setShowForm(false);
+    setImageFile(null);
+    setImagePreview('');
+    setUploadingImage(false);
   }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a JPG, PNG, or WebP image.');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('Image must be less than 5MB.');
+      return;
+    }
+
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) return;
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+
+      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-blog-image`;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to upload image');
+      }
+
+      setFormData(prev => ({ ...prev, image_url: result.url }));
+      alert('Image uploaded successfully!');
+    } catch (error: any) {
+      console.error('Upload failed:', error);
+      alert(error.message || 'Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
 
   return (
@@ -346,16 +424,80 @@ export function BlogPostsAdminPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-2">
-                  Featured Image URL *
+                  Featured Image *
                 </label>
+
+                <div className="mb-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    id="featuredImageFile"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingImage}
+                      className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Select Image
+                    </button>
+                    {imageFile && !uploadingImage && (
+                      <button
+                        type="button"
+                        onClick={handleImageUpload}
+                        className="inline-flex items-center px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                      >
+                        Upload to R2
+                      </button>
+                    )}
+                    {uploadingImage && (
+                      <div className="flex items-center text-sm text-stone-600">
+                        <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        Uploading...
+                      </div>
+                    )}
+                    <span className="text-sm text-stone-500">
+                      Or paste URL below
+                    </span>
+                  </div>
+                </div>
+
+                {imagePreview && (
+                  <div className="mb-3 relative inline-block">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full max-w-md h-48 object-cover rounded-lg border border-stone-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 <input
                   type="url"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://cdn.inneredge.co/blog/featured-images/image.jpg"
                   className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />
+                <p className="mt-1 text-xs text-stone-500">
+                  Upload an image to R2 or paste an external URL
+                </p>
               </div>
 
               <div>
