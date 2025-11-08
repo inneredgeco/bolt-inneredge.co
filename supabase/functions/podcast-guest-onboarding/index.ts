@@ -159,11 +159,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const bucketName = Deno.env.get("R2_GUESTS_BUCKET_NAME");
-    const endpoint = Deno.env.get("R2_GUESTS_ENDPOINT");
-    const accessKeyId = Deno.env.get("R2_GUESTS_ACCESS_KEY_ID");
-    const secretAccessKey = Deno.env.get("R2_GUESTS_SECRET_ACCESS_KEY");
-    const publicUrl = Deno.env.get("R2_GUESTS_PUBLIC_URL");
+    const bucketName = Deno.env.get("R2_BUCKET_NAME");
+    const endpoint = Deno.env.get("R2_ENDPOINT");
+    const accessKeyId = Deno.env.get("R2_ACCESS_KEY_ID");
+    const secretAccessKey = Deno.env.get("R2_SECRET_ACCESS_KEY");
+    const publicUrl = Deno.env.get("R2_PUBLIC_URL");
     const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL_GUEST_ONBOARDING");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
@@ -202,14 +202,14 @@ Deno.serve(async (req: Request) => {
 
     const command = new PutObjectCommand({
       Bucket: bucketName,
-      Key: `headshots/${filename}`,
+      Key: `guests/headshots/${filename}`,
       Body: new Uint8Array(fileBuffer),
       ContentType: headshotFile.type,
     });
 
     await s3Client.send(command);
 
-    const photoUrl = `${publicUrl}/headshots/${filename}`;
+    const photoUrl = `${publicUrl}/guests/headshots/${filename}`;
     console.log("Photo uploaded successfully:", photoUrl);
 
     console.log("=== Step 2: Setting up Database Connection ===");
