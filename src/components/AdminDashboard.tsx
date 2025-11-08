@@ -1,6 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { Header } from './Header';
-import { LogOut, FileText, Mail, Users, BarChart3 } from 'lucide-react';
+import { LogOut, FileText, Mail, Users, BarChart3, Image } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface DashboardCard {
@@ -35,6 +35,13 @@ export function AdminDashboard() {
       icon: <Mail className="w-8 h-8 text-teal-600" />,
       link: '/admin/email-templates',
       buttonText: 'Edit Email Templates'
+    },
+    {
+      title: 'Media Manager',
+      description: 'Browse, upload, and manage images in R2 storage',
+      icon: <Image className="w-8 h-8 text-teal-600" />,
+      link: '/admin/media-manager',
+      buttonText: 'Manage Media'
     },
     {
       title: 'Vision Analytics',

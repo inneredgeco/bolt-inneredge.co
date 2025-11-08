@@ -13,6 +13,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { BlogPostsAdminPage } from './components/BlogPostsAdminPage';
 import { GuestProfilesAdminPage } from './components/GuestProfilesAdminPage';
 import { EmailTemplatesPage } from './components/EmailTemplatesPage';
+import { MediaManagerPage } from './components/MediaManagerPage';
 import { LoginPage } from './components/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RSSPage } from './components/RSSPage';
@@ -68,6 +69,7 @@ function App() {
         <Route path="/admin/blog-posts" element={<ProtectedRoute><BlogPostsAdminPage /></ProtectedRoute>} />
         <Route path="/admin/guest-profiles" element={<ProtectedRoute><GuestProfilesAdminPage /></ProtectedRoute>} />
         <Route path="/admin/email-templates" element={<ProtectedRoute><EmailTemplatesPage /></ProtectedRoute>} />
+        <Route path="/admin/media-manager" element={<ProtectedRoute><MediaManagerPage /></ProtectedRoute>} />
         <Route path="/admin/vision-analytics" element={<ProtectedRoute><VisionAnalyticsPage /></ProtectedRoute>} />
         <Route path="/rss.xml" element={<RSSPage />} />
         <Route path="/sitemap.xml" element={<SitemapPage />} />

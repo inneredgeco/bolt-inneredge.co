@@ -21,6 +21,7 @@ Deno.serve(async (req: Request) => {
     const formData = await req.formData();
     const imageFile = formData.get("image") as File;
     const filename = formData.get("filename") as string;
+    const folder = formData.get("folder") as string | null;
 
     if (!imageFile) {
       return new Response(
@@ -102,7 +103,7 @@ Deno.serve(async (req: Request) => {
       },
     });
 
-    const uploadPath = `og-images/${filename}`;
+    const uploadPath = folder ? `${folder}/${filename}` : `og-images/${filename}`;
 
     console.log("=== Upload Configuration ===");
     console.log("Bucket parameter:", bucketName);
