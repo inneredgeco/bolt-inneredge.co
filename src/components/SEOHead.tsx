@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '../lib/supabase';
 
 interface SEOHeadProps {
@@ -96,133 +97,102 @@ export function SEOHead({
 
   const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
 
+  const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
+  const finalImage = ogImage || (type === 'website' ? defaultImage : '');
+  const fullImageUrl = finalImage && finalImage.startsWith('http')
+    ? finalImage
+    : finalImage
+      ? `${window.location.origin}${finalImage}`
+      : defaultImage;
+
   useEffect(() => {
-    if (loading) return;
-
-    console.log('SEOHead: Rendering meta tags for', pagePath || 'custom');
-    console.log('SEOHead: Using title:', title);
-    console.log('SEOHead: Using description:', description);
-    console.log('SEOHead: Using og_image:', ogImage);
-    console.log('SEOHead: Database data:', !!seoData);
-
-    document.title = title;
-
-    const updateMetaTag = (property: string, content: string, useProperty = false) => {
-      const attribute = useProperty ? 'property' : 'name';
-      let element = document.querySelector(`meta[${attribute}="${property}"]`);
-
-      if (!element) {
-        element = document.createElement('meta');
-        element.setAttribute(attribute, property);
-        document.head.appendChild(element);
-      }
-
-      element.setAttribute('content', content);
-    };
-
-    updateMetaTag('description', description);
-    updateMetaTag('keywords', finalKeywords || defaultKeywords);
-
-    updateMetaTag('geo.region', `US-${finalRegion}`);
-    updateMetaTag('geo.placename', finalLocality);
-    updateMetaTag('geo.position', '32.7677;-117.0231');
-    updateMetaTag('ICBM', '32.7677, -117.0231');
-
-    updateMetaTag('og:title', title, true);
-    updateMetaTag('og:description', description, true);
-    updateMetaTag('og:type', type, true);
-
-    const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
-    const finalImage = ogImage || (type === 'website' ? defaultImage : '');
-
-    if (finalImage) {
-      const fullImageUrl = finalImage.startsWith('http') ? finalImage : `${window.location.origin}${finalImage}`;
-      updateMetaTag('og:image', fullImageUrl, true);
-      updateMetaTag('og:image:secure_url', fullImageUrl, true);
-      updateMetaTag('og:image:type', 'image/png', true);
-      updateMetaTag('og:image:width', '1200', true);
-      updateMetaTag('og:image:height', '630', true);
-      updateMetaTag('og:image:alt', title, true);
-      updateMetaTag('twitter:image', fullImageUrl);
-    } else {
-      const ogImageElement = document.querySelector('meta[property="og:image"]');
-      if (ogImageElement) {
-        ogImageElement.remove();
-      }
+    if (!loading) {
+      console.log('SEOHead: Rendering meta tags for', pagePath || 'custom');
+      console.log('SEOHead: Using title:', title);
+      console.log('SEOHead: Using description:', description);
+      console.log('SEOHead: Using og_image:', ogImage);
+      console.log('SEOHead: Final og_image URL:', fullImageUrl);
+      console.log('SEOHead: Database data:', !!seoData);
     }
+  }, [loading, title, description, ogImage, fullImageUrl, seoData, pagePath]);
 
-    if (finalOgUrl) {
-      updateMetaTag('og:url', finalOgUrl, true);
+  if (loading) {
+    return null;
+  }
+
+  const structuredData = type === 'article' && finalOgUrl && finalImage ? {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": finalOgUrl
+    },
+    "author": {
+      "@type": "Person",
+      "name": author || "Inner Edge"
+    },
+    "datePublished": publishedTime,
+    "dateModified": modifiedTime || publishedTime,
+    "image": finalImage,
+    "inLanguage": "en-US",
+    "wordCount": wordCount,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Inner Edge"
     }
-    updateMetaTag('og:site_name', 'Inner Edge', true);
+  } : null;
 
-    if (type === 'article') {
-      if (author) {
-        updateMetaTag('article:author', author, true);
-      }
-      if (publishedTime) {
-        updateMetaTag('article:published_time', publishedTime, true);
-      }
-      if (modifiedTime) {
-        updateMetaTag('article:modified_time', modifiedTime, true);
-      }
-    }
+  return (
+    <Helmet>
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      <meta name="keywords" content={finalKeywords || defaultKeywords} />
 
-    updateMetaTag('twitter:card', 'summary_large_image');
-    updateMetaTag('twitter:title', title);
-    updateMetaTag('twitter:description', description);
+      <meta name="geo.region" content={`US-${finalRegion}`} />
+      <meta name="geo.placename" content={finalLocality} />
+      <meta name="geo.position" content="32.7677;-117.0231" />
+      <meta name="ICBM" content="32.7677, -117.0231" />
 
-    if (canonical) {
-      let linkElement = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-      if (!linkElement) {
-        linkElement = document.createElement('link');
-        linkElement.setAttribute('rel', 'canonical');
-        document.head.appendChild(linkElement);
-      }
-      linkElement.setAttribute('href', canonical);
-    }
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={type} />
+      <meta property="og:site_name" content="Inner Edge" />
 
-    if (type === 'article' && finalOgUrl && finalImage) {
-      let scriptElement = document.querySelector('script[type="application/ld+json"]#article-schema') as HTMLScriptElement;
-      if (!scriptElement) {
-        scriptElement = document.createElement('script');
-        scriptElement.setAttribute('type', 'application/ld+json');
-        scriptElement.setAttribute('id', 'article-schema');
-        document.head.appendChild(scriptElement);
-      }
+      {fullImageUrl && (
+        <>
+          <meta property="og:image" content={fullImageUrl} />
+          <meta property="og:image:secure_url" content={fullImageUrl} />
+          <meta property="og:image:type" content="image/png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content={title} />
+          <meta name="twitter:image" content={fullImageUrl} />
+        </>
+      )}
 
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "headline": title,
-        "description": description,
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": finalOgUrl
-        },
-        "author": {
-          "@type": "Person",
-          "name": author || "Inner Edge"
-        },
-        "datePublished": publishedTime,
-        "dateModified": modifiedTime || publishedTime,
-        "image": finalImage,
-        "inLanguage": "en-US",
-        "wordCount": wordCount,
-        "publisher": {
-          "@type": "Organization",
-          "name": "Inner Edge"
-        }
-      };
+      {finalOgUrl && <meta property="og:url" content={finalOgUrl} />}
 
-      scriptElement.textContent = JSON.stringify(structuredData);
-    } else {
-      const existingScript = document.querySelector('script[type="application/ld+json"]#article-schema');
-      if (existingScript) {
-        existingScript.remove();
-      }
-    }
-  }, [loading, title, description, finalKeywords, ogImage, finalOgUrl, canonical, finalLocality, finalRegion, type, author, publishedTime, modifiedTime, wordCount, seoData, pagePath]);
+      {type === 'article' && (
+        <>
+          {author && <meta property="article:author" content={author} />}
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+        </>
+      )}
 
-  return null;
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+
+      {canonical && <link rel="canonical" href={canonical} />}
+
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  );
 }
