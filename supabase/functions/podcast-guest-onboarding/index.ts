@@ -191,8 +191,23 @@ Deno.serve(async (req: Request) => {
 
     console.log("R2 Configuration loaded:");
     console.log("- Bucket Name:", bucketName);
+    console.log("- Bucket Name Type:", typeof bucketName);
+    console.log("- Bucket Name Length:", bucketName?.length);
     console.log("- Public URL:", publicUrl);
+    console.log("- Public URL Type:", typeof publicUrl);
     console.log("- Endpoint:", endpoint);
+
+    if (bucketName !== "inneredge-cdn") {
+      console.error("⚠️ WARNING: Bucket name is NOT 'inneredge-cdn'");
+      console.error("⚠️ Expected: 'inneredge-cdn'");
+      console.error("⚠️ Actual:", JSON.stringify(bucketName));
+    }
+
+    if (!publicUrl?.startsWith("https://cdn.inneredge.co")) {
+      console.error("⚠️ WARNING: Public URL does not start with 'https://cdn.inneredge.co'");
+      console.error("⚠️ Expected: 'https://cdn.inneredge.co'");
+      console.error("⚠️ Actual:", JSON.stringify(publicUrl));
+    }
 
     console.log("=== Step 1: Uploading Photo to R2 ===");
 
@@ -219,17 +234,34 @@ Deno.serve(async (req: Request) => {
     console.log("Filename:", filename);
     console.log("VERIFY: Key should NOT contain bucket name");
 
+    if (uploadPath.includes(bucketName!)) {
+      console.error("❌ CRITICAL ERROR: uploadPath contains bucket name!");
+      console.error("❌ uploadPath:", uploadPath);
+      console.error("❌ bucketName:", bucketName);
+    } else {
+      console.log("✅ VERIFIED: uploadPath does NOT contain bucket name");
+    }
+
     const fileBuffer = await headshotFile.arrayBuffer();
 
-    const command = new PutObjectCommand({
+    const commandParams = {
       Bucket: bucketName,
       Key: uploadPath,
       Body: new Uint8Array(fileBuffer),
       ContentType: headshotFile.type,
-    });
+    };
+
+    console.log("=== PutObjectCommand Parameters ===");
+    console.log("Command.Bucket:", JSON.stringify(commandParams.Bucket));
+    console.log("Command.Key:", JSON.stringify(commandParams.Key));
+    console.log("Command.ContentType:", JSON.stringify(commandParams.ContentType));
+    console.log("Command.Body length:", commandParams.Body.length, "bytes");
+
+    const command = new PutObjectCommand(commandParams);
 
     console.log("Sending upload command to R2...");
-    await s3Client.send(command);
+    const uploadResult = await s3Client.send(command);
+    console.log("R2 upload result:", uploadResult);
 
     const photoUrl = `${publicUrl}/${uploadPath}`;
     console.log("=== Upload Success ===");
