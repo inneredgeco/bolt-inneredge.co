@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, Plus, X, Upload } from 'lucide-react';
+import { Search, Plus, X, Upload, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { SEOHead } from './SEOHead';
+import { Header } from './Header';
 
 interface SEOMeta {
   id: string;
@@ -318,8 +320,17 @@ export function SEOManagerPage() {
         title="SEO Manager - Admin"
         description="Manage SEO meta tags and Open Graph images"
       />
+      <Header />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Link
+          to="/admin"
+          className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 font-semibold mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Admin
+        </Link>
+
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold text-stone-900">SEO Meta Manager</h1>
