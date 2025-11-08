@@ -14,6 +14,10 @@ interface SEOHeadProps {
   publishedTime?: string;
   modifiedTime?: string;
   wordCount?: number;
+  pagePath?: string;
+  fallbackTitle?: string;
+  fallbackDescription?: string;
+  fallbackOgImage?: string;
 }
 
 export function SEOHead({
@@ -29,15 +33,19 @@ export function SEOHead({
   author,
   publishedTime,
   modifiedTime,
-  wordCount
+  wordCount,
+  pagePath,
+  fallbackTitle,
+  fallbackDescription,
+  fallbackOgImage
 }: SEOHeadProps) {
-  const title = propTitle || 'Inner Edge';
-  const description = propDescription || 'Transform your life from the inside out with Inner Edge.';
+  const title = propTitle || fallbackTitle || 'Inner Edge';
+  const description = propDescription || fallbackDescription || 'Transform your life from the inside out with Inner Edge.';
   const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
   const finalKeywords = keywords || defaultKeywords;
 
-  const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
-  const finalImage = propOgImage || defaultImage;
+  const defaultImage = 'https://cdn.inneredge.co/og-images/home-ie-open-graph.png';
+  const finalImage = propOgImage || fallbackOgImage || defaultImage;
   const fullImageUrl = finalImage && finalImage.startsWith('http')
     ? finalImage
     : finalImage
@@ -104,7 +112,7 @@ export function SEOHead({
         <>
           <meta property="og:image" content={fullImageUrl} />
           <meta property="og:image:secure_url" content={fullImageUrl} />
-          <meta property="og:image:type" content="image/png" />
+          <meta property="og:image:type" content={imageType} />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta property="og:image:alt" content={title} />
