@@ -1,30 +1,27 @@
-# SEO Meta Entry Creation Workflow
+# SEO Workflow - Simple Hardcoded Approach
 
-This document outlines the standard workflow for creating SEO meta entries whenever a new page is added to the application.
+This document explains the simple, reliable approach to managing SEO meta tags in this application.
 
 ## Overview
 
-Every new page in the application should automatically have a corresponding `seo_meta` database entry created. This ensures all pages have proper SEO configuration from the start, which can be edited later through the SEO Manager admin interface.
+All SEO meta tags are **hardcoded directly in each page component** using the `SEOHead` component. This approach is simple, reliable, and predictable.
 
-## Process for Creating New Pages
+## How It Works
 
-When creating a new page, follow these steps:
-
-### Step 1: Create the Page Component
-
-Create the page file with the `SEOHead` component:
+Each page component includes a `SEOHead` component with specific props:
 
 ```tsx
 import { SEOHead } from './SEOHead';
 
-export function NewPage() {
+export function AboutPage() {
   return (
     <div>
       <SEOHead
-        pagePath="/new-page"
-        fallbackTitle="New Page | Inner Edge"
-        fallbackDescription="Description of the new page..."
-        fallbackOgImage="https://cdn.inneredge.co/og-images/default-og.jpg"
+        title="About Soleiman | Inner Edge"
+        description="Learn about Soleiman and Inner Edge's mission to help men..."
+        keywords="about soleiman, life coach, mens coach"
+        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        ogUrl="https://www.inneredge.co/about"
       />
 
       {/* Page content */}
@@ -33,167 +30,122 @@ export function NewPage() {
 }
 ```
 
-### Step 2: Add Route to App.tsx
+## Changing SEO Values
 
-Add the route to `src/App.tsx`:
+To change SEO meta tags for a page:
+
+1. Open the page component file in `/src/components/`
+2. Find the `<SEOHead>` component
+3. Edit the props directly
+4. Deploy the changes
+
+**Example:** To change the About page title:
+- Open `/src/components/AboutPage.tsx`
+- Change `title="About Soleiman | Inner Edge"` to your new title
+- Deploy
+
+## Available SEOHead Props
 
 ```tsx
-import { NewPage } from './components/NewPage';
-
-// In Routes:
-<Route path="/new-page" element={<NewPage />} />
-```
-
-### Step 3: Create Database Entry
-
-Automatically insert the corresponding entry into the `seo_meta` table:
-
-```sql
-INSERT INTO seo_meta (
-  page_path,
-  page_title,
-  meta_description,
-  og_image_url,
-  og_url
-) VALUES (
-  '/new-page',
-  'New Page | Inner Edge',
-  'Description of the new page...',
-  'https://cdn.inneredge.co/og-images/default-og.jpg',
-  'https://www.inneredge.co/new-page'
-)
-ON CONFLICT (page_path) DO NOTHING;
+interface SEOHeadProps {
+  title?: string;              // Page title (appears in browser tab)
+  description?: string;        // Meta description (appears in search results)
+  keywords?: string;           // Keywords for search engines
+  ogImage?: string;            // Open Graph image URL (social media preview)
+  ogUrl?: string;              // Canonical URL
+  canonical?: string;          // Alternative canonical URL
+  locality?: string;           // City (default: 'San Diego')
+  region?: string;             // State (default: 'CA')
+  type?: 'website' | 'article'; // Page type (default: 'website')
+  author?: string;             // Author name (for articles)
+  publishedTime?: string;      // Publish date (for articles)
+  modifiedTime?: string;       // Modified date (for articles)
+  wordCount?: number;          // Word count (for articles)
+}
 ```
 
 ## Default Values
 
-If specific SEO values are not provided, use these defaults:
+If props are not provided, these defaults are used:
 
-| Field | Default Value |
-|-------|---------------|
-| `page_title` | `[Page Name] \| Inner Edge` |
-| `meta_description` | `Inner Edge - [Page Name]` |
-| `og_image_url` | `https://cdn.inneredge.co/og-images/default-og.jpg` |
-| `og_url` | `https://www.inneredge.co/[page-path]` |
-| `twitter_card` | `summary_large_image` |
+- **Title:** `"Inner Edge"`
+- **Description:** `"Transform your life from the inside out with Inner Edge."`
+- **Keywords:** `"mens coaching, life coaching for men, personal development..."`
+- **OG Image:** `"https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"`
+- **Locality:** `"San Diego"`
+- **Region:** `"CA"`
 
-## Example: Creating a Services Page
-
-### 1. Create Component (`src/components/ServicesPage.tsx`)
+## Example: Creating a New Page
 
 ```tsx
 import { SEOHead } from './SEOHead';
+import { Header } from './Header';
+import { Footer } from './Footer';
 
 export function ServicesPage() {
   return (
-    <div>
+    <div className="min-h-screen bg-stone-50">
       <SEOHead
-        pagePath="/services"
-        fallbackTitle="Services | Inner Edge"
-        fallbackDescription="Explore our coaching services and programs for men's personal development."
-        fallbackOgImage="https://cdn.inneredge.co/og-images/default-og.jpg"
+        title="Services | Inner Edge"
+        description="Explore our coaching services and programs for men's personal development."
+        keywords="coaching services, mens programs, personal development"
+        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        ogUrl="https://www.inneredge.co/services"
       />
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <Header />
+
+      <main>
         <h1>Our Services</h1>
-        {/* Services content */}
-      </div>
+        {/* Page content */}
+      </main>
+
+      <Footer />
     </div>
   );
 }
 ```
 
-### 2. Add Route to `App.tsx`
+Then add the route in `App.tsx`:
 
 ```tsx
-import { ServicesPage } from './components/ServicesPage';
-
 <Route path="/services" element={<ServicesPage />} />
 ```
 
-### 3. Insert Database Entry
+## Why This Approach?
 
-```sql
-INSERT INTO seo_meta (
-  page_path,
-  page_title,
-  meta_description,
-  og_image_url,
-  og_url
-) VALUES (
-  '/services',
-  'Services | Inner Edge',
-  'Explore our coaching services and programs for men''s personal development.',
-  'https://cdn.inneredge.co/og-images/default-og.jpg',
-  'https://www.inneredge.co/services'
-)
-ON CONFLICT (page_path) DO NOTHING;
-```
+1. **Simple:** No database queries, no complex state management
+2. **Reliable:** Always works, no loading states or errors
+3. **Fast:** No API calls on every page load
+4. **Predictable:** Edit component = change meta tags
+5. **Version Controlled:** All SEO changes tracked in git
 
-## Editing SEO Meta
+## Blog Posts Exception
 
-Once a page is created with its initial SEO configuration, users can:
-
-1. Navigate to `/admin/seo-manager` in the admin panel
-2. Search for the page by path
-3. Click "Edit" to modify any SEO field
-4. Upload custom Open Graph images
-5. Configure Twitter card settings
-6. Add local business information (locality, region)
-7. Customize keywords
-
-## Important Notes
-
-- **Always use the same values** in the `SEOHead` component and the database entry
-- **Page paths must start with `/`** (e.g., `/about`, not `about`)
-- **Use `ON CONFLICT (page_path) DO NOTHING`** to avoid duplicate entries
-- **The database entry is authoritative** - `SEOHead` will fetch from database first, then use fallback values
-- **OG images should be 1200x630px** (1.91:1 aspect ratio) for optimal social media display
-
-## SEOHead Component Props
-
-The `SEOHead` component accepts these props:
+Blog posts use dynamic SEO based on the post data fetched from the database. The `BlogPostPage` component passes post-specific data to `SEOHead`:
 
 ```tsx
-interface SEOHeadProps {
-  pagePath?: string;           // Page path to fetch SEO data from database
-  fallbackTitle?: string;      // Title if database entry doesn't exist
-  fallbackDescription?: string; // Description if database entry doesn't exist
-  fallbackOgImage?: string;    // OG image URL if database entry doesn't exist
-  title?: string;              // Override title (use fallbackTitle instead)
-  description?: string;        // Override description (use fallbackDescription instead)
-}
+<SEOHead
+  title={`${post.title} | Inner Edge Blog`}
+  description={post.meta_description}
+  keywords={post.keywords}
+  ogImage={post.featured_image_url}
+  ogUrl={`https://www.inneredge.co/blog/${post.slug}`}
+  type="article"
+  author={post.author}
+  publishedTime={post.published_at}
+  modifiedTime={post.updated_at}
+/>
 ```
-
-## Current Pages with SEO Meta
-
-All existing pages have been seeded with SEO meta entries:
-
-- `/` - Homepage
-- `/about` - About Page
-- `/blog` - Blog Page
-- `/podcast` - Podcast Page
-- `/contact` - Contact Page
-- `/booking` - Booking Page
-- `/vision-builder` - Vision Builder
-- `/guests` - Podcast Guests Directory
-- `/podcast-guest` - Become a Guest
-- `/podcast-guest-form` - Guest Application
-- `/podcast-guest-onboarding` - Guest Onboarding
-- `/privacy-policy` - Privacy Policy
-- `/emotional-release-techniques` - ERT Page
-- `/rise-course-resources` - RISE Course Resources
-- `/link` - Links Page
 
 ## Checklist for New Pages
 
 - [ ] Create page component with `SEOHead`
+- [ ] Add all relevant SEO props (title, description, keywords, ogImage, ogUrl)
 - [ ] Add route to `App.tsx`
-- [ ] Insert `seo_meta` database entry with same values
 - [ ] Test page loads correctly
-- [ ] Verify SEO meta appears in page source (view source in browser)
-- [ ] Confirm entry appears in SEO Manager admin panel
+- [ ] View page source to verify meta tags appear
 
-## Questions?
+## Need to Change Meta Tags?
 
-For questions about SEO configuration or the SEO Manager, refer to the admin documentation or check the SEO Manager page at `/admin/seo-manager`.
+Edit the component file in Bolt, then deploy. That's it!
