@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Instagram, Facebook, Youtube, Linkedin } from 'lucide-react';
+import { SEOHead } from './SEOHead';
 
 interface Post {
   id: string;
@@ -106,6 +107,12 @@ export function LinkPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        pagePath="/link"
+        fallbackTitle="Links | Inner Edge"
+        fallbackDescription="All Inner Edge links in one place."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-32" style={{
         background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)'

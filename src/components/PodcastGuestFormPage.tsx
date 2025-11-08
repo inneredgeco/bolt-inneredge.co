@@ -165,10 +165,10 @@ export function PodcastGuestFormPage() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       <SEOHead
-        title="Podcast Guest Application - Inner Edge Podcast"
-        description="Apply to be a guest on the Inner Edge Podcast. Share your expertise with men who are ready for transformation."
-        keywords="podcast guest application, mens coaching podcast, inner edge podcast, coaching application"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/podcast-guest-form"
+        fallbackTitle="Podcast Guest Application - Inner Edge Podcast"
+        fallbackDescription="Apply to be a guest on the Inner Edge Podcast. Share your expertise with men who are ready for transformation."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/podcast-guest-form"
         ogUrl="https://www.inneredge.co/podcast-guest-form"
       />

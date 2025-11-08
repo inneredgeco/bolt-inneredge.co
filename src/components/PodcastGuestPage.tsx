@@ -7,12 +7,11 @@ export function PodcastGuestPage() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Be a Guest on the Inner Edge Podcast - Share Your Wisdom"
-        description="Join the Inner Edge Podcast as a guest. Share your coaching expertise and guide men through transformational embodiment practices. Apply to be featured."
-        keywords="podcast guest, mens coaching podcast, embodiment practices, transformational coaching, inner edge podcast guest"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/podcast-guest"
+        fallbackTitle="Be a Guest on the Inner Edge Podcast - Share Your Wisdom"
+        fallbackDescription="Join the Inner Edge Podcast as a guest. Share your coaching expertise and guide men through transformational embodiment practices. Apply to be featured."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/podcast-guest"
-        ogUrl="https://www.inneredge.co/podcast-guest"
       />
       <Header />
 

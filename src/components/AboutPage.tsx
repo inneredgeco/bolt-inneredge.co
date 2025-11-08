@@ -24,10 +24,10 @@ export function AboutPage() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="About Soleiman Bolour - Men's Coach & Founder of Inner Edge"
-        description="Meet Soleiman Bolour, men's coach and founder of Inner Edge. Learn about his journey through Spiritual Psychology, Tantra, and embodiment work to help men live authentically."
-        keywords="Soleiman Bolour, mens coach, spiritual psychology, tantra teacher, Inner Edge founder, mens work facilitator"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/about"
+        fallbackTitle="About Soleiman Bolour - Men's Coach & Founder of Inner Edge"
+        fallbackDescription="Meet Soleiman Bolour, men's coach and founder of Inner Edge. Learn about his journey through Spiritual Psychology, Tantra, and embodiment work to help men live authentically."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/about"
         ogUrl="https://www.inneredge.co/about"
       />

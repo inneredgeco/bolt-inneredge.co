@@ -231,10 +231,10 @@ export function RiseCourseResources() {
   return (
     <div className="min-h-screen bg-slate-50">
       <SEOHead
-        title="RISE Course Resources - Inner Edge"
-        description="Access your RISE course materials including workbooks, audio meditations, life design canvas, goal roadmaps, and habit building trackers. Complete resources for personal transformation."
-        keywords="RISE course, personal development resources, life coaching materials, goal setting workbook, habit tracker, forgiveness meditation"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/rise-course-resources"
+        fallbackTitle="RISE Course Resources - Inner Edge"
+        fallbackDescription="Access your RISE course materials including workbooks, audio meditations, life design canvas, goal roadmaps, and habit building trackers. Complete resources for personal transformation."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/rise-course-resources"
         ogUrl="https://www.inneredge.co/rise-course-resources"
       />

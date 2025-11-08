@@ -1,8 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface SEOHeadProps {
-  title: string;
-  description: string;
+  pagePath?: string;
+  fallbackTitle?: string;
+  fallbackDescription?: string;
+  fallbackOgImage?: string;
+  title?: string;
+  description?: string;
   keywords?: string;
   ogImage?: string;
   ogUrl?: string;
@@ -17,10 +22,14 @@ interface SEOHeadProps {
 }
 
 export function SEOHead({
-  title,
-  description,
+  pagePath,
+  fallbackTitle,
+  fallbackDescription,
+  fallbackOgImage,
+  title: propTitle,
+  description: propDescription,
   keywords,
-  ogImage,
+  ogImage: propOgImage,
   ogUrl,
   canonical,
   locality = 'San Diego',
@@ -31,8 +40,71 @@ export function SEOHead({
   modifiedTime,
   wordCount
 }: SEOHeadProps) {
-  const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
+  const [seoData, setSeoData] = useState<{
+    page_title: string;
+    meta_description: string;
+    og_image_url: string | null;
+    og_url: string | null;
+    keywords: string | null;
+    locality: string | null;
+    region: string | null;
+  } | null>(null);
+
+  const [loading, setLoading] = useState(!!pagePath);
+
   useEffect(() => {
+    const fetchSeoData = async () => {
+      if (!pagePath) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('seo_meta')
+          .select('page_title, meta_description, og_image_url, og_url, keywords, locality, region')
+          .eq('page_path', pagePath)
+          .maybeSingle();
+
+        if (error) {
+          console.error('SEOHead: Error fetching SEO data:', error);
+        }
+
+        if (data) {
+          console.log('SEOHead: Database data found for', pagePath, data);
+          setSeoData(data);
+        } else {
+          console.log('SEOHead: No database data for', pagePath, '- using fallbacks');
+        }
+      } catch (err) {
+        console.error('SEOHead: Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSeoData();
+  }, [pagePath]);
+
+  const title = propTitle || seoData?.page_title || fallbackTitle || 'Inner Edge';
+  const description = propDescription || seoData?.meta_description || fallbackDescription || 'Transform your life from the inside out with Inner Edge.';
+  const ogImage = propOgImage || seoData?.og_image_url || fallbackOgImage;
+  const finalOgUrl = ogUrl || seoData?.og_url;
+  const finalKeywords = keywords || seoData?.keywords;
+  const finalLocality = locality || seoData?.locality || 'San Diego';
+  const finalRegion = region || seoData?.region || 'CA';
+
+  const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
+
+  useEffect(() => {
+    if (loading) return;
+
+    console.log('SEOHead: Rendering meta tags for', pagePath || 'custom');
+    console.log('SEOHead: Using title:', title);
+    console.log('SEOHead: Using description:', description);
+    console.log('SEOHead: Using og_image:', ogImage);
+    console.log('SEOHead: Database data:', !!seoData);
+
     document.title = title;
 
     const updateMetaTag = (property: string, content: string, useProperty = false) => {
@@ -49,20 +121,20 @@ export function SEOHead({
     };
 
     updateMetaTag('description', description);
-    updateMetaTag('keywords', keywords || defaultKeywords);
+    updateMetaTag('keywords', finalKeywords || defaultKeywords);
 
-    updateMetaTag('geo.region', `US-${region}`);
-    updateMetaTag('geo.placename', locality);
+    updateMetaTag('geo.region', `US-${finalRegion}`);
+    updateMetaTag('geo.placename', finalLocality);
     updateMetaTag('geo.position', '32.7677;-117.0231');
     updateMetaTag('ICBM', '32.7677, -117.0231');
 
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:type', type, true);
-    
-    const defaultImage = 'https://inner-edge-audio-files.b-cdn.net/Inner-Edge-Open-Graph.png';
-    const finalImage = ogImage ? ogImage : (type === 'website' ? defaultImage : '');
-    
+
+    const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
+    const finalImage = ogImage || (type === 'website' ? defaultImage : '');
+
     if (finalImage) {
       const fullImageUrl = finalImage.startsWith('http') ? finalImage : `${window.location.origin}${finalImage}`;
       updateMetaTag('og:image', fullImageUrl, true);
@@ -79,8 +151,8 @@ export function SEOHead({
       }
     }
 
-    if (ogUrl) {
-      updateMetaTag('og:url', ogUrl, true);
+    if (finalOgUrl) {
+      updateMetaTag('og:url', finalOgUrl, true);
     }
     updateMetaTag('og:site_name', 'Inner Edge', true);
 
@@ -110,7 +182,7 @@ export function SEOHead({
       linkElement.setAttribute('href', canonical);
     }
 
-    if (type === 'article' && ogUrl && finalImage) {
+    if (type === 'article' && finalOgUrl && finalImage) {
       let scriptElement = document.querySelector('script[type="application/ld+json"]#article-schema') as HTMLScriptElement;
       if (!scriptElement) {
         scriptElement = document.createElement('script');
@@ -126,7 +198,7 @@ export function SEOHead({
         "description": description,
         "mainEntityOfPage": {
           "@type": "WebPage",
-          "@id": ogUrl
+          "@id": finalOgUrl
         },
         "author": {
           "@type": "Person",
@@ -150,7 +222,7 @@ export function SEOHead({
         existingScript.remove();
       }
     }
-  }, [title, description, keywords, ogImage, ogUrl, canonical, locality, region, type, author, publishedTime, modifiedTime, wordCount]);
+  }, [loading, title, description, finalKeywords, ogImage, finalOgUrl, canonical, finalLocality, finalRegion, type, author, publishedTime, modifiedTime, wordCount, seoData, pagePath]);
 
   return null;
 }

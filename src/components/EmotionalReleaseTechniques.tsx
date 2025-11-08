@@ -98,10 +98,10 @@ export function EmotionalReleaseTechniques() {
   return (
     <div className="min-h-screen bg-slate-50">
       <SEOHead
-        title="Emotional Release Techniques - Inner Edge"
-        description="Watch video demonstrations of powerful emotional release techniques including shaking, power stomp, and pillow pounding. Learn effective methods for emotional processing."
-        keywords="emotional release techniques, emotional processing, stress release, trauma release exercises, emotional healing techniques"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/emotional-release-techniques"
+        fallbackTitle="Emotional Release Techniques - Inner Edge"
+        fallbackDescription="Watch video demonstrations of powerful emotional release techniques including shaking, power stomp, and pillow pounding. Learn effective methods for emotional processing."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/emotional-release-techniques"
         ogUrl="https://www.inneredge.co/emotional-release-techniques"
       />

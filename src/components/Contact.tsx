@@ -9,12 +9,11 @@ export function Contact() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        title="Contact Inner Edge - Get in Touch"
-        description="Ready to start your transformation? Contact Inner Edge today for mens coaching, personal development, and life-changing support. Based in San Diego, CA."
-        keywords="contact mens coach, get coaching help, mens life coach contact, coaching inquiry, book coaching session"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/contact"
+        fallbackTitle="Contact Inner Edge - Get in Touch"
+        fallbackDescription="Ready to start your transformation? Contact Inner Edge today for mens coaching, personal development, and life-changing support. Based in San Diego, CA."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/contact"
-        ogUrl="https://www.inneredge.co/contact"
       />
       <Header />
       {/* Hero Section */}
