@@ -98,7 +98,7 @@ export function SEOHead({
   const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
 
   const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
-  const finalImage = ogImage || (type === 'website' ? defaultImage : '');
+  const finalImage = ogImage || defaultImage;
   const fullImageUrl = finalImage && finalImage.startsWith('http')
     ? finalImage
     : finalImage
@@ -179,17 +179,13 @@ export function SEOHead({
       <meta property="og:type" content={type} />
       <meta property="og:site_name" content="Inner Edge" />
 
-      {fullImageUrl && (
-        <>
-          <meta property="og:image" content={fullImageUrl} />
-          <meta property="og:image:secure_url" content={fullImageUrl} />
-          <meta property="og:image:type" content="image/png" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content={title} />
-          <meta name="twitter:image" content={fullImageUrl} />
-        </>
-      )}
+      <meta property="og:image" content={fullImageUrl} />
+      <meta property="og:image:secure_url" content={fullImageUrl} />
+      <meta property="og:image:type" content={imageType} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
+      <meta name="twitter:image" content={fullImageUrl} />
 
       {finalOgUrl && <meta property="og:url" content={finalOgUrl} />}
 
