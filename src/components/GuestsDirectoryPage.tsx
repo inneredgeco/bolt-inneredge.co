@@ -46,9 +46,10 @@ export function GuestsDirectoryPage() {
   return (
     <div className="min-h-screen bg-stone-50">
       <SEOHead
-        title="Podcast Guests - Inner Edge"
-        description="Meet the inspiring guests who have appeared on the Inner Edge Podcast, sharing their expertise in men's personal development and transformation."
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/guests"
+        fallbackTitle="Podcast Guests - Inner Edge"
+        fallbackDescription="Meet the inspiring guests who have appeared on the Inner Edge Podcast, sharing their expertise in men's personal development and transformation."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/guests"
         ogUrl="https://www.inneredge.co/guests"
       />

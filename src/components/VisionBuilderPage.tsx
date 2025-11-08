@@ -439,9 +439,10 @@ export function VisionBuilderPage() {
     return (
       <>
         <SEOHead
-          title="Create Your 1-Year Vision | Inner Edge"
-          description="A guided process to design the life you want in the next 12 months"
-          ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+          pagePath="/vision-builder"
+          fallbackTitle="Create Your 1-Year Vision | Inner Edge"
+          fallbackDescription="A guided process to design the life you want in the next 12 months"
+          fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
           canonical="https://www.inneredge.co/vision-builder"
         />
         <Header />
@@ -459,9 +460,10 @@ export function VisionBuilderPage() {
     return (
       <>
         <SEOHead
-          title="Create Your 1-Year Vision | Inner Edge"
-          description="A guided process to design the life you want in the next 12 months"
-          ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+          pagePath="/vision-builder"
+          fallbackTitle="Create Your 1-Year Vision | Inner Edge"
+          fallbackDescription="A guided process to design the life you want in the next 12 months"
+          fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
           canonical="https://www.inneredge.co/vision-builder"
         />
         <Header />
@@ -494,9 +496,10 @@ export function VisionBuilderPage() {
   return (
     <>
       <SEOHead
-        title="Create Your 1-Year Vision | Inner Edge"
-        description="A guided process to design the life you want in the next 12 months"
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/vision-builder"
+        fallbackTitle="Create Your 1-Year Vision | Inner Edge"
+        fallbackDescription="A guided process to design the life you want in the next 12 months"
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/vision-builder"
       />
       <Header />

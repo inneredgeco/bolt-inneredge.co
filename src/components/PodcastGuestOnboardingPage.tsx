@@ -231,9 +231,10 @@ export function PodcastGuestOnboardingPage() {
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col">
       <SEOHead
-        title="Guest Onboarding - Inner Edge Podcast"
-        description="Complete your guest profile for the Inner Edge Podcast. Upload your headshot and finalize your episode details."
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/podcast-guest-onboarding"
+        fallbackTitle="Guest Onboarding - Inner Edge Podcast"
+        fallbackDescription="Complete your guest profile for the Inner Edge Podcast. Upload your headshot and finalize your episode details."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/podcast-guest-onboarding"
         ogUrl="https://www.inneredge.co/podcast-guest-onboarding"
       />

@@ -11,9 +11,10 @@ export function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead
-        title="Privacy Policy - Inner Edge"
-        description="Inner Edge privacy policy. Learn how we collect, use, and protect your personal information when you use our mens coaching services and website."
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/privacy-policy"
+        fallbackTitle="Privacy Policy - Inner Edge"
+        fallbackDescription="Inner Edge privacy policy. Learn how we collect, use, and protect your personal information when you use our mens coaching services and website."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/privacy-policy"
       />
       <Header />

@@ -65,9 +65,10 @@ export function BlogPage() {
   return (
     <div className="min-h-screen bg-stone-50">
       <SEOHead
-        title="The Path Forward - Inner Edge Blog"
-        description="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood."
-        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        pagePath="/blog"
+        fallbackTitle="The Path Forward - Inner Edge Blog"
+        fallbackDescription="Insights and reflections on men's personal development, growth, and transformation. Read articles on emotional intelligence, mindset, and brotherhood."
+        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://inneredge.co/blog"
         keywords="mens coaching blog, personal development, mens growth, emotional intelligence, mindset coaching, mens community"
       />
