@@ -167,17 +167,6 @@ export function GuestProfilePage() {
                     <Linkedin size={24} />
                   </a>
                 )}
-                {guest.guest_youtube_url && (
-                  <a
-                    href={guest.guest_youtube_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
-                    aria-label="YouTube"
-                  >
-                    <Youtube size={24} />
-                  </a>
-                )}
                 {guest.facebook_url && (
                   <a
                     href={guest.facebook_url}
@@ -198,6 +187,17 @@ export function GuestProfilePage() {
                     aria-label="Instagram"
                   >
                     <Instagram size={24} />
+                  </a>
+                )}
+                {guest.guest_youtube_url && (
+                  <a
+                    href={guest.guest_youtube_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center w-12 h-12 bg-white text-brand-700 rounded-full font-semibold hover:bg-brand-50 transition-colors"
+                    aria-label="YouTube"
+                  >
+                    <Youtube size={24} />
                   </a>
                 )}
               </div>
