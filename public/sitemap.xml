@@ -25,6 +25,30 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://inneredge.co/podcast-guest</loc>
+    <lastmod>2025-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://inneredge.co/podcast-guest-form</loc>
+    <lastmod>2025-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://inneredge.co/guests</loc>
+    <lastmod>2025-11-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://inneredge.co/vision-builder</loc>
+    <lastmod>2025-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://inneredge.co/contact</loc>
     <lastmod>2025-11-08</lastmod>
     <changefreq>monthly</changefreq>

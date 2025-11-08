@@ -53,11 +53,25 @@ async function generateSitemap() {
       process.exit(0);
     }
 
+    const { data: guests, error: guestsError } = await supabase
+      .from('podcast_guests')
+      .select('slug, created_at')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false });
+
+    if (guestsError) {
+      console.error('Error fetching guests:', guestsError);
+    }
+
     const staticPages = [
       { url: '', priority: '1.0', changefreq: 'weekly' },
       { url: 'about', priority: '0.8', changefreq: 'monthly' },
       { url: 'blog', priority: '0.9', changefreq: 'weekly' },
       { url: 'podcast', priority: '0.9', changefreq: 'weekly' },
+      { url: 'podcast-guest', priority: '0.7', changefreq: 'monthly' },
+      { url: 'podcast-guest-form', priority: '0.6', changefreq: 'monthly' },
+      { url: 'guests', priority: '0.8', changefreq: 'weekly' },
+      { url: 'vision-builder', priority: '0.8', changefreq: 'monthly' },
       { url: 'contact', priority: '0.8', changefreq: 'monthly' },
       { url: 'booking', priority: '0.9', changefreq: 'monthly' },
       { url: 'emotional-release-techniques', priority: '0.6', changefreq: 'monthly' },
@@ -93,12 +107,24 @@ async function generateSitemap() {
       });
     }
 
+    if (guests && guests.length > 0) {
+      guests.forEach((guest) => {
+        const guestDate = new Date(guest.created_at).toISOString().split('T')[0];
+        sitemap += '  <url>\n';
+        sitemap += `    <loc>${baseUrl}/guests/${guest.slug}</loc>\n`;
+        sitemap += `    <lastmod>${guestDate}</lastmod>\n`;
+        sitemap += `    <changefreq>monthly</changefreq>\n`;
+        sitemap += `    <priority>0.7</priority>\n`;
+        sitemap += '  </url>\n';
+      });
+    }
+
     sitemap += '</urlset>';
 
     const sitemapPath = join(__dirname, '../public/sitemap.xml');
     writeFileSync(sitemapPath, sitemap, 'utf-8');
 
-    console.log(`✓ Sitemap generated successfully with ${posts?.length || 0} blog posts`);
+    console.log(`✓ Sitemap generated successfully with ${posts?.length || 0} blog posts and ${guests?.length || 0} guest profiles`);
   } catch (error) {
     console.error('Error generating sitemap:', error);
     process.exit(0);
