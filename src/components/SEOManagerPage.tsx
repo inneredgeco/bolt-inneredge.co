@@ -253,19 +253,29 @@ export function SEOManagerPage() {
         updated_at: new Date().toISOString()
       };
 
+      console.log('SEO Manager: Saving data to database:', dataToSave);
+
       if (editingMeta) {
         const { error } = await supabase
           .from('seo_meta')
           .update(dataToSave)
           .eq('id', editingMeta.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('SEO Manager: Update error:', error);
+          throw error;
+        }
+        console.log('SEO Manager: Successfully updated entry for', formData.page_path);
       } else {
         const { error } = await supabase
           .from('seo_meta')
           .insert([dataToSave]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('SEO Manager: Insert error:', error);
+          throw error;
+        }
+        console.log('SEO Manager: Successfully inserted entry for', formData.page_path);
       }
 
       await fetchSeoMeta();

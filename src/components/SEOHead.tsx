@@ -87,13 +87,13 @@ export function SEOHead({
     fetchSeoData();
   }, [pagePath]);
 
-  const title = propTitle || seoData?.page_title || fallbackTitle || 'Inner Edge';
-  const description = propDescription || seoData?.meta_description || fallbackDescription || 'Transform your life from the inside out with Inner Edge.';
-  const ogImage = propOgImage || seoData?.og_image_url || fallbackOgImage;
-  const finalOgUrl = ogUrl || seoData?.og_url;
-  const finalKeywords = keywords || seoData?.keywords;
-  const finalLocality = locality || seoData?.locality || 'San Diego';
-  const finalRegion = region || seoData?.region || 'CA';
+  const title = propTitle || (pagePath && seoData?.page_title) || fallbackTitle || 'Inner Edge';
+  const description = propDescription || (pagePath && seoData?.meta_description) || fallbackDescription || 'Transform your life from the inside out with Inner Edge.';
+  const ogImage = propOgImage || (pagePath && seoData?.og_image_url) || fallbackOgImage;
+  const finalOgUrl = ogUrl || (pagePath && seoData?.og_url) || undefined;
+  const finalKeywords = keywords || (pagePath && seoData?.keywords) || undefined;
+  const finalLocality = (pagePath && seoData?.locality) || locality || 'San Diego';
+  const finalRegion = (pagePath && seoData?.region) || region || 'CA';
 
   const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
 
@@ -105,20 +105,39 @@ export function SEOHead({
       ? `${window.location.origin}${finalImage}`
       : defaultImage;
 
-  useEffect(() => {
-    if (!loading) {
-      console.log('SEOHead: Rendering meta tags for', pagePath || 'custom');
-      console.log('SEOHead: Using title:', title);
-      console.log('SEOHead: Using description:', description);
-      console.log('SEOHead: Using og_image:', ogImage);
-      console.log('SEOHead: Final og_image URL:', fullImageUrl);
-      console.log('SEOHead: Database data:', !!seoData);
-    }
-  }, [loading, title, description, ogImage, fullImageUrl, seoData, pagePath]);
+  const getImageType = (url: string): string => {
+    if (!url) return 'image/jpeg';
+    const lowerUrl = url.toLowerCase();
+    if (lowerUrl.endsWith('.png') || lowerUrl.includes('.png?')) return 'image/png';
+    if (lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.includes('.jpg?') || lowerUrl.includes('.jpeg?')) return 'image/jpeg';
+    if (lowerUrl.endsWith('.webp') || lowerUrl.includes('.webp?')) return 'image/webp';
+    if (lowerUrl.endsWith('.gif') || lowerUrl.includes('.gif?')) return 'image/gif';
+    return 'image/jpeg';
+  };
 
-  if (loading) {
-    return null;
-  }
+  const imageType = getImageType(fullImageUrl);
+
+  useEffect(() => {
+    console.log('=== SEOHead Render ===');
+    console.log('Page Path:', pagePath || 'custom');
+    console.log('Loading:', loading);
+    console.log('Database data loaded:', !!seoData);
+    if (seoData) {
+      console.log('DB Title:', seoData.page_title);
+      console.log('DB Description:', seoData.meta_description);
+      console.log('DB OG Image:', seoData.og_image_url);
+    }
+    console.log('Fallback Title:', fallbackTitle);
+    console.log('Fallback Description:', fallbackDescription);
+    console.log('Fallback OG Image:', fallbackOgImage);
+    console.log('---');
+    console.log('FINAL Title:', title);
+    console.log('FINAL Description:', description);
+    console.log('FINAL OG Image:', ogImage);
+    console.log('FINAL OG Image URL:', fullImageUrl);
+    console.log('FINAL OG Image Type:', imageType);
+    console.log('==================');
+  }, [loading, title, description, ogImage, fullImageUrl, imageType, seoData, pagePath, fallbackTitle, fallbackDescription, fallbackOgImage]);
 
   const structuredData = type === 'article' && finalOgUrl && finalImage ? {
     "@context": "https://schema.org",
