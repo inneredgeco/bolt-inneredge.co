@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Search, Plus, Edit2, Trash2, X, Image as ImageIcon } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, Plus, Edit2, Trash2, X, Image as ImageIcon, Upload } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { SEOHead } from './SEOHead';
 
@@ -60,6 +60,10 @@ export function SEOManagerPage() {
   const [usePageTitle, setUsePageTitle] = useState(true);
   const [useMetaDescription, setUseMetaDescription] = useState(true);
   const [useOgImageForTwitter, setUseOgImageForTwitter] = useState(true);
+  const [ogImageFile, setOgImageFile] = useState<File | null>(null);
+  const [ogImagePreview, setOgImagePreview] = useState<string>('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -103,6 +107,7 @@ export function SEOManagerPage() {
       setUsePageTitle(!meta.og_title || meta.og_title === meta.page_title);
       setUseMetaDescription(!meta.og_description || meta.og_description === meta.meta_description);
       setUseOgImageForTwitter(!meta.twitter_image_url || meta.twitter_image_url === meta.og_image_url);
+      setOgImagePreview(meta.og_image_url || '');
     } else {
       setEditingMeta(null);
       setFormData({
@@ -122,7 +127,9 @@ export function SEOManagerPage() {
       setUsePageTitle(true);
       setUseMetaDescription(true);
       setUseOgImageForTwitter(true);
+      setOgImagePreview('');
     }
+    setOgImageFile(null);
     setShowModal(true);
     setError('');
   };
@@ -138,6 +145,76 @@ export function SEOManagerPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setError('Please upload a JPG, PNG, or WebP image file.');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError('Image file must be less than 5MB.');
+      return;
+    }
+
+    setOgImageFile(file);
+    setError('');
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setOgImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setOgImageFile(null);
+    setOgImagePreview(formData.og_image_url || '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadOgImage = async (pagePath: string, file: File): Promise<string> => {
+    const pageName = pagePath === '/'
+      ? 'home'
+      : pagePath.replace(/^\//, '').replace(/\//g, '-');
+
+    const sanitizedOriginalName = file.name
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[^a-z0-9]+/gi, '-')
+      .toLowerCase();
+
+    const fileExtension = file.name.split('.').pop();
+    const filename = `${pageName}-${sanitizedOriginalName}.${fileExtension}`;
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('filename', filename);
+
+    const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-og-image`;
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Failed to upload image');
+    }
+
+    return result.url;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -150,11 +227,27 @@ export function SEOManagerPage() {
     }
 
     try {
+      let ogImageUrl = formData.og_image_url;
+
+      if (ogImageFile) {
+        setUploadingImage(true);
+        try {
+          ogImageUrl = await uploadOgImage(formData.page_path, ogImageFile);
+        } catch (uploadErr: any) {
+          setError(uploadErr.message || 'Failed to upload image');
+          setSaving(false);
+          setUploadingImage(false);
+          return;
+        }
+        setUploadingImage(false);
+      }
+
       const dataToSave = {
         ...formData,
+        og_image_url: ogImageUrl,
         og_title: usePageTitle ? formData.page_title : formData.og_title,
         og_description: useMetaDescription ? formData.meta_description : formData.og_description,
-        twitter_image_url: useOgImageForTwitter ? formData.og_image_url : formData.twitter_image_url,
+        twitter_image_url: useOgImageForTwitter ? ogImageUrl : formData.twitter_image_url,
         updated_at: new Date().toISOString()
       };
 
@@ -180,6 +273,7 @@ export function SEOManagerPage() {
       setError(err.message || 'Failed to save SEO meta');
     } finally {
       setSaving(false);
+      setUploadingImage(false);
     }
   };
 
@@ -530,19 +624,57 @@ export function SEOManagerPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1">
-                      OG Image URL
+                    <label className="block text-sm font-medium text-stone-700 mb-2">
+                      OG Image
                     </label>
+
+                    {ogImagePreview ? (
+                      <div className="mb-3">
+                        <div className="relative inline-block">
+                          <img
+                            src={ogImagePreview}
+                            alt="OG Preview"
+                            className="max-w-full h-auto rounded-lg border border-stone-300 max-h-48"
+                          />
+                          <button
+                            type="button"
+                            onClick={removeImage}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-2 px-4 py-2 border border-stone-300 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors"
+                      >
+                        <Upload className="w-4 h-4" />
+                        {ogImagePreview ? 'Change Image' : 'Upload Image'}
+                      </button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                    </div>
+
                     <input
                       type="url"
                       name="og_image_url"
                       value={formData.og_image_url}
                       onChange={handleInputChange}
-                      placeholder="https://cdn.inneredge.co/og-image.jpg"
-                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Or enter image URL: https://cdn.inneredge.co/og-image.jpg"
+                      className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent mt-2"
                     />
                     <p className="mt-1 text-xs text-stone-500">
-                      Recommended: 1200x630px (1.91:1 ratio)
+                      Upload an image or enter a URL. Recommended: 1200x630px (1.91:1 ratio)
                     </p>
                   </div>
 
@@ -654,10 +786,10 @@ export function SEOManagerPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || uploadingImage}
                   className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {saving ? 'Saving...' : editingMeta ? 'Update' : 'Create'}
+                  {uploadingImage ? 'Uploading Image...' : saving ? 'Saving...' : editingMeta ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>
