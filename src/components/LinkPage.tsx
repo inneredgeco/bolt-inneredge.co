@@ -108,10 +108,9 @@ export function LinkPage() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        pagePath="/link"
-        fallbackTitle="Links | Inner Edge"
-        fallbackDescription="All Inner Edge links in one place."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        title="Links | Inner Edge"
+        description="All Inner Edge links in one place."
+        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
       />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-32" style={{

@@ -24,10 +24,9 @@ export function BookingPage() {
   return (
     <div className="min-h-screen bg-white">
       <SEOHead
-        pagePath="/booking"
-        fallbackTitle="Book Your Free Discovery Call - Inner Edge Mens Coaching"
-        fallbackDescription="Schedule your free 45-minute discovery call with Inner Edge. No pressure, no obligation. Explore how mens coaching can help you unlock your potential."
-        fallbackOgImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
+        title="Book Your Free Discovery Call - Inner Edge Mens Coaching"
+        description="Schedule your free 45-minute discovery call with Inner Edge. No pressure, no obligation. Explore how mens coaching can help you unlock your potential."
+        ogImage="https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png"
         canonical="https://www.inneredge.co/booking"
       />
       <Header />

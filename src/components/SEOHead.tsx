@@ -1,12 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { supabase } from '../lib/supabase';
 
 interface SEOHeadProps {
-  pagePath?: string;
-  fallbackTitle?: string;
-  fallbackDescription?: string;
-  fallbackOgImage?: string;
   title?: string;
   description?: string;
   keywords?: string;
@@ -23,14 +17,10 @@ interface SEOHeadProps {
 }
 
 export function SEOHead({
-  pagePath,
-  fallbackTitle,
-  fallbackDescription,
-  fallbackOgImage,
-  title: propTitle,
-  description: propDescription,
+  title,
+  description,
   keywords,
-  ogImage: propOgImage,
+  ogImage,
   ogUrl,
   canonical,
   locality = 'San Diego',
@@ -41,61 +31,10 @@ export function SEOHead({
   modifiedTime,
   wordCount
 }: SEOHeadProps) {
-  const [seoData, setSeoData] = useState<{
-    page_title: string;
-    meta_description: string;
-    og_image_url: string | null;
-    og_url: string | null;
-    keywords: string | null;
-    locality: string | null;
-    region: string | null;
-  } | null>(null);
-
-  const [loading, setLoading] = useState(!!pagePath);
-
-  useEffect(() => {
-    const fetchSeoData = async () => {
-      if (!pagePath) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('seo_meta')
-          .select('page_title, meta_description, og_image_url, og_url, keywords, locality, region')
-          .eq('page_path', pagePath)
-          .maybeSingle();
-
-        if (error) {
-          console.error('SEOHead: Error fetching SEO data:', error);
-        }
-
-        if (data) {
-          console.log('SEOHead: Database data found for', pagePath, data);
-          setSeoData(data);
-        } else {
-          console.log('SEOHead: No database data for', pagePath, '- using fallbacks');
-        }
-      } catch (err) {
-        console.error('SEOHead: Error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSeoData();
-  }, [pagePath]);
-
-  const title = propTitle || (pagePath && seoData?.page_title) || fallbackTitle || 'Inner Edge';
-  const description = propDescription || (pagePath && seoData?.meta_description) || fallbackDescription || 'Transform your life from the inside out with Inner Edge.';
-  const ogImage = propOgImage || (pagePath && seoData?.og_image_url) || fallbackOgImage;
-  const finalOgUrl = ogUrl || (pagePath && seoData?.og_url) || undefined;
-  const finalKeywords = keywords || (pagePath && seoData?.keywords) || undefined;
-  const finalLocality = (pagePath && seoData?.locality) || locality || 'San Diego';
-  const finalRegion = (pagePath && seoData?.region) || region || 'CA';
-
+  const finalTitle = title || 'Inner Edge';
+  const finalDescription = description || 'Transform your life from the inside out with Inner Edge.';
   const defaultKeywords = 'mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community';
+  const finalKeywords = keywords || defaultKeywords;
 
   const defaultImage = 'https://inner-edge.b-cdn.net/Inner-Edge-Open-Graph.png';
   const finalImage = ogImage || defaultImage;
@@ -117,36 +56,14 @@ export function SEOHead({
 
   const imageType = getImageType(fullImageUrl);
 
-  useEffect(() => {
-    console.log('=== SEOHead Render ===');
-    console.log('Page Path:', pagePath || 'custom');
-    console.log('Loading:', loading);
-    console.log('Database data loaded:', !!seoData);
-    if (seoData) {
-      console.log('DB Title:', seoData.page_title);
-      console.log('DB Description:', seoData.meta_description);
-      console.log('DB OG Image:', seoData.og_image_url);
-    }
-    console.log('Fallback Title:', fallbackTitle);
-    console.log('Fallback Description:', fallbackDescription);
-    console.log('Fallback OG Image:', fallbackOgImage);
-    console.log('---');
-    console.log('FINAL Title:', title);
-    console.log('FINAL Description:', description);
-    console.log('FINAL OG Image:', ogImage);
-    console.log('FINAL OG Image URL:', fullImageUrl);
-    console.log('FINAL OG Image Type:', imageType);
-    console.log('==================');
-  }, [loading, title, description, ogImage, fullImageUrl, imageType, seoData, pagePath, fallbackTitle, fallbackDescription, fallbackOgImage]);
-
-  const structuredData = type === 'article' && finalOgUrl && finalImage ? {
+  const structuredData = type === 'article' && ogUrl && finalImage ? {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": title,
-    "description": description,
+    "headline": finalTitle,
+    "description": finalDescription,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": finalOgUrl
+      "@id": ogUrl
     },
     "author": {
       "@type": "Person",
@@ -165,17 +82,17 @@ export function SEOHead({
 
   return (
     <Helmet>
-      <title>{title}</title>
-      <meta name="description" content={description} />
-      <meta name="keywords" content={finalKeywords || defaultKeywords} />
+      <title>{finalTitle}</title>
+      <meta name="description" content={finalDescription} />
+      <meta name="keywords" content={finalKeywords} />
 
-      <meta name="geo.region" content={`US-${finalRegion}`} />
-      <meta name="geo.placename" content={finalLocality} />
+      <meta name="geo.region" content={`US-${region}`} />
+      <meta name="geo.placename" content={locality} />
       <meta name="geo.position" content="32.7677;-117.0231" />
       <meta name="ICBM" content="32.7677, -117.0231" />
 
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={finalTitle} />
+      <meta property="og:description" content={finalDescription} />
       <meta property="og:type" content={type} />
       <meta property="og:site_name" content="Inner Edge" />
 
@@ -184,10 +101,10 @@ export function SEOHead({
       <meta property="og:image:type" content={imageType} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={title} />
+      <meta property="og:image:alt" content={finalTitle} />
       <meta name="twitter:image" content={fullImageUrl} />
 
-      {finalOgUrl && <meta property="og:url" content={finalOgUrl} />}
+      {ogUrl && <meta property="og:url" content={ogUrl} />}
 
       {type === 'article' && (
         <>
@@ -198,8 +115,8 @@ export function SEOHead({
       )}
 
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={finalTitle} />
+      <meta name="twitter:description" content={finalDescription} />
 
       {canonical && <link rel="canonical" href={canonical} />}
 

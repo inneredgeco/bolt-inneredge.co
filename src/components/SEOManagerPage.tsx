@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, Plus, X, Upload, ArrowLeft } from 'lucide-react';
+import { Search, Plus, X, Upload, ArrowLeft, FileCode } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { SEOHead } from './SEOHead';
 import { Header } from './Header';
+import { PAGE_FILE_MAP, updatePageSEO, getComponentFileName } from '../lib/fileWriter';
 
 interface SEOMeta {
   id: string;
@@ -75,13 +75,26 @@ export function SEOManagerPage() {
 
   const fetchSeoMeta = async () => {
     try {
-      const { data, error } = await supabase
-        .from('seo_meta')
-        .select('*')
-        .order('updated_at', { ascending: false });
+      const pages: SEOMeta[] = Object.keys(PAGE_FILE_MAP).map(pagePath => ({
+        id: pagePath,
+        page_path: pagePath,
+        page_title: `SEO for ${pagePath}`,
+        meta_description: null,
+        keywords: null,
+        og_title: null,
+        og_description: null,
+        og_image_url: null,
+        og_url: null,
+        twitter_card: 'summary_large_image',
+        twitter_image_url: null,
+        locality: null,
+        region: null,
+        additional_meta: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }));
 
-      if (error) throw error;
-      setSeoMeta(data || []);
+      setSeoMeta(pages);
     } catch (err) {
       console.error('Error fetching SEO meta:', err);
     } finally {
@@ -228,6 +241,12 @@ export function SEOManagerPage() {
       return;
     }
 
+    if (!PAGE_FILE_MAP[formData.page_path]) {
+      setError('No component file found for this page path');
+      setSaving(false);
+      return;
+    }
+
     try {
       let ogImageUrl = formData.og_image_url;
 
@@ -244,45 +263,26 @@ export function SEOManagerPage() {
         setUploadingImage(false);
       }
 
-      const dataToSave = {
-        ...formData,
-        og_image_url: ogImageUrl,
-        og_title: usePageTitle ? formData.page_title : formData.og_title,
-        og_description: useMetaDescription ? formData.meta_description : formData.og_description,
-        twitter_image_url: useOgImageForTwitter ? ogImageUrl : formData.twitter_image_url,
-        updated_at: new Date().toISOString()
-      };
+      await updatePageSEO(formData.page_path, {
+        title: formData.page_title,
+        description: formData.meta_description,
+        keywords: formData.keywords || undefined,
+        ogImage: ogImageUrl || undefined,
+        canonical: formData.og_url || undefined,
+        locality: formData.locality || undefined,
+        region: formData.region || undefined
+      });
 
-      console.log('SEO Manager: Saving data to database:', dataToSave);
-
-      if (editingMeta) {
-        const { error } = await supabase
-          .from('seo_meta')
-          .update(dataToSave)
-          .eq('id', editingMeta.id);
-
-        if (error) {
-          console.error('SEO Manager: Update error:', error);
-          throw error;
-        }
-        console.log('SEO Manager: Successfully updated entry for', formData.page_path);
-      } else {
-        const { error } = await supabase
-          .from('seo_meta')
-          .insert([dataToSave]);
-
-        if (error) {
-          console.error('SEO Manager: Insert error:', error);
-          throw error;
-        }
-        console.log('SEO Manager: Successfully inserted entry for', formData.page_path);
-      }
+      const fileName = getComponentFileName(formData.page_path);
+      console.log(`SEO Manager: Successfully updated ${fileName}`);
 
       await fetchSeoMeta();
       handleCloseModal();
+
+      alert(`✓ Updated ${fileName}\n\nThe component file has been updated with your new SEO values. Click "Deploy" in Bolt to publish the changes.`);
     } catch (err: any) {
       console.error('Error saving SEO meta:', err);
-      setError(err.message || 'Failed to save SEO meta');
+      setError(err.message || 'Failed to update component file');
     } finally {
       setSaving(false);
       setUploadingImage(false);
@@ -440,16 +440,26 @@ export function SEOManagerPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-stone-200 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-stone-900">
-                {editingMeta ? 'Edit SEO Meta' : 'Add New Page'}
-              </h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-stone-400 hover:text-stone-600 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
+            <div className="sticky top-0 bg-white border-b border-stone-200 px-6 py-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-xl font-bold text-stone-900">
+                    {editingMeta ? 'Edit SEO Meta' : 'Add New Page'}
+                  </h2>
+                  {formData.page_path && PAGE_FILE_MAP[formData.page_path] && (
+                    <div className="flex items-center gap-2 mt-2 text-sm text-stone-600">
+                      <FileCode className="w-4 h-4" />
+                      <span>Will update: <code className="bg-stone-100 px-2 py-0.5 rounded text-xs">{getComponentFileName(formData.page_path)}</code></span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={handleCloseModal}
+                  className="text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
