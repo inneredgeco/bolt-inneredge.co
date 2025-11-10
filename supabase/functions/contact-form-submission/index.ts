@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,6 +31,12 @@ Deno.serve(async (req: Request) => {
     const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL_CONTACT_FORM");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const recaptchaSecretKey = Deno.env.get("RECAPTCHA_SECRET_KEY");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    const supabase = supabaseUrl && supabaseServiceKey
+      ? createClient(supabaseUrl, supabaseServiceKey)
+      : null;
 
     const submittedAt = new Date().toISOString();
 
@@ -112,21 +119,21 @@ Deno.serve(async (req: Request) => {
       console.warn("PABBLY_WEBHOOK_URL_CONTACT_FORM not set");
     }
 
-    if (resendApiKey) {
+    if (resendApiKey && supabase) {
       try {
-        const confirmationResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify({
-            from: "Inner Edge <contact@send.inneredge.co>",
-            reply_to: "Inner Edge <contact@inneredge.co>",
-            to: formData.email,
-            subject: "Thanks for Reaching Out!",
-            html: `
-              <p>Hi ${formData.firstName},</p>
+        const { data: confirmTemplate } = await supabase
+          .from('email_templates')
+          .select('subject, content, from_email, from_name, reply_to_email')
+          .eq('template_key', 'contact_form_confirmation')
+          .maybeSingle();
+
+        const fromEmail = confirmTemplate?.from_email || 'contact@send.inneredge.co';
+        const fromName = confirmTemplate?.from_name || 'Inner Edge';
+        const replyTo = confirmTemplate?.reply_to_email || 'info@inneredge.co';
+        const subject = confirmTemplate?.subject || 'Thanks for Reaching Out!';
+
+        let html = confirmTemplate?.content || `
+              <p>Hi {firstName},</p>
 
               <p>Thank you for contacting Inner Edge. We've received your message and will get back to you within 1-2 business days.</p>
 
@@ -134,7 +141,23 @@ Deno.serve(async (req: Request) => {
 
               <p>Looking forward to connecting,<br>
               Inner Edge</p>
-            `,
+            `;
+
+        html = html.replace(/{firstName}/g, formData.firstName);
+        html = html.replace(/{email}/g, formData.email);
+
+        const confirmationResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${resendApiKey}`,
+          },
+          body: JSON.stringify({
+            from: `${fromName} <${fromEmail}>`,
+            reply_to: replyTo,
+            to: formData.email,
+            subject: subject,
+            html: html,
           }),
         });
 
@@ -152,6 +175,42 @@ Deno.serve(async (req: Request) => {
       }
 
       try {
+        const { data: notifTemplate } = await supabase
+          .from('email_templates')
+          .select('subject, content, from_email, from_name, reply_to_email')
+          .eq('template_key', 'contact_form_notification')
+          .maybeSingle();
+
+        const notifFromEmail = notifTemplate?.from_email || 'contact@send.inneredge.co';
+        const notifFromName = notifTemplate?.from_name || 'Inner Edge';
+        const notifReplyTo = notifTemplate?.reply_to_email || 'info@inneredge.co';
+        let notifSubject = notifTemplate?.subject || `New Contact Form Submission - {firstName} {lastName}`;
+        let notifHtml = notifTemplate?.content || `
+              <p>New contact form submission:</p>
+
+              <p><strong>NAME:</strong> {firstName} {lastName}<br>
+              <strong>EMAIL:</strong> {email}<br>
+              <strong>PHONE:</strong> {phone}<br>
+              <strong>NEWSLETTER:</strong> {newsletter}</p>
+
+              <p><strong>MESSAGE:</strong><br>
+              {message}</p>
+
+              <p><strong>SUBMITTED AT:</strong> {submittedAt}</p>
+
+              <hr>
+            `;
+
+        notifSubject = notifSubject.replace(/{firstName}/g, formData.firstName);
+        notifSubject = notifSubject.replace(/{lastName}/g, formData.lastName);
+        notifHtml = notifHtml.replace(/{firstName}/g, formData.firstName);
+        notifHtml = notifHtml.replace(/{lastName}/g, formData.lastName);
+        notifHtml = notifHtml.replace(/{email}/g, formData.email);
+        notifHtml = notifHtml.replace(/{phone}/g, formData.phone || 'Not provided');
+        notifHtml = notifHtml.replace(/{newsletter}/g, formData.joinNewsletter ? 'Yes' : 'No');
+        notifHtml = notifHtml.replace(/{message}/g, formData.message.replace(/\n/g, '<br>'));
+        notifHtml = notifHtml.replace(/{submittedAt}/g, submittedAt);
+
         const notificationResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -159,24 +218,11 @@ Deno.serve(async (req: Request) => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "Inner Edge <contact@send.inneredge.co>",
+            from: `${notifFromName} <${notifFromEmail}>`,
+            reply_to: notifReplyTo,
             to: "contact@inneredge.co",
-            subject: `New Contact Form Submission - ${formData.firstName} ${formData.lastName}`,
-            html: `
-              <p>New contact form submission:</p>
-
-              <p><strong>NAME:</strong> ${formData.firstName} ${formData.lastName}<br>
-              <strong>EMAIL:</strong> ${formData.email}<br>
-              <strong>PHONE:</strong> ${formData.phone || 'Not provided'}<br>
-              <strong>NEWSLETTER:</strong> ${formData.joinNewsletter ? 'Yes' : 'No'}</p>
-
-              <p><strong>MESSAGE:</strong><br>
-              ${formData.message.replace(/\n/g, '<br>')}</p>
-
-              <p><strong>SUBMITTED AT:</strong> ${submittedAt}</p>
-
-              <hr>
-            `,
+            subject: notifSubject,
+            html: notifHtml,
           }),
         });
 

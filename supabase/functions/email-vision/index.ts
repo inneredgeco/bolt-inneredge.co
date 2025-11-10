@@ -262,6 +262,7 @@ Deno.serve(async (req: Request) => {
 
     const emailPayload = {
       from: "Inner Edge <vision@send.inneredge.co>",
+      reply_to: "info@inneredge.co",
       to: [visionData.email],
       subject: `Your ${areaTitle} Vision - Inner Edge`,
       html: emailHTML,

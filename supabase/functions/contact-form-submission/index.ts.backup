@@ -7,45 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-interface PodcastGuestSubmission {
-  name: string;
+interface ContactFormSubmission {
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
-  website: string;
-  facebook: string;
-  instagram: string;
-  profession: string;
-  why_guest: string;
-  exercise: string;
-}
-
-function formatSocialUrl(input: string, platform: 'facebook' | 'instagram'): string {
-  if (!input || input.trim() === '') {
-    return 'Not provided';
-  }
-
-  const trimmed = input.trim();
-  const baseUrl = platform === 'facebook' ? 'https://www.facebook.com/' : 'https://www.instagram.com/';
-  
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-    return trimmed;
-  }
-  
-  if (trimmed.startsWith('@')) {
-    return baseUrl + trimmed.substring(1);
-  }
-  
-  if (platform === 'facebook') {
-    if (trimmed.includes('facebook.com/')) {
-      return trimmed.startsWith('www.') ? 'https://' + trimmed : 'https://www.' + trimmed;
-    }
-  } else {
-    if (trimmed.includes('instagram.com/')) {
-      return trimmed.startsWith('www.') ? 'https://' + trimmed : 'https://www.' + trimmed;
-    }
-  }
-  
-  return baseUrl + trimmed;
+  message: string;
+  joinNewsletter: boolean;
+  recaptchaResponse: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -57,26 +26,65 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const formData: PodcastGuestSubmission = await req.json();
+    const formData: ContactFormSubmission = await req.json();
 
-    const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL2");
+    const webhookUrl = Deno.env.get("PABBLY_WEBHOOK_URL_CONTACT_FORM");
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const recaptchaSecretKey = Deno.env.get("RECAPTCHA_SECRET_KEY");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    const supabase = supabaseUrl && supabaseServiceKey
+      ? createClient(supabaseUrl, supabaseServiceKey)
+      : null;
 
     const submittedAt = new Date().toISOString();
 
-    const webhookPayload: Record<string, string> = {};
-    webhookPayload.name = formData.name || '';
-    webhookPayload.email = formData.email || '';
-    webhookPayload.phone = formData.phone || '';
-    webhookPayload.website = formData.website || '';
-    webhookPayload.facebook = formData.facebook || '';
-    webhookPayload.instagram = formData.instagram || '';
-    webhookPayload.profession = formData.profession || '';
-    webhookPayload.why_guest = formData.why_guest || '';
-    webhookPayload.exercise = formData.exercise || '';
-    webhookPayload.submitted_at = submittedAt;
+    if (recaptchaSecretKey && formData.recaptchaResponse) {
+      try {
+        const recaptchaVerifyResponse = await fetch(
+          `https://www.google.com/recaptcha/api/siteverify`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `secret=${recaptchaSecretKey}&response=${formData.recaptchaResponse}`,
+          }
+        );
 
-    console.log('Webhook payload order:', Object.keys(webhookPayload));
+        const recaptchaResult = await recaptchaVerifyResponse.json();
+
+        if (!recaptchaResult.success) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: "reCAPTCHA verification failed",
+            }),
+            {
+              status: 400,
+              headers: {
+                ...corsHeaders,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+      } catch (error) {
+        console.error("reCAPTCHA verification error:", error);
+      }
+    }
+
+    const webhookPayload = {
+      first_name: formData.firstName || '',
+      last_name: formData.lastName || '',
+      email: formData.email || '',
+      phone: formData.phone || '',
+      message: formData.message || '',
+      newsletter: formData.joinNewsletter || false,
+      submitted_at: submittedAt,
+    };
+
     console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
 
     let webhookSuccess = false;
@@ -108,7 +116,7 @@ Deno.serve(async (req: Request) => {
       }
     } else {
       errors.push("Webhook URL not configured");
-      console.warn("PABBLY_WEBHOOK_URL2 not set");
+      console.warn("PABBLY_WEBHOOK_URL_CONTACT_FORM not set");
     }
 
     if (resendApiKey) {
@@ -120,19 +128,17 @@ Deno.serve(async (req: Request) => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "Inner Edge Podcast <podcast@send.inneredge.co>",
-            reply_to: "Inner Edge Podcast <podcast@inneredge.co>",
+            from: "Inner Edge <contact@send.inneredge.co>",
+            reply_to: "Inner Edge <contact@inneredge.co>",
             to: formData.email,
-            subject: "Thanks for Your Podcast Guest Application!",
+            subject: "Thanks for Reaching Out!",
             html: `
-              <p>Hi ${formData.name},</p>
-              
-              <p>Thank you for your interest in being a guest on the Inner Edge Podcast! We've received your application and are excited to learn more about your work.</p>
-              
-              <p>We'll review your submission and get back to you within 3-5 business days.</p>
-              
-              <p>In the meantime, feel free to explore our podcast episodes at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a>.</p>
-              
+              <p>Hi ${formData.firstName},</p>
+
+              <p>Thank you for contacting Inner Edge. We've received your message and will get back to you within 1-2 business days.</p>
+
+              <p>In the meantime, feel free to explore our podcast at <a href="https://inneredge.co/podcast">inneredge.co/podcast</a> or learn more about our men's community at <a href="https://links.inneredge.co/menscommunity">https://links.inneredge.co/menscommunity</a></p>
+
               <p>Looking forward to connecting,<br>
               Inner Edge</p>
             `,
@@ -153,9 +159,6 @@ Deno.serve(async (req: Request) => {
       }
 
       try {
-        const facebookUrl = formatSocialUrl(formData.facebook, 'facebook');
-        const instagramUrl = formatSocialUrl(formData.instagram, 'instagram');
-
         const notificationResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -163,30 +166,22 @@ Deno.serve(async (req: Request) => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "Inner Edge Podcast <podcast@send.inneredge.co>",
-            to: "podcast@inneredge.co",
-            subject: `New Podcast Guest Application - ${formData.name}`,
+            from: "Inner Edge <contact@send.inneredge.co>",
+            to: "contact@inneredge.co",
+            subject: `New Contact Form Submission - ${formData.firstName} ${formData.lastName}`,
             html: `
-              <p>New podcast guest application received:</p>
-              
-              <p><strong>NAME:</strong> ${formData.name}<br>
+              <p>New contact form submission:</p>
+
+              <p><strong>NAME:</strong> ${formData.firstName} ${formData.lastName}<br>
               <strong>EMAIL:</strong> ${formData.email}<br>
-              <strong>PHONE:</strong> ${formData.phone}<br>
-              <strong>WEBSITE:</strong> <a href="${formData.website}">${formData.website}</a><br>
-              <strong>FACEBOOK:</strong> ${facebookUrl !== 'Not provided' ? `<a href="${facebookUrl}">${facebookUrl}</a>` : facebookUrl}<br>
-              <strong>INSTAGRAM:</strong> ${instagramUrl !== 'Not provided' ? `<a href="${instagramUrl}">${instagramUrl}</a>` : instagramUrl}</p>
-              
-              <p><strong>PROFESSION:</strong><br>
-              ${formData.profession.replace(/\n/g, '<br>')}</p>
-              
-              <p><strong>WHY THEY'D BE A GREAT GUEST:</strong><br>
-              ${formData.why_guest.replace(/\n/g, '<br>')}</p>
-              
-              <p><strong>PRACTICAL EXERCISE THEY'D LEAD:</strong><br>
-              ${formData.exercise.replace(/\n/g, '<br>')}</p>
-              
+              <strong>PHONE:</strong> ${formData.phone || 'Not provided'}<br>
+              <strong>NEWSLETTER:</strong> ${formData.joinNewsletter ? 'Yes' : 'No'}</p>
+
+              <p><strong>MESSAGE:</strong><br>
+              ${formData.message.replace(/\n/g, '<br>')}</p>
+
               <p><strong>SUBMITTED AT:</strong> ${submittedAt}</p>
-              
+
               <hr>
             `,
           }),
@@ -228,7 +223,7 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("Error processing form submission:", error);
-    
+
     return new Response(
       JSON.stringify({
         success: false,
