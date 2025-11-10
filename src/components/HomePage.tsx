@@ -13,10 +13,12 @@ export function HomePage() {
   return (
     <>
       <SEOHead
-        pagePath="/"
-        fallbackTitle="Men's Life Coaching and Community Organization. Based in San Diego, CA."
-        fallbackDescription="Transform your life from the inside out with Inner Edge. Discover your vision, reconnect with your truth, and step into grounded leadership. Virtual life coaching for men in San Diego, CA."
-        fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        type="website"
+        title="Men's Life Coaching and Community Organization. Based in San Diego, CA."
+        description="Transform your life from the inside out with Inner Edge. Discover your vision, reconnect with your truth, and step into grounded leadership. Virtual life coaching for men in San Diego, CA."
+        keywords="mens coaching, life coaching for men, personal development, mindset coaching, emotional intelligence, leadership development, mens community, mens virtual community, mens online community, san diego life coach"
+        ogImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
+        ogUrl="https://inneredge.co/"
         canonical="https://inneredge.co/"
       />
       <LocalBusinessSchema />
