@@ -143,10 +143,14 @@ Deno.serve(async (req: Request) => {
               Inner Edge</p>
             `;
 
+        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+
+        html = html.replace(/{name}/g, fullName);
         html = html.replace(/{firstName}/g, formData.firstName);
         html = html.replace(/{lastName}/g, formData.lastName);
         html = html.replace(/{email}/g, formData.email);
         html = html.replace(/{phone}/g, formData.phone || 'Not provided');
+        html = html.replace(/{subject}/g, 'Contact Form Inquiry');
         html = html.replace(/{message}/g, formData.message.replace(/\n/g, '<br>'));
         html = html.replace(/{newsletter}/g, formData.joinNewsletter ? 'Yes' : 'No');
         html = html.replace(/{submittedAt}/g, submittedAt);
