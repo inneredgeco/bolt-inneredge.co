@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Header } from './Header';
-import { Footer } from './Footer';
 import { SEOHead } from './SEOHead';
 import { VisionBuilderStep1 } from './VisionBuilderStep1';
 import { VisionBuilderStep2 } from './VisionBuilderStep2';
@@ -445,7 +443,6 @@ export function VisionBuilderPage() {
           fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
           canonical="https://inneredge.co/vision-builder"
         />
-        <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mx-auto mb-4"></div>
@@ -466,7 +463,6 @@ export function VisionBuilderPage() {
           fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
           canonical="https://inneredge.co/vision-builder"
         />
-        <Header />
         <div className="min-h-screen flex items-center justify-center px-4">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -502,7 +498,6 @@ export function VisionBuilderPage() {
         fallbackOgImage="https://cdn.inneredge.co/og-images/home-ie-open-graph.png"
         canonical="https://inneredge.co/vision-builder"
       />
-      <Header />
 
       <div className="min-h-screen">
         {currentStep === 1 && (
@@ -570,8 +565,6 @@ export function VisionBuilderPage() {
           />
         )}
       </div>
-
-      <Footer />
     </>
   );
 }
