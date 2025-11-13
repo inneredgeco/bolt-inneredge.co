@@ -482,6 +482,25 @@ export default function NewsletterFormVisualBuilder() {
       });
     })();
   </script>
+
+  <script>
+    // Pre-fill form fields from URL parameters
+    window.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const name = urlParams.get('name');
+      const email = urlParams.get('email');
+
+      if (name) {
+        const nameInput = document.getElementById('nameInput');
+        if (nameInput) nameInput.value = decodeURIComponent(name);
+      }
+
+      if (email) {
+        const emailInput = document.getElementById('emailInput');
+        if (emailInput) emailInput.value = decodeURIComponent(email);
+      }
+    });
+  </script>
 </body>
 </html>`;
 
