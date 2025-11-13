@@ -5,6 +5,9 @@ import NewsletterForm from './NewsletterForm';
 export default function NewsletterFormVisualBuilder() {
   const [copied, setCopied] = useState(false);
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
   const embedCode = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,19 +25,7 @@ export default function NewsletterFormVisualBuilder() {
       padding: 48px 16px;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%);
-    }
-
-    .newsletter-bg-overlay-1 {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1), transparent 50%);
-    }
-
-    .newsletter-bg-overlay-2 {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05), transparent 50%);
+      background: white;
     }
 
     .newsletter-container {
@@ -247,9 +238,6 @@ export default function NewsletterFormVisualBuilder() {
 </head>
 <body>
   <section class="newsletter-section">
-    <div class="newsletter-bg-overlay-1"></div>
-    <div class="newsletter-bg-overlay-2"></div>
-
     <div class="newsletter-container">
       <div class="newsletter-card">
         <div class="newsletter-content">
@@ -314,12 +302,9 @@ export default function NewsletterFormVisualBuilder() {
 
   <script>
     (function() {
-      // CONFIGURATION - Replace these with your actual Supabase credentials
-      const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-      const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-
-      // CONFIGURATION - Replace with your actual domain
-      const REDIRECT_BASE_URL = 'https://yourdomain.com';
+      const SUPABASE_URL = '${supabaseUrl}';
+      const SUPABASE_ANON_KEY = '${supabaseAnonKey}';
+      const REDIRECT_BASE_URL = 'https://inneredge.co';
 
       const form = document.getElementById('newsletterForm');
       const nameInput = document.getElementById('nameInput');
@@ -553,12 +538,10 @@ export default function NewsletterFormVisualBuilder() {
           </div>
 
           <div className="mt-6 p-4 bg-stone-800 rounded-lg">
-            <h3 className="font-semibold mb-2 text-brand-400">Configuration Required:</h3>
-            <ul className="text-sm text-stone-300 space-y-1">
-              <li>• Replace <code className="text-brand-400">YOUR_SUPABASE_URL</code> with your Supabase project URL</li>
-              <li>• Replace <code className="text-brand-400">YOUR_SUPABASE_ANON_KEY</code> with your Supabase anonymous key</li>
-              <li>• Replace <code className="text-brand-400">https://yourdomain.com</code> with your actual domain</li>
-            </ul>
+            <h3 className="font-semibold mb-2 text-brand-400">Ready to Use:</h3>
+            <p className="text-sm text-stone-300">
+              This code is pre-configured with your Supabase credentials and domain. Simply copy and paste it into Webflow or any HTML page.
+            </p>
           </div>
         </div>
       </div>
