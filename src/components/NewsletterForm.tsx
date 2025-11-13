@@ -124,10 +124,7 @@ export default function NewsletterForm() {
   };
 
   return (
-    <section className="py-12 relative overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #ffffff 0%, #f0f9f8 40%, #d4ebe8 100%)' }}>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_50%)]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.05),transparent_50%)]"></div>
-
+    <section className="py-12 relative overflow-hidden bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-brand-100">
           <div className="p-5 sm:p-6 lg:p-8">
