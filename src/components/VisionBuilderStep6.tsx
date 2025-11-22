@@ -283,6 +283,14 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+              {availableOutcomes.length === 0 && (
+                <div className="col-span-2 p-6 bg-red-50 border-2 border-red-200 rounded-xl">
+                  <p className="text-red-800 font-semibold mb-2">Debug Info:</p>
+                  <p className="text-sm text-red-700">Area of Life: {initialData.area_of_life || 'NOT SET'}</p>
+                  <p className="text-sm text-red-700">Available Keys: {Object.keys(outcomesByArea).join(', ')}</p>
+                  <p className="text-sm text-red-700">Outcomes Count: {availableOutcomes.length}</p>
+                </div>
+              )}
               {availableOutcomes.map((outcome) => {
                 const isSelected = selectedOutcomes.includes(outcome);
                 const isDisabled = !isSelected && selectedOutcomes.length >= MAX_LIST_OUTCOMES;
