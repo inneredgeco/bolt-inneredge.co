@@ -197,6 +197,11 @@ const actionsByArea: Record<string, string[]> = {
 };
 
 export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading }: VisionBuilderStep5Props) {
+  console.log('=== STEP 5 MOUNTED ===');
+  console.log('initialData:', JSON.stringify(initialData, null, 2));
+  console.log('area_of_life:', initialData.area_of_life);
+  console.log('area_of_life type:', typeof initialData.area_of_life);
+
   const [selectedActions, setSelectedActions] = useState<string[]>(initialData.doing_actions || []);
   const [customActions, setCustomActions] = useState<string[]>(['', '', '', '', '']);
 
