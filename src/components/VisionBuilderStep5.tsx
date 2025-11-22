@@ -218,7 +218,10 @@ export function VisionBuilderStep5({ onComplete, onBack, initialData, isLoading 
     return areaMap[areaId] || areaId;
   };
 
+  console.log('Step 5 - Area of life:', initialData.area_of_life);
+  console.log('Step 5 - Available actions keys:', Object.keys(actionsByArea));
   const availableActions = actionsByArea[initialData.area_of_life || ''] || [];
+  console.log('Step 5 - Available actions count:', availableActions.length);
 
   const toggleAction = (action: string) => {
     if (selectedActions.includes(action)) {

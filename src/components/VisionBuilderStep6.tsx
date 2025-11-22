@@ -182,7 +182,10 @@ export function VisionBuilderStep6({ onComplete, onBack, initialData, isLoading 
     return areaMap[areaId] || areaId;
   };
 
+  console.log('Step 6 - Area of life:', initialData.area_of_life);
+  console.log('Step 6 - Available outcomes keys:', Object.keys(outcomesByArea));
   const availableOutcomes = outcomesByArea[initialData.area_of_life || ''] || [];
+  console.log('Step 6 - Available outcomes count:', availableOutcomes.length);
 
   const toggleOutcome = (outcome: string) => {
     if (selectedOutcomes.includes(outcome)) {
